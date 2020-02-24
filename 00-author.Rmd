@@ -1,3 +1,10 @@
 # 作者简介 {#author .unnumbered}
 
-上不了厅堂，下得了厨房。敲得了代码，逮得住蟑螂。
+
+![](yanfei.png) [**Yanfei Kang**](https://yanfei.site) is Associate Professor of Statistics in the School of Economics and Management at Beihang University in China. Prior to that, she was Senior R&D Engineer in Big Data Group of Baidu Inc. Yanfei obtained her Ph.D. degree of Applied and Computational Mathematics at Monash University in 2014. She worked as a postdoctoral research fellow in time series forecasting algorithm performance visualization during 2014 and 2015 at Monash University. Her research interests include time series forecasting, time series visualization, text mining and statistical computing. 
+
+康雁飞现任北京航空航天大学经济管理学院数量经济与商务统计系副教授、博士生导师，2016年入选北航“卓越百人计划”，研究方向为统计预测、文本挖掘与统计计算。在国际顶级期刊及会议上发表多篇学术论文，曾在莫纳什大学进行博士后研究，在百度大数据部任高级研发工程师，主持国家自然科学基金项目。
+
+![](feng.png) [**Feng Li**](https://feng.li)  is Assistant Professor of Statistics in School of Statistics and Mathematics at Central University of Finance and Economics in China. Feng obtained his Ph.D. degree in Statistics at Stockholm University in 2013. His research interests include Bayesian econometrics, statistical computing and multivariate analysis.
+
+李丰现任中央财经大学统计与数学学院副院长，大数据分析专业硕士导师，中国统计教育学会高等教育分会会副秘书长。博士毕业于瑞典斯德哥尔摩大学，研究领域包括贝叶斯计算，统计预测，多元Copula模型等。曾获瑞典皇家统计学会Cramér奖，国际贝叶斯学会青年奖励基金，瑞典Knut & Alice Wallenberg基金奖励，第二届全国高校经管类实验教学案例大赛二等奖。著有《Bayesian Modeling of Conditional Densities》和《大数据分布式计算与案例》，在International Journal of Forecasting等期刊发表多篇学术论文，主持国家自然科学基金项目。
