@@ -3,12 +3,18 @@ title: "统计计算"
 author: 
   - "李丰"
   - "康雁飞"
-date: "2020年3月"
-description: "本科生统计计算教材."
-documentclass: book
+date: "2020-02-24"
+documentclass: ctexbook
+description: "本科生统计计算教材。"
+bibliography: [book.bib, packages.bib]
 biblio-style: apalike
-bibliography: [mybib.bib]
 link-citations: yes
+colorlinks: yes
+lot: yes
+lof: yes
+geometry: [b5paper, tmargin=2.5cm, bmargin=2.5cm, lmargin=3.5cm, rmargin=2.5cm]
+site: bookdown::bookdown_site
+github-repo: ykang/Statistical-Computing-Chinese
 ---
 
 

@@ -1,4 +1,4 @@
-\documentclass[]{book}
+\documentclass[]{ctexbook}
 \usepackage{lmodern}
 \usepackage{amssymb,amsmath}
 \usepackage{ifxetex,ifluatex}
@@ -8,7 +8,7 @@
   \usepackage[utf8]{inputenc}
 \else % if luatex or xelatex
   \ifxetex
-    \usepackage{mathspec}
+    \usepackage{xltxtra,xunicode}
   \else
     \usepackage{fontspec}
   \fi
@@ -21,12 +21,16 @@
 \usepackage{microtype}
 \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
 }{}
-\usepackage[margin=1in]{geometry}
-\usepackage{hyperref}
-\hypersetup{unicode=true,
+\usepackage[b5paper,tmargin=2.5cm,bmargin=2.5cm,lmargin=3.5cm,rmargin=2.5cm]{geometry}
+\usepackage[unicode=true]{hyperref}
+\PassOptionsToPackage{usenames,dvipsnames}{color} % color is loaded by hyperref
+\hypersetup{
             pdftitle={统计计算},
             pdfauthor={李丰; 康雁飞},
-            pdfborder={0 0 0},
+            colorlinks=true,
+            linkcolor=Maroon,
+            citecolor=Blue,
+            urlcolor=Blue,
             breaklinks=true}
 \urlstyle{same}  % don't use monospace font for urls
 \usepackage{natbib}
@@ -72,6 +76,8 @@
 \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 \usepackage{longtable,booktabs}
+% Fix footnotes in tables (requires footnote package)
+\IfFileExists{footnote.sty}{\usepackage{footnote}\makesavenoteenv{long table}}{}
 \usepackage{graphicx,grffile}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
@@ -101,52 +107,72 @@
 \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
 \fi
 
-%%% Use protect on footnotes to avoid problems with footnotes in titles
-\let\rmarkdownfootnote\footnote%
-\def\footnote{\protect\rmarkdownfootnote}
+% set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
 
-%%% Change title format to be more compact
-\usepackage{titling}
-
-% Create subtitle command for use in maketitle
-\newcommand{\subtitle}[1]{
-  \posttitle{
-    \begin{center}\large#1\end{center}
-    }
-}
-
-\setlength{\droptitle}{-2em}
-
-  \title{统计计算}
-    \pretitle{\vspace{\droptitle}\centering\huge}
-  \posttitle{\par}
-    \author{李丰 \\ 康雁飞}
-    \preauthor{\centering\large\emph}
-  \postauthor{\par}
-      \predate{\centering\large\emph}
-  \postdate{\par}
-    \date{2020年3月}
-
-\usepackage{ctex}
-
-%\usepackage{xltxtra} % XeLaTeX的一些额外符号
-% 设置中文字体
-%\setCJKmainfont[BoldFont={黑体},ItalicFont={楷体}]{新宋体}
-
-% 设置边距
-\usepackage{geometry}
-\geometry{%
-  left=2.0cm, right=2.0cm, top=3.5cm, bottom=2.5cm} 
-
-\usepackage{amsthm,mathrsfs}
 \usepackage{booktabs}
 \usepackage{longtable}
+
+\usepackage{framed,color}
+\definecolor{shadecolor}{RGB}{248,248,248}
+
+\renewcommand{\textfraction}{0.05}
+\renewcommand{\topfraction}{0.8}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\floatpagefraction}{0.75}
+
+\let\oldhref\href
+\renewcommand{\href}[2]{#2\footnote{\url{#1}}}
+
+\makeatletter
+\newenvironment{kframe}{%
+\medskip{}
+\setlength{\fboxsep}{.8em}
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\makeatletter
+\@ifundefined{Shaded}{
+}{\renewenvironment{Shaded}{\begin{kframe}}{\end{kframe}}}
+\@ifpackageloaded{fancyvrb}{%
+  % https://github.com/CTeX-org/ctex-kit/issues/331
+  \RecustomVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\},formatcom=\xeCJKVerbAddon}%
+}{}
+\makeatother
+
+\usepackage{makeidx}
+\makeindex
+
+\urlstyle{tt}
+
+\usepackage{amsthm}
 \makeatletter
 \def\thm@space@setup{%
   \thm@preskip=8pt plus 2pt minus 4pt
   \thm@postskip=\thm@preskip
 }
 \makeatother
+
+\frontmatter
+
+\title{统计计算}
+\author{李丰 \and 康雁飞}
+\date{2020-02-24}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{定理}[chapter]
@@ -166,12 +192,24 @@
 \begin{document}
 \maketitle
 
+
+\thispagestyle{empty}
+
+\begin{center}
+献给李慷小朋友
+\end{center}
+
+\setlength{\abovedisplayskip}{-5pt}
+\setlength{\abovedisplayshortskip}{-5pt}
+
 {
-\setcounter{tocdepth}{1}
+\setcounter{tocdepth}{2}
 \tableofcontents
 }
+\listoftables
+\listoffigures
 \chapter*{简介}
-\addcontentsline{toc}{chapter}{简介}
+
 
 R软件的bookdown扩展包是R Markdown的增强版，
 支持自动目录、文献索引、公式编号与引用、定理编号与引用、图表自动编号与引用等功能，
@@ -198,6 +236,14 @@ Bookdown如果输出为网页， 其中的数学公式需要MathJax程序库的�
 如果显示不正常， 可以在公式上右键单击， 选择``Math Settings--Math
 Renderer''， 依次使用改成``Common
 HTML''，``SVG''等是否可以变成正常显示。 PDF版本不存在这样的问题。
+
+\hypertarget{author}{%
+\chapter*{作者简介}\label{author}}
+
+
+上不了厅堂，下得了厨房。敲得了代码，逮得住蟑螂。
+
+\mainmatter
 
 \hypertarget{usage}{%
 \chapter{R 基础}\label{usage}}
@@ -674,7 +720,9 @@ L(Y_t | \bar X_t, \bar Y_t, X_t)
 [aaa]
 \end{aligned}\]
 
-\bibliography{mybib.bib}
+\bibliography{book.bib,packages.bib}
 
+\backmatter
+\printindex
 
 \end{document}

@@ -1,6 +1,7 @@
-book_filename: 'CBook'
-output_dir: "_book"
-output: bookdown::gitbook
+output_dir: "textbook"
+clean: [packages.bib, bookdown.bbl]
+new_session: true
+book_filename: 'statscomp'
 language:
   label:
     thm: '定理'
@@ -13,6 +14,3 @@ language:
   ui:
     edit: "编辑"
     chapter_name: ["第 ", " 章"]
-delete_merged_file: true
-new_session: true
-
