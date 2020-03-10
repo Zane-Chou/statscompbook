@@ -18,7 +18,8 @@ delete_merged_file: true
 rmd_files: ["index.Rmd"
  ,"00-author.Rmd"
  ,"01-usage.Rmd"
- ,"02-optim.Rmd"
+ ,"02-rootfinding.Rmd"
+ ,"03-optim.Rmd"
  ,"9990-references.Rmd"
 ]
 
