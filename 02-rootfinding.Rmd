@@ -1,3 +1,8 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
 # 求根算法 {#rootfinding}
 
 ```{r setup, include=FALSE}
@@ -9,11 +14,42 @@ pdf.options(height=10/2.54, width=10/2.54, family="GB1") # 注意：此设置要
 ## 介绍 {#rootfinding-intro}
 
 
-## 
+## 牛顿法
+
+牛顿法（Newton Method，or Newton-Raphson method）是最常用且高效的求根算法之一。假设函数 $f(x)$ 可导并一阶导 $f^{'}(x)$ 连续，且 $x^*$ 为 $f(x) = 0$ 的根。设 $x_0$ 是对 $x^*$ 的一个好的估计，令 $x^* = x_0 + h$。因为 $x^*$ 是$f(x) = 0$的根而且 $h = x^* - x_0$，所以 $h$ 描述了 $x_0$距离真实根的距离。
+
+因为 $h$ 很小，我们通过线性逼近可以得到：
+
+$$0 = f(x^*) = f(x_0+h) \approx f(x_0) + h f^{'}(x_0),$$
+
+所以除非 $f^{'}(x_0)$ 接近于0，我们得到：
+
+$$h \approx-\frac{f\left(x_{0}\right)}{f^{\prime}\left(x_{0}\right)}.$$
+
+从而，
+
+$$x^*=x_{0}+h \approx x_{0}-\frac{f\left(x_{0}\right)}{f^{\prime}\left(x_{0}\right)},$$
+
+我们可以把这个新的估计 $x_1$ 做为对 $x^*$ 更好的估计：
+
+$$x_{1}=x_{0}-\frac{f\left(x_{0}\right)}{f^{\prime}\left(x_{0}\right)}.$$
+
+如果我们继续更新，就可以得到 $x_2$：
+
+$$x_{2}=x_{1}-\frac{f\left(x_{1}\right)}{f^{\prime}\left(x_{1}\right)}.$$
+
+按照这种思路继续迭代下去，就是牛顿法求根。牛顿法更一般的写法如下。
+
+\centering
+```{block, type='method'}
+**牛顿法**
+\begin{equation}
+x_{n+1}=x_{n}-\frac{f\left(x_{n}\right)}{f^{\prime}\left(x_{n}\right)}.
+\end{equation}
+```
+
+下面我们来看一下牛顿法更直观的解释。
 
 
 
 
-$$\begin{aligned}
-[aaa]
-\end{aligned}$$
