@@ -1,1 +1,1 @@
-`r if (knitr::is_html_output()) '# 参考文献 {-refs}'`
+`r if (knitr::is_html_output()) '# 参考文献 {-#refs}'`
