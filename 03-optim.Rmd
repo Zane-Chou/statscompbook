@@ -117,7 +117,7 @@ s0
 
 #### 第一步：求函数值 {-}
 
-对每个单纯形的顶点 ${\mathbf x_j}$，计算函数值 $f({\mathbf x_j})$，其中 $j \in 1, 2, \cdots, n$，并将将所有顶点排序使得 $$f({\mathbf x_1})\leq f({\mathbf x_2})\leq\ldots\leq f({\mathbf x_{n+1}}).$$。假设我们的目标是最小化 $f(\cdot)$，那么 $f({\mathbf x_{n+1}})$ 就是最差点。算法目标即使寻找更好的点来取代  $f({\mathbf x_{n+1}})$。
+对每个单纯形的顶点 ${\mathbf x_j}$，计算函数值 $f({\mathbf x_j})$，其中 $j \in 1, 2, \cdots, n$，并将将所有顶点排序使得 $$f({\mathbf x_1})\leq f({\mathbf x_2})\leq\ldots\leq f({\mathbf x_{n+1}}).$$假设我们的目标是最小化 $f(\cdot)$，那么 $f({\mathbf x_{n+1}})$ 就是最差点。算法目标即使寻找更好的点来取代  $f({\mathbf x_{n+1}})$。
 
 #### 第二步：计算中心点 {-}
 
@@ -129,11 +129,11 @@ s0
 
 
 根据中点计算最差点的映射，得到映射点（Reflection Point）：
-$${\mathbf x_r}={\mathbf x_0}+\alpha({\mathbf x_0}-{\mathbf x_{n+1}}).$$
+$${\mathbf x_r}={\mathbf x_0}+\alpha({\mathbf x_0}-{\mathbf x_{n+1}}),$$
 
 通常取 $\alpha=1$，这种情况下映射点和最差点到中点的距离相等。算法的下一步则取决于 $f({\mathbf x_r})$  的取值大小。
 
-1. $f({\mathbf x_1})\leq f({\mathbf x_r})<f({\mathbf x_n})$（${\mathbf x_r}$， 这种情况下 ${\mathbf x_r}$ 既不是最佳点也不是最差点，将 $\mathbf x_{n+1}$ 替换为 ${\mathbf x_r}$，形成新的单纯形，回到第一步。
+1. $f({\mathbf x_1})\leq f({\mathbf x_r})<f({\mathbf x_n})$， 这种情况下 ${\mathbf x_r}$ 既不是最佳点也不是最差点，将 $\mathbf x_{n+1}$ 替换为 ${\mathbf x_r}$，形成新的单纯形，回到第一步。
     
 2. $f({\mathbf x_r})<f({\mathbf x_1})$，即 ${\mathbf x_r}$ 为最佳点，那么在这个方向上继续延伸，得到延伸点（Expansion Point）：
 $$ {\mathbf x_e}={\mathbf x_0}+\gamma({\mathbf x_r}-{\mathbf x_0})，$$ 通常取 $\gamma = 2$。计算  $f({\mathbf x_e})$。
@@ -159,7 +159,7 @@ knitr::include_graphics("./rcode/nelder.gif")
 
 #### 停止条件 {-}
 
-由图 \@ref(fig:nelder) 可见，随着迭代过程，单纯形的越来越小，Nelder Mead 算法的停止条件可以是判断单纯形的体积： $$\frac{1}{2}|\mathrm{det}(\tilde{X})|，$$其中 $$\tilde{X}=\left({\mathbf x_1}-{\mathbf x_{n+1}},{\mathbf x_2-{\mathbf x_{n+1}}},\ldots, {\mathbf x_{n}-{\mathbf x_{n+1}}}\right)$$。
+由图 \@ref(fig:nelder) 可见，随着迭代过程，单纯形的体积越来越小，因此通常将单纯形的体积足够小做为Nelder Mead。有 $n+1$ 个顶点的单纯形的体积为： $$\frac{1}{2}|\mathrm{det}(\tilde{X})|,$$其中 $$\tilde{X}=\left({\mathbf x_1}-{\mathbf x_{n+1}},{\mathbf x_2-{\mathbf x_{n+1}}},\ldots, {\mathbf x_{n}-{\mathbf x_{n+1}}}\right).$$
 
 
 在 R 中，Nelder Mead 算法可以用 `optim()` 实现。
