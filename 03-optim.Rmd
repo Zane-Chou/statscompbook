@@ -168,15 +168,30 @@ knitr::include_graphics("./rcode/nelder.gif")
 
 ### 梯度下降算法
 
+
+
 梯度下降（Gradient Descent，或者 Steepest Descent）算法是一种迭代算法。对于一个 $n$ 元连续可导函数 $f(\mathbf{x})$，在 $\mathbf{x}_n$ 处 $f(\mathbf{x})$下降最快的方向也就是$f(\mathbf{x})$ 在 $\mathbf{x}_n$ 处的梯度方向的反方向，即$-f^{\prime}(\mathbf{x}_n)$，这也是与 $\mathbf{x}_n$ 处等高线正交的方向。所以给定当前 $\mathbf{x}_n$，梯度下降算法的更新策略就是：
 \begin{equation}
-\mathbf{x}_{n+1}=\mathbf{x}_{n}-\alpha_{n} f^{\prime}\left(\mathbf{x}_{n}\right),
+\mathbf{x}_{n+1}=\mathbf{x}_{n}-\alpha f^{\prime}\left(\mathbf{x}_{n}\right),
 (\#eq:gd)
 \end{equation}
 
-其中 $\alpha_n > 0$。如果我们的初始猜测为 $\mathbf{x}_0$，那么根据公式\@ref(eq:gd)，我们可以得到 $f(\mathbf{x}_0) \geq f(\mathbf{x}_1) \geq f(\mathbf{x}_2) \geq \cdots$，如果算法收敛，序列 $\{\mathbf{x}_n\}$ 就会收敛到 $f(\mathbf{x})$ 的局部极小值。
+其中 $\alpha > 0$  控制下降步长。如果我们的初始猜测为 $\mathbf{x}_0$，那么根据公式 \@ref(eq:gd)，我们可以得到 $f(\mathbf{x}_0) \geq f(\mathbf{x}_1) \geq f(\mathbf{x}_2) \geq \cdots$，如果算法收敛，序列 $\{\mathbf{x}_n\}$ 就会收敛到 $f(\mathbf{x})$ 的局部极小值。
 
-```{r gd, fig.cap='梯度下降算法', fig.asp=1, echo=FALSE}
+```{r gd-1, echo=FALSE, fig.cap='梯度下降算法：一元函数'}
+library(ggplot2)
+f <- function(x) x^2 - 5
+gd.eg1 <- data.frame(x = 4:1, y = f(4:1))
+ggplot(data.frame(x=c(-5, 5)), aes(x)) + 
+  stat_function(fun=f) + 
+  geom_path(data= gd.eg1, aes(x = x, y = y), arrow = arrow(), color = 'red')+
+  geom_point(data = gd.eg1, aes(x = x, y = y), color = 'red', size = 2) + 
+  ggtitle(parse(text = paste0(' ~ f(x) == ~ x^2 - 5'))) + xlab(expression(x)) +
+  ylab(expression(f(x))) 
+```
+
+
+```{r gd, fig.cap='梯度下降算法：二元函数', fig.asp=1, echo=FALSE}
 f <- function(x, y) { x^2 + y ^2}
 dx <- function(x,y) {2*x }
 dy <- function(x,y) {2*y}
@@ -212,14 +227,14 @@ g <- expand.grid(x, y)
 z <- f(g[,1], g[,2])
 f_long <- data.frame(x = g[,1], y = g[,2], z = z)
 library(ggplot2)
-cggplot(f_long, aes(x, y, z = z)) + 
+ggplot(f_long, aes(x, y, z = z)) + 
   geom_contour_filled(aes(fill = stat(level)), bins = 50) + 
   guides(fill = FALSE) +
   geom_path(data = m, aes(x, y, z=0), col = 2, arrow = arrow()) +
   geom_point(data = m, aes(x, y, z=0), size = 3, col = 2) +
   xlab(expression(x[1])) +
   ylab(expression(x[2])) +
-  ggtitle(parse(text = paste0('"梯度下降算法： "', ' ~ f(x[1],x[2]) == ~ x[1]^2 + x[2]^2'))) 
+  ggtitle(parse(text = paste0('~ f(x[1],x[2]) == ~ x[1]^2 + x[2]^2'))) 
 ```
 
 值得注意的是，通常情况下梯度反方向迭代是符合逻辑的，但是当待优化函数中的某些参数存在高度相关关系时，梯度下降算法的收敛速度可能会降低。
@@ -260,12 +275,17 @@ g <- expand.grid(x, y)
 z <- f(g[,1], g[,2])
 f_long <- data.frame(x = g[,1], y = g[,2], z = z)
 library(ggplot2)
-cggplot(f_long, aes(x, y, z = z)) + 
+ggplot(f_long, aes(x, y, z = z)) + 
   geom_contour_filled(aes(fill = stat(level)), bins = 50) + 
   guides(fill = FALSE) +
   geom_path(data = m, aes(x, y, z=0), col = 2, arrow = arrow()) +
   geom_point(data = m, aes(x, y, z=0), size = 3, col = 2) +
   xlab(expression(x[1])) +
   ylab(expression(x[2])) +
-  ggtitle(parse(text = paste0('"梯度下降算法： "', ' ~ f(x[1],x[2]) == ~ x[1]^2 + x[2]^2 - 1.6*x[1]*x[2]'))) 
+  ggtitle(parse(text = paste0(' ~ f(x[1],x[2]) == ~ x[1]^2 + x[2]^2 - 1.6*x[1]*x[2]'))) 
 ```
+
+```{example}
+用梯度下降算法建立一元线性回归模型。
+```
+
