@@ -144,8 +144,8 @@ $$ {\mathbf x_e}={\mathbf x_0}+\gamma({\mathbf x_r}-{\mathbf x_0})，$$ 通常�
 
     
 3. $f({\mathbf x_r})\geq f({\mathbf x_n})$，即 ${\mathbf x_r}$ 为最差点，这意味着在 ${\mathbf x_{n+1}}$ 和 ${\mathbf x_{r}}$ 之间可能存在谷点，这时寻找收缩点（contraction point）：$${\mathbf x_c}={\mathbf x_0}+\rho({\mathbf x_{n+1}}-{\mathbf x_0})，$$通常取 $\rho=0.5$。
-    - 如果 ${\mathbf x_c} < {\mathbf x_{n+1}}$，那么用收缩点 ${\mathbf x_c}$ 形成新的单纯形。
-    - 如果 ${\mathbf x_c} \geq {\mathbf x_{n+1}}$，说明收缩无效，需要一个更小的单纯形，这时将 ${\mathbf x_{1}}$ 以外的点按以下方式压缩（shrink）：
+    - 如果 $f({\mathbf x_c}) < f({\mathbf x_{n+1}})$，那么用收缩点 ${\mathbf x_c}$ 形成新的单纯形。
+    - 如果 $f({\mathbf x_c}) \geq f({\mathbf x_{n+1}})$，说明收缩无效，需要一个更小的单纯形，这时将 ${\mathbf x_{1}}$ 以外的点按以下方式压缩（shrink）：
     $${\mathbf x_i}={\mathbf x_1}+\sigma({\mathbf x_i}-{\mathbf x_1})，$$通常取 $\sigma = 0.5$，得到新的单纯形后返回第一步。
   
 
@@ -164,3 +164,108 @@ knitr::include_graphics("./rcode/nelder.gif")
 
 在 R 中，Nelder Mead 算法可以用 `optim()` 实现。
 
+## 随机梯度下降算法
+
+### 梯度下降算法
+
+梯度下降（Gradient Descent，或者 Steepest Descent）算法是一种迭代算法。对于一个 $n$ 元连续可导函数 $f(\mathbf{x})$，在 $\mathbf{x}_n$ 处 $f(\mathbf{x})$下降最快的方向也就是$f(\mathbf{x})$ 在 $\mathbf{x}_n$ 处的梯度方向的反方向，即$-f^{\prime}(\mathbf{x}_n)$，这也是与 $\mathbf{x}_n$ 处等高线正交的方向。所以给定当前 $\mathbf{x}_n$，梯度下降算法的更新策略就是：
+\begin{equation}
+\mathbf{x}_{n+1}=\mathbf{x}_{n}-\alpha_{n} f^{\prime}\left(\mathbf{x}_{n}\right),
+(\#eq:gd)
+\end{equation}
+
+其中 $\alpha_n > 0$。如果我们的初始猜测为 $\mathbf{x}_0$，那么根据公式\@ref(eq:gd)，我们可以得到 $f(\mathbf{x}_0) \geq f(\mathbf{x}_1) \geq f(\mathbf{x}_2) \geq \cdots$，如果算法收敛，序列 $\{\mathbf{x}_n\}$ 就会收敛到 $f(\mathbf{x})$ 的局部极小值。
+
+```{r gd, fig.cap='梯度下降算法', fig.asp=1, echo=FALSE}
+f <- function(x, y) { x^2 + y ^2}
+dx <- function(x,y) {2*x }
+dy <- function(x,y) {2*y}
+num_iter <- 10
+learning_rate <- 0.2
+x_val <- 6
+y_val <- 6
+
+updates_x <- c(x_val, rep(NA, num_iter))
+updates_y <- c(y_val, rep(NA, num_iter))
+updates_z <- c(f(x_val, y_val), rep(NA, num_iter))
+
+# parameter updates
+for (i in 1:num_iter) {
+
+  dx_val = dx(x_val,y_val)
+  dy_val = dy(x_val,y_val)
+
+  x_val <- x_val-learning_rate*dx_val
+  y_val <- y_val-learning_rate*dy_val
+  z_val <- f(x_val, y_val)
+
+  updates_x[i + 1] <- x_val
+  updates_y[i + 1] <- y_val
+  updates_z[i + 1] <- z_val
+}
+
+## plotting
+m <- data.frame(x = updates_x, y = updates_y)
+x <- seq(-6, 6, length = 100)
+y <- x
+g <- expand.grid(x, y)
+z <- f(g[,1], g[,2])
+f_long <- data.frame(x = g[,1], y = g[,2], z = z)
+library(ggplot2)
+cggplot(f_long, aes(x, y, z = z)) + 
+  geom_contour_filled(aes(fill = stat(level)), bins = 50) + 
+  guides(fill = FALSE) +
+  geom_path(data = m, aes(x, y, z=0), col = 2, arrow = arrow()) +
+  geom_point(data = m, aes(x, y, z=0), size = 3, col = 2) +
+  xlab(expression(x[1])) +
+  ylab(expression(x[2])) +
+  ggtitle(parse(text = paste0('"梯度下降算法： "', ' ~ f(x[1],x[2]) == ~ x[1]^2 + x[2]^2'))) 
+```
+
+值得注意的是，通常情况下梯度反方向迭代是符合逻辑的，但是当待优化函数中的某些参数存在高度相关关系时，梯度下降算法的收敛速度可能会降低。
+
+```{r gd-cor, fig.cap='梯度下降算法（变量高度相关的情况）', fig.asp=1, echo=FALSE}
+f <- function(x, y) { x^2 + y^2 - 1.6*x*y}
+dx <- function(x,y) { (2*x - 1.6*y)}
+dy <- function(x,y) { (2*y - 1.6*x)}
+num_iter <- 20
+learning_rate <- 0.42
+x_val <- 0
+y_val <- 4
+
+updates_x <- c(x_val, rep(NA, num_iter))
+updates_y <- c(y_val, rep(NA, num_iter))
+updates_z <- c(f(x_val, y_val), rep(NA, num_iter))
+
+# parameter updates
+for (i in 1:num_iter) {
+
+  dx_val = dx(x_val,y_val)
+  dy_val = dy(x_val,y_val)
+
+  x_val <- x_val-learning_rate*dx_val
+  y_val <- y_val-learning_rate*dy_val
+  z_val <- f(x_val, y_val)
+
+  updates_x[i + 1] <- x_val
+  updates_y[i + 1] <- y_val
+  updates_z[i + 1] <- z_val
+}
+
+## plotting
+m <- data.frame(x = updates_x, y = updates_y)
+x <- seq(-5, 5, length = 100)
+y <- seq(-5, 5, length = 100)
+g <- expand.grid(x, y)
+z <- f(g[,1], g[,2])
+f_long <- data.frame(x = g[,1], y = g[,2], z = z)
+library(ggplot2)
+cggplot(f_long, aes(x, y, z = z)) + 
+  geom_contour_filled(aes(fill = stat(level)), bins = 50) + 
+  guides(fill = FALSE) +
+  geom_path(data = m, aes(x, y, z=0), col = 2, arrow = arrow()) +
+  geom_point(data = m, aes(x, y, z=0), size = 3, col = 2) +
+  xlab(expression(x[1])) +
+  ylab(expression(x[2])) +
+  ggtitle(parse(text = paste0('"梯度下降算法： "', ' ~ f(x[1],x[2]) == ~ x[1]^2 + x[2]^2 - 1.6*x[1]*x[2]'))) 
+```

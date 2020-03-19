@@ -30,7 +30,6 @@ blockquote > p:first-child {
 }
 
 .bookcomment:before {
-    content: "\f075";
     font-family: FontAwesome;
     left:10px;
     position:absolute;
@@ -45,7 +44,7 @@ blockquote > p:first-child {
   position:relative;
 }
 
-.methodbock:before {
+.methodblock:before {
     font-family: FontAwesome;
     left:10px;
     position:absolute;
