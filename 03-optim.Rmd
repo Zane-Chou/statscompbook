@@ -285,7 +285,54 @@ ggplot(f_long, aes(x, y, z = z)) +
   ggtitle(parse(text = paste0(' ~ f(x[1],x[2]) == ~ x[1]^2 + x[2]^2 - 1.6*x[1]*x[2]'))) 
 ```
 
+
+
 ```{example}
-用梯度下降算法建立一元线性回归模型。
+用梯度下降算法估计一元线性回归模型。
 ```
 
+```{r}
+graddesc.lm <- function(X, y, beta.init, alpha = 1, tol = 1e-5, max.iter = 100){
+  beta <- beta.init
+  iter <- 1
+  betas <- list()
+  betas[[1]] <- beta
+  while ((max(abs(l2.loss.grad(X, y, beta)))  > tol) & (iter < max.iter)){
+    beta <- beta - alpha * l2.loss.grad(X, y, beta)
+    iter <- iter + 1
+    betas[[iter + 1]] <- beta
+    # cat('迭代第',iter,'次：beta0 =', beta[1],'beta1 =',beta[2],'\n')
+  }
+  if (max(abs(l2.loss.grad(X, y, beta))) > tol){
+    cat('算法无法收敛 \n')
+  } else{
+    cat('算法收敛\n')
+    cat('共迭代',iter,'次','\n')
+    cat('系数估计为：', beta)
+    return(betas)
+  }
+}
+```
+
+```{r}
+## Generate some data
+beta0 <- 1
+beta1 <- 3
+sigma <- 1
+n <- 10000
+x <- rnorm(n, 3, 1)
+y <- beta0 + x * beta1 + rnorm(n, mean = 0, sd = sigma)
+X <- cbind(1, x)
+## Make the l2 loss function
+l2.loss <- function(X, y, beta){
+   m <- length(y)
+   loss <- sum((X%*%beta -  y)^2)/(2*n)
+return(loss)
+}
+
+l2.loss.grad <- function(X, y, beta){
+  (1/n)*(t(X)%*%(X%*%beta - y))
+}
+
+gd.est <- graddesc.lm(X, y, beta.init = c(0,0), alpha = 0.1, max.iter = 1000)
+```
