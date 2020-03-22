@@ -170,13 +170,18 @@ knitr::include_graphics("./rcode/nelder.gif")
 
 
 
-梯度下降（Gradient Descent，或者 Steepest Descent）算法是一种迭代算法。对于一个 $n$ 元连续可导函数 $f(\mathbf{x})$，在 $\mathbf{x}_n$ 处 $f(\mathbf{x})$下降最快的方向也就是$f(\mathbf{x})$ 在 $\mathbf{x}_n$ 处的梯度方向的反方向，即$-f^{\prime}(\mathbf{x}_n)$，这也是与 $\mathbf{x}_n$ 处等高线正交的方向。所以给定当前 $\mathbf{x}_n$，梯度下降算法的更新策略就是：
+梯度下降（Gradient Descent，或者 Steepest Descent）算法是一种迭代算法。对于一个 $n$ 元连续可导函数 $f(\mathbf{x})$，在 $\mathbf{x}_n$ 处 $f(\mathbf{x})$下降最快的方向也就是$f(\mathbf{x})$ 在 $\mathbf{x}_n$ 处的梯度方向的反方向，即$-\nabla f(\mathbf{x}_n)$，这也是与 $\mathbf{x}_n$ 处等高线正交的方向。所以给定当前 $\mathbf{x}_n$，梯度下降算法的更新策略就是：
 \begin{equation}
-\mathbf{x}_{n+1}=\mathbf{x}_{n}-\alpha f^{\prime}\left(\mathbf{x}_{n}\right),
+\mathbf{x}_{n+1}=\mathbf{x}_{n}-\alpha  \nabla f\left(\mathbf{x}_{n}\right),
 (\#eq:gd)
 \end{equation}
 
-其中 $\alpha > 0$  控制下降步长。如果我们的初始猜测为 $\mathbf{x}_0$，那么根据公式 \@ref(eq:gd)，我们可以得到 $f(\mathbf{x}_0) \geq f(\mathbf{x}_1) \geq f(\mathbf{x}_2) \geq \cdots$，如果算法收敛，序列 $\{\mathbf{x}_n\}$ 就会收敛到 $f(\mathbf{x})$ 的局部极小值。
+其中 $\alpha > 0$  控制下降步长。我们可以选择 $\alpha$ 以最小化：
+\begin{equation}
+g(\alpha) = f(\mathbf{x}_n - \alpha \nabla f(\mathbf{x}_n),
+(\#eq:stepsize)
+\end{equation}
+如果我们的初始猜测为 $\mathbf{x}_0$，那么根据公式 \@ref(eq:gd)，我们可以得到 $f(\mathbf{x}_0) \geq f(\mathbf{x}_1) \geq f(\mathbf{x}_2) \geq \cdots$，如果算法收敛，序列 $\{\mathbf{x}_n\}$ 就会收敛到 $f(\mathbf{x})$ 的局部极小值。所以我们可以以 $f(\mathbf{x}_{n+1})- f(\mathbf{x}_n) \leq \epsilon$ 为梯度下降算法收敛的停止条件，其中 $\epsilon$ 为容忍值。
 
 ```{r gd-1, echo=FALSE, fig.cap='梯度下降算法：一元函数'}
 library(ggplot2)
@@ -288,31 +293,60 @@ ggplot(f_long, aes(x, y, z = z)) +
 
 
 ```{example}
-用梯度下降算法估计一元线性回归模型。
+用梯度下降算法估计线性回归模型。
 ```
 
+假设一般的线性回归模型 $y = X\beta + \eta,~\eta \sim N(0, I)$，给定 $n$ 个观测样本，我们可以写出线性模型的损失函数 
+$$J(\beta) = \frac{1}{2n}(X\beta - y)^T(X\beta - y).$$ 对应的梯度向量为 
+$$\nabla J(\beta) = \frac{1}{n}X^T(X\beta-y).$$
+
 ```{r}
-graddesc.lm <- function(X, y, beta.init, alpha = 1, tol = 1e-5, max.iter = 100){
-  beta <- beta.init
-  iter <- 1
-  betas <- list()
-  betas[[1]] <- beta
-  while ((max(abs(l2.loss.grad(X, y, beta)))  > tol) & (iter < max.iter)){
-    beta <- beta - alpha * l2.loss.grad(X, y, beta)
-    iter <- iter + 1
-    betas[[iter + 1]] <- beta
-    # cat('迭代第',iter,'次：beta0 =', beta[1],'beta1 =',beta[2],'\n')
+graddesc.lm <- function(X, y, beta.init, alpha = NULL, tol = 1e-9, max.iter = 100){
+  beta.old <- beta.init
+  if (is.null(alpha)){
+    alpha <- optim(0.1, function(alpha) {lm.cost(X, y, beta.old - alpha * lm.cost.grad(X, y, beta.old))}, method = 'BFGS')
+    if (alpha$convergence == 0){
+      alpha <- alpha$par
+    }else{
+      alpha <- 0.1
+    }
   }
-  if (max(abs(l2.loss.grad(X, y, beta))) > tol){
+  J <- betas <- list()
+  betas[[1]] <- beta.old
+  J[[1]] <- lm.cost(X, y, beta.old)
+  beta.new <- beta.old - alpha * lm.cost.grad(X, y, beta.old)
+  betas[[2]] <- beta.new
+  J[[2]] <- lm.cost(X, y, beta.new)
+  iter <- 1
+  while ((abs(lm.cost(X, y, beta.new) - lm.cost(X, y, beta.old))  > tol) & (iter < max.iter)){
+    beta.old <- beta.new
+    if (is.null(alpha)){
+    alpha <- optim(0.1, function(alpha) {lm.cost(X, y, beta.old - alpha * lm.cost.grad(X, y, beta.old))}, method = 'BFGS')
+    if (alpha$convergence == 0){
+      alpha <- alpha$par
+    }else{
+      alpha <- 0.1
+    }
+  }
+    beta.new <- beta.old - alpha * lm.cost.grad(X, y, beta.old)
+    iter <- iter + 1
+    betas[[iter + 2]] <- beta.new
+    J[[iter + 2]] <- lm.cost(X, y, beta.new)
+  }
+  if (abs(lm.cost(X, y, beta.new) - lm.cost(X, y, beta.old)) > tol){
     cat('算法无法收敛 \n')
   } else{
     cat('算法收敛\n')
     cat('共迭代',iter,'次','\n')
-    cat('系数估计为：', beta)
-    return(betas)
+    cat('系数估计为：', beta.new)
+    return(list(coef = betas,
+                cost = J))
   }
 }
 ```
+
+
+
 
 ```{r}
 ## Generate some data
@@ -323,16 +357,35 @@ n <- 10000
 x <- rnorm(n, 3, 1)
 y <- beta0 + x * beta1 + rnorm(n, mean = 0, sd = sigma)
 X <- cbind(1, x)
-## Make the l2 loss function
-l2.loss <- function(X, y, beta){
+
+## Make the cost function
+lm.cost <- function(X, y, beta){
    m <- length(y)
    loss <- sum((X%*%beta -  y)^2)/(2*n)
 return(loss)
 }
-
-l2.loss.grad <- function(X, y, beta){
+## Calculate the gradient
+lm.cost.grad <- function(X, y, beta){
   (1/n)*(t(X)%*%(X%*%beta - y))
 }
 
-gd.est <- graddesc.lm(X, y, beta.init = c(0,0), alpha = 0.1, max.iter = 1000)
+gd.est <- graddesc.lm(X, y, beta.init = c(0,0), alpha = NULL, max.iter = 1000)
 ```
+
+
+
+### 随机梯度下降算法
+
+梯度下降算法通常收敛速度较慢，因为在每次迭代中对每个样本值都需要计算梯度，在样本量较大时计算量会随之增大。随机梯度下降算法的思想是在算法的每次迭代更新时只考虑一个样本。以线性回归模型为例，就是讲梯度下降算法中的 $$\nabla J(\beta) = \frac{1}{n}X^T(X\beta-y).$$ 替换为 ：
+$$\nabla J(\beta)_i = \frac{1}{n}X_i^T(X_i\beta-y_i),$$ 完整的迭代过程如下。
+
+
+\centering
+```{block, type='method'}
+**随机梯度下降算法**
+
+1. 将训练数据随机排序。
+2. 对每个样本重复以下过程：
+$$\beta:= \beta - \alpha \nabla J(\beta)_i.$$
+```
+
