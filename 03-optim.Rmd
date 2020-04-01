@@ -166,7 +166,7 @@ knitr::include_graphics("./rcode/nelder.gif")
 
 ## 随机梯度下降算法
 
-### 梯度下降算法
+### 梯度下降算法 {#gd}
 
 
 
@@ -301,33 +301,39 @@ $$J(\beta) = \frac{1}{2n}(X\beta - y)^T(X\beta - y).$$ 对应的梯度向量为
 $$\nabla J(\beta) = \frac{1}{n}X^T(X\beta-y).$$
 
 ```{r}
-graddesc.lm <- function(X, y, beta.init, alpha = NULL, tol = 1e-9, max.iter = 100){
+gd.lm <- function(X, y, beta.init, alpha, tol = 1e-5, max.iter = 100){
   beta.old <- beta.init
-  if (is.null(alpha)){
-    alpha <- optim(0.1, function(alpha) {lm.cost(X, y, beta.old - alpha * lm.cost.grad(X, y, beta.old))}, method = 'BFGS')
-    if (alpha$convergence == 0){
+  J <- betas <- list()
+  if (alpha == 'auto'){
+    alpha <-
+      optim(0.1, function(alpha) {
+        lm.cost(X, y, beta.old - alpha * lm.cost.grad(X, y, beta.old))
+      }, method = 'L-BFGS-B', lower = 0, upper = 1)
+    if (alpha$convergence == 0) {
       alpha <- alpha$par
-    }else{
+    } else{
       alpha <- 0.1
     }
   }
-  J <- betas <- list()
   betas[[1]] <- beta.old
   J[[1]] <- lm.cost(X, y, beta.old)
   beta.new <- beta.old - alpha * lm.cost.grad(X, y, beta.old)
   betas[[2]] <- beta.new
   J[[2]] <- lm.cost(X, y, beta.new)
-  iter <- 1
+  iter <- 0
   while ((abs(lm.cost(X, y, beta.new) - lm.cost(X, y, beta.old))  > tol) & (iter < max.iter)){
     beta.old <- beta.new
-    if (is.null(alpha)){
-    alpha <- optim(0.1, function(alpha) {lm.cost(X, y, beta.old - alpha * lm.cost.grad(X, y, beta.old))}, method = 'BFGS')
-    if (alpha$convergence == 0){
+    if (alpha == 'auto'){
+    alpha <-
+      optim(0.1, function(alpha) {
+        lm.cost(X, y, beta.old - alpha * lm.cost.grad(X, y, beta.old))
+      }, method = 'L-BFGS-B', lower = 0, upper = 1)
+    if (alpha$convergence == 0) {
       alpha <- alpha$par
-    }else{
+    } else{
       alpha <- 0.1
     }
-  }
+    }
     beta.new <- beta.old - alpha * lm.cost.grad(X, y, beta.old)
     iter <- iter + 1
     betas[[iter + 2]] <- beta.new
@@ -337,10 +343,11 @@ graddesc.lm <- function(X, y, beta.init, alpha = NULL, tol = 1e-9, max.iter = 10
     cat('算法无法收敛 \n')
   } else{
     cat('算法收敛\n')
-    cat('共迭代',iter,'次','\n')
-    cat('系数估计为：', beta.new)
+    cat('共迭代',iter + 1,'次','\n')
+    cat('系数估计为：', beta.new, '\n')
     return(list(coef = betas,
-                cost = J))
+                cost = J,
+                niter = iter + 1))
   }
 }
 ```
@@ -354,38 +361,228 @@ beta0 <- 1
 beta1 <- 3
 sigma <- 1
 n <- 10000
-x <- rnorm(n, 3, 1)
+x <- rnorm(n, 0, 1)
 y <- beta0 + x * beta1 + rnorm(n, mean = 0, sd = sigma)
 X <- cbind(1, x)
 
 ## Make the cost function
 lm.cost <- function(X, y, beta){
-   m <- length(y)
+   n <- length(y)
    loss <- sum((X%*%beta -  y)^2)/(2*n)
 return(loss)
 }
 ## Calculate the gradient
 lm.cost.grad <- function(X, y, beta){
+  n <- length(y)
   (1/n)*(t(X)%*%(X%*%beta - y))
 }
+## Use optimized alpha
+gd.auto <- gd.lm(X, y, beta.init = c(-4,-5), alpha = 'auto', tol = 1e-5, max.iter = 10000)
 
-gd.est <- graddesc.lm(X, y, beta.init = c(0,0), alpha = NULL, max.iter = 1000)
+## alpha = 0.1
+gd1 <- gd.lm(X, y, beta.init = c(-4,-5), alpha = 0.1, tol = 1e-5, max.iter = 10000)
+
+## alpha = 0.01
+gd2 <- gd.lm(X, y, beta.init = c(-4,-5), alpha = 0.01, tol = 1e-5, max.iter = 10000)
 ```
 
+```{r niter}
+niter <- data.frame(alpha = c('auto', 0.1, 0.01), niter = c(gd.auto$niter, gd1$niter, gd2$niter))
+knitr::kable(
+  niter, caption = '不同 $\\alpha$ 对应的梯度下降算法的迭代次数',booktabs = TRUE,  col.names = c("$\\alpha$", '迭代次数'),
+  
+) 
+```
+
+从表~\@ref(tab:niter)~中我们可以发现在每次迭代过程中对 $\alpha$ 进行优化可以显著提高计算效率。如图~\@ref(fig:gd2)~如果 $\alpha$ 较小，迭代的次数就会增加，因此收敛过程比较缓慢。
+
+```{r gd2, echo = FALSE, fig.cap="不同 $\\alpha$ 取值下梯度下降算法的收敛情况", fig.asp=0.4}
+library(dplyr)
+library(reshape2)
+gd1.betas <- as.data.frame(t(do.call(cbind, gd1$coef)))
+gd2.betas <- as.data.frame(t(do.call(cbind, gd2$coef)))
+colnames(gd1.betas) <- colnames(gd2.betas) <- c('beta0', 'beta1')
+gd1.betas <- gd1.betas %>% mutate(Iteration = 1:nrow(gd1.betas)) %>% melt(id.vars = 'Iteration', variable.name = 'coef')
+gd2.betas <- gd2.betas %>% mutate(Iteration = 1:nrow(gd2.betas)) %>% melt(id.vars = 'Iteration', variable.name = 'coef')
+p1 <- ggplot(gd1.betas, aes(Iteration, value)) + 
+  geom_line(aes(colour = coef)) + ggtitle(bquote(alpha == 0.1)) + xlim(c(0,500)) +
+  scale_colour_discrete(name = '', labels = expression(beta[0],beta[1]))
+p2 <- ggplot(gd2.betas, aes(Iteration, value)) + 
+  geom_line(aes(colour = coef)) + ggtitle(bquote(alpha == 0.01)) + xlim(c(0,500)) +
+  scale_colour_discrete(name = '', labels = expression(beta[0],beta[1]))
+library(patchwork)
+p1+p2
+```
 
 
 ### 随机梯度下降算法
 
 梯度下降算法通常收敛速度较慢，因为在每次迭代中对每个样本值都需要计算梯度，在样本量较大时计算量会随之增大。随机梯度下降算法的思想是在算法的每次迭代更新时只考虑一个样本。以线性回归模型为例，就是讲梯度下降算法中的 $$\nabla J(\beta) = \frac{1}{n}X^T(X\beta-y).$$ 替换为 ：
-$$\nabla J(\beta)_i = \frac{1}{n}X_i^T(X_i\beta-y_i),$$ 完整的迭代过程如下。
+$$\nabla J(\beta)_i = X_i^T(X_i\beta-y_i),$$ 完整的迭代过程如下。
 
 
 \centering
 ```{block, type='method'}
 **随机梯度下降算法**
 
-1. 将训练数据随机排序。
-2. 对每个样本重复以下过程：
-$$\beta:= \beta - \alpha \nabla J(\beta)_i.$$
+1. 将训练数据随机排序，然后重复第2步直至收敛。
+2. 抽取一个随机样本 $i\in\{1, 2, \cdots, n\}$，根据下式对 $\beta$
+进行迭代。$$\beta:= \beta - \alpha \nabla J(\beta)_i.$$
 ```
+
+随机梯度下降在R中的实现如下。
+
+```{r}
+sgd.lm <- function(X, y, beta.init, alpha = 0.5, n.samples = 1, tol = 1e-5, max.iter = 100){
+  n <- length(y)
+  beta.old <- beta.init
+  J <- betas <- list()
+  sto.sample <- sample(1:n, n.samples, replace = TRUE)
+  betas[[1]] <- beta.old
+  J[[1]] <- lm.cost(X, y, beta.old)
+  beta.new <- beta.old - alpha * sgd.lm.cost.grad(X[sto.sample, ], y[sto.sample], beta.old)
+  betas[[2]] <- beta.new
+  J[[2]] <- lm.cost(X, y, beta.new)
+  iter <- 0
+  n.best <- 0
+  while ((abs(lm.cost(X, y, beta.new) - lm.cost(X, y, beta.old))  > tol) & (iter + 2 < max.iter)){
+    beta.old <- beta.new
+    sto.sample <- sample(1:n, n.samples, replace = TRUE)
+    beta.new <- beta.old - alpha * sgd.lm.cost.grad(X[sto.sample, ], y[sto.sample], beta.old)
+    iter <- iter + 1
+    betas[[iter + 2]] <- beta.new
+    J[[iter + 2]] <- lm.cost(X, y, beta.new)
+  }
+  if (abs(lm.cost(X, y, beta.new) - lm.cost(X, y, beta.old)) > tol){
+    cat('算法无法收敛。 \n')
+  } else{
+    cat('算法收敛\n')
+    cat('共迭代',iter + 1,'次','\n')
+    cat('系数估计为：', beta.new, '\n')
+    return(list(coef = betas,
+                cost = J,
+                niter = iter + 1))
+  }
+}
+
+## Make the cost function
+sgd.lm.cost <- function(X, y, beta){
+   n <- length(y)
+   if (!is.matrix(X)){
+    X <- matrix(X, nrow = 1)
+  }
+   loss <- sum((X%*%beta -  y)^2)/(2*n)
+return(loss)
+}
+## Calculate the gradient
+sgd.lm.cost.grad <- function(X, y, beta){
+  n <- length(y)
+  if (!is.matrix(X)){
+    X <- matrix(X, nrow = 1)
+  }
+  t(X)%*%(X%*%beta - y)/n
+}
+
+```
+
+现在我们在章节~\@ref(gd)~中模拟的线性回归数据中实现SGD算法。
+
+```{r sgdlm, echo=FALSE, fig.cap='随机梯度下降算法的收敛情况'}
+# test on the generated data
+sgd.est <- sgd.lm(X, y, beta.init = c(-4,-5), alpha = 0.05, tol = 1e-5, max.iter = 10000)
+betas <- as.data.frame(t(do.call(cbind,sgd.est$coef)))
+colnames(betas) <- c('beta0', 'beta1')
+betas <- as.data.frame(betas) %>% mutate(Iteration = 1:nrow(betas)) %>% melt(id.vars = 'Iteration', variable.name = 'coef')
+ggplot(betas, aes(Iteration, value)) + 
+  geom_line(aes(colour = coef)) +
+  scale_colour_discrete(name = '', labels = expression(beta[0],beta[1]))
+```
+
+## 优化算法比较
+
+
+
+```{r nt, results='hide', echo=FALSE}
+# newton method
+func = function(beta) {
+    sum((y - beta[1] - beta[2] * x)^2)/2/length(y)
+}
+grad = function(beta) {
+    matrix(c(sum(-2 * (y - beta[1] - beta[2] * x)), sum(-2 * x * (y - beta[1] - 
+        beta[2] * x))), 2, 1)/length(y)
+}
+hess = function(beta) {
+    matrix(c(2 * length(x), 2 * sum(x), 2 * sum(x), 2 * sum(x^2)), 2, 2)/length(y)
+}
+newton <- function(f3, x0, tol = 1e-9, n.max = 100) {
+  # Newton's method for optimisation, starting at x0
+  # f3 is a function that given x returns the list
+  # {f(x), grad f(x), Hessian f(x)}
+  
+  x <- x0
+  f3.x <- f3(x)
+  xs <- list()
+  xs[[1]] <- x
+  n <- 0
+  while((max(abs(f3.x[[2]])) > tol) & (n < n.max)){
+    x <- x - solve(f3.x[[3]], f3.x[[2]])
+    f3.x <- f3(x)
+    n <- n + 1
+    xs[[n + 1]] <- x
+  }
+  if (n == n.max){
+    cat('newton failed to converge. \n')
+  } else{
+    cat('iterated', n+1, 'times. \n')
+    return(xs)
+  }
+}
+## Newton optimization
+optimOut <- newton(function(beta){list(func(beta), grad(beta), hess(beta))}, c(-4, -5))  
+```
+
+```{r optimcomp, fig.asp=0.8, echo=FALSE, fig.cap='梯度下降算法、随机梯度下降算法和牛顿算法的收敛情况比较'}
+trace.newton <- data.frame(x = sapply(optimOut, `[`, 1), y = sapply(optimOut, `[`, 2))
+trace.gd <- data.frame(x = sapply(gd1$coef, `[`, 1), y = sapply(gd1$coef, `[`, 2))
+trace.sgd <- data.frame(x = sapply(sgd.est$coef, `[`, 1), y = sapply(sgd.est$coef, `[`, 2))
+xs <- seq(-5, 5, length = 100)
+ys <- seq(-5, 5, length = 100)
+g <- expand.grid(xs, ys)
+z <- sapply(1:dim(g)[1], function(i){lm.cost(X, y, c(g[i,1],g[i,2]))})
+f_long <- data.frame(x = g[,1], y = g[,2], z = z)
+colors <- c("SGD" = "blue", "Newton" = "red", "GD" = "green")
+
+ggplot(f_long, aes(x, y, z = z)) + 
+  geom_contour_filled(aes(fill = stat(level)), bins = 200) + 
+  guides(fill = FALSE) +
+  geom_path(data = trace.sgd, aes(x, y, z=0, color = 'SGD'), arrow = arrow(), alpha = 0.5) +
+  geom_point(data = trace.sgd, aes(x, y, z=0, color = 'SGD'), size = 1.1, alpha = 0.5) +
+  geom_path(data = trace.newton, aes(x, y, z=0, color = 'Newton'), arrow = arrow(), alpha = 0.5) +
+  geom_point(data = trace.newton, aes(x, y, z=0, color = 'Newton'), size = 1.1, alpha = 0.5) +
+  geom_path(data = trace.gd, aes(x, y, z=0, color = 'GD'), arrow = arrow(), alpha = 0.5) +
+  geom_point(data = trace.gd, aes(x, y, z=0, color = 'GD'), size = 1.1, alpha = 0.5) +
+  ggtitle('') +
+  labs(x = expression(beta[0]),
+         y = expression(beta[1]),
+         color = "Method") +
+    scale_color_manual(values = colors)
+```
+
+基于章节~\@ref(gd)~中模拟的线性回归数据，我们来比较梯度下降算法、随机梯度下降算法和牛顿算法。从图~\@ref(fig:optimcomp)~中我们可以发现：
+
+1. 牛顿迭代的收敛速度很快，前提条件是海塞矩阵存在，但在复杂的机器学习方法中海塞矩阵的解析表达式通常很难求得或者无法求得。
+
+2. 如果训练样本的个数**非常**庞大，牛顿方法或者梯度下降方法可能会花费很长的时间才可以收敛，这时随机梯度下降是一个更好的选择。
+
+3. 随机梯度下降的收敛路径带有较多噪音，这是因为SGD的每次迭代只用了一个随机样本，为了平衡SGD带来的不确定性和GD的计算复杂度，我们可以在每步迭代时抽取少量样本，通常可以达到更加稳健的收敛，这也就是 mini-batch GD。
+
+4. 对于 $\alpha$ 的选择，可以参考 @bottou2012stochastic 和 @zeiler2012adadelta。
+
+
+## 拓展阅读 {#optim-reading}
+
+
+* @bottou2012stochastic 是实战中随机梯度下降算法通常用到的一些技巧。
+* @zeiler2012adadelta 是关于如何适应性的选择梯度下降算法和随机梯度下降算法中的 $\alpha$。
+
 

@@ -6,7 +6,7 @@ author:
 date: "`r Sys.Date()`"
 documentclass: ctexbook
 description: "本科生统计计算教材。"
-bibliography: [mybib.bib, packages.bib]
+bibliography: [mybib.bib]
 biblio-style: apalike
 link-citations: yes
 colorlinks: yes

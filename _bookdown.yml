@@ -21,7 +21,9 @@ rmd_files: ["index.Rmd"
  ,"01-R.Rmd"
  ,"02-rootfinding.Rmd"
  ,"03-optim.Rmd"
- ,"04-sampling.Rmd"
+ ,"04-laplace.Rmd"
+ ,"05-mc.Rmd"
+ ,"06-mcmc.Rmd"
  ,"9990-references.Rmd"
 ]
 

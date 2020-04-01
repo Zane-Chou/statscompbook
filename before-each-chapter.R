@@ -24,3 +24,4 @@ knitr::opts_chunk$set(
 cggplot <- function(...){
   ggplot(...) + theme(text = element_text(family = "STHeiti"))
 }
+
