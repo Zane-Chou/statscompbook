@@ -3,7 +3,31 @@
 
 ## 直接抽样
 
+假设已知随机变量 $U$ 服从均匀分布： $U\sim U(0,1)$，随机变量 $X$ 的分布函数为 $F(x)$，设 $Y = F_X^{-1}(U)$，我们可以得到：
 
+$$
+F_{Y}(y)=\mathbb{P}(Y \leq y)=\mathbb{P}\left(F_{X}^{-1}(U) \leq y\right)=\mathbb{P}\left(U \leq F_{X}(y)\right)=F_{X}(y).
+$$
+也就是说 $Y$ 和 $X$ 具有同样的概率分布。这样的话，如果我们可以抽取均匀分布的随机数的话，在 $F_X^{-1}$ 存在的条件下，我们就可以产生任何连续随机变量 $X$ 的随机数。这种对连续随机变量 $X$ 抽样的方法叫作**直接抽样**（也叫逆方法，或逆分布函数变换法）。
+
+我们也可以从另外一个角度考虑这个问题，因为对任何的连续随机变量$X$， $F_X(X) \sim U(0, 1)$，所以直接抽样也就是先从 $U\sim U(0,1)$ 中抽样后再代入 $F_X^{-1}$。
+
+```{example}
+如果 $X \sim \exp(\lambda)$，我们有
+$$F_{X}(x)=\left\{\begin{array}{ll}{0} & {\text { for } x<0;} \\
+{1-e^{-\lambda x}} & {\text { for } x \geq 0.}\end{array}\right.$$假设 $\lambda = 1$，那么我们如何从指数分布中实现直接抽样？
+```
+
+```{r exp-dir}
+lambda <- 1
+u <- runif(20)
+x <- -1/lambda * log(1 - u)
+curve(1 - exp(-x), 0, 5, ylab = 'u', main = 'Direct sampling from exp(1)') 
+for (i in 1:length(x)){
+  lines(c(x[i], x[i]), c(u[i], 0), lty = 'dashed')
+  lines(c(x[i], 0), c(u[i], u[i]), lty = 'dashed')
+}
+```
 
 ## 拒绝抽样
 
