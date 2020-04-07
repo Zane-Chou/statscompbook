@@ -394,7 +394,7 @@ knitr::kable(
 ) 
 ```
 
-从表~\@ref(tab:niter)~中我们可以发现在每次迭代过程中对 $\alpha$ 进行优化可以显著提高计算效率。如图~\@ref(fig:gd2)~如果 $\alpha$ 较小，迭代的次数就会增加，因此收敛过程比较缓慢。
+从表~\@ref(tab:niter)~中我们可以发现在每次迭代过程中对 $\alpha$ 进行优化可以显著提高计算效率。如图~\@ref(fig:gd2)~，如果 $\alpha$ 较小，迭代的次数就会增加，因此收敛过程比较缓慢。
 
 ```{r gd2, echo = FALSE, fig.cap="不同 $\\alpha$ 取值下梯度下降算法的收敛情况", fig.asp=0.4}
 library(dplyr)
