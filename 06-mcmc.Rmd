@@ -1,2 +1,95 @@
-# 独立蒙特卡罗抽样 {#mcmc}
+# 马尔科夫链蒙特卡罗抽样 {#mcmc}
 
+在章节~\@ref(rejection)~中的拒绝抽样算法需要有一个合理的猜想概率密度 $g(x)$，如果 $g(x)$ 与目标概率密度 $f(x)$ 相差较远，拒绝抽样可能无法收敛。马尔科夫链蒙特卡罗（Markov chain Monte Carlo，MCMC）模拟则可以通过一个可适应性的猜想概率密度，也就是在每一步抽样中通过调整猜想概率使其尽可能的靠近目标概率密度。
+
+```{r rsnorm, fig.cap="上：以 $g(x)$ 为猜想概率密度对 $f(x)$ 进行拒绝抽样；下：MCMC抽样", echo=FALSE}
+library(ggplot2)
+f <- function(x) {
+    0.3 * dnorm(x, 0, 1) + 0.7 * dnorm(x, 4, 1)
+}
+p1 <- cggplot(data.frame(x=runif(1000, -10, 10)), aes(x)) +
+  stat_function(fun = f) +
+  stat_function(fun = dnorm, args = list(mean = -3, sd = 2), col= 'red')  +
+  ylab('密度') + annotate("text", x = c(-3,4,-3,-1,-5), y = c(0.21,0.29,-0.01,-0.01,-0.01), label = c("g(x)","f(x)","x^1","x^2","x^3"), parse = TRUE) +
+  geom_segment(aes(x = x1, y = y1, xend = x2, yend = y2), data = data.frame(x1 = c(-3,-1,-5), y1 = 0, x2 = c(-3,-1,-5), y2 = c(0.2, 0.12,0.12)), linetype = 2)
+
+p2 <- cggplot(data.frame(x=runif(1000, -10, 10)), aes(x)) +
+  stat_function(fun = f) +
+  stat_function(fun = dnorm, args = list(mean = -3, sd = 2), col= 'red')  +
+  stat_function(fun = dnorm, args = list(mean = -3 + 2, sd = 2), col= 'orange')  +
+  stat_function(fun = dnorm, args = list(mean = -3 + 2 + 2, sd = 2), col= 'purple')  +
+  ylab('密度') + annotate("text", x = c(-3,-1,1,4,-3,-1,1), y = c(0.21,0.21,0.21,0.29,-0.01,-0.01,-0.01), label = c(expression(paste("g(", x^2,"|",x^1,")")),expression(paste("g(", x^3,"|",x^2,")")),expression(paste("g(", x^4,"|",x^3,")")),"f(x)","x^1","x^2","x^3"), parse = TRUE) +
+  geom_segment(aes(x = x1, y = y1, xend = x2, yend = y2), data = data.frame(x1 = c(-3,-1,1), y1 = 0, x2 = c(-3,-1,1), y2 = 0.2), linetype = 2)
+
+library(patchwork)
+p1 / p2
+```
+
+
+最常用的 MCMC 抽样算法包括 Metropolis-Hastings 算法和 Gibbs 抽样算法。
+
+
+## 马尔科夫链
+
+马尔科夫链（Markov chain）是一个随机变量序列 $X^1, X^2, \cdots$，对于任意时刻 $t$，给定 $X^1, X^2, \cdots, X^{t-1}$ 的条件下， $X^t$ 的分布只依赖于上一步的状态 $X^{t-1}$。
+
+## Metropolis-Hastings
+
+假设我们想从 $f(x)$ 中抽样，抽样的初始值为 $x^0$， Metropolis-Hastings 算法假设给定第 $t-1$ 步的抽样 $x^{t-1}$ 的条件下，$x^t$ 的抽样由一个可以产生 $x^*$ 的猜想概率密度和接受概率 $\alpha$ 决定。 其中 $\alpha$ 就是接受 $x^*$ 为下一状态的概率。具体来讲，Metropolis-Hastings 算法如下。
+
+\centering
+```{block, type='method'}
+**Metropolis-Hastings 算法**
+
+1. 从 $g(x^*|x^{t-1})$ 中抽取随机数 $x^*$。
+
+2. 计算接受概率
+ $$\alpha = \min\left(1, \frac{f(x^*)g(x^{t-1}|x^*)}{f(x^{t-1)}g(x^*|x^{t-1}))}\right).$$
+
+3. 产生均匀分布的随机数 $U \sim U(0,1)$，如果 $U \leq \alpha$，接受 $x^*$，即以 $\alpha$ 为接受概率接受 $x^*$。若接受，$x^t = x^*$，否则 $x^t = x^{t-1}$。
+```
+
+### 随机游走 Metropolis-Hastings
+
+在随机游走 Metropolis-Hastings 中， $g(x^*|x^{t-1})$ 定义成 $x^* = x^{t-1} + \epsilon$，其中 $\epsilon$ 服从一个以 0 为中心的对称分布 $q$，那么我们有 
+$$g(x^*|x^{t-1}) = q(\epsilon),$$
+并且 $$g(x^{t-1}|x^*)  = q(-\epsilon) = q(\epsilon).$$
+此时因为 $g(x^*|x^{t-1}) = g(x^{t-1}|x^*)$，Metropolis-Hastings 算法中的接受概率 $\alpha$ 就变成了 $$\alpha = \min\left(1, \frac{f(x^*)}{f(x^{t-1})}\right).$$ 具体来讲，随机游走 Metropolis-Hastings 算法^[随机游走 Metropolis-Hastings 算法也就是最原始的 Metropolis 算法。]如下。
+
+\centering
+```{block, type='method'}
+**随机游走 Metropolis-Hastings 算法**
+
+1. 从 $q$ 中抽取 $\epsilon$，其中 $q$ 是一个以 0 为中心的对称分布。让 $x^* = x^{t-1} + \epsilon$。
+
+2. 计算接受概率
+ $$\alpha = \min\left(1, \frac{f(x^*)}{f(x^{t-1})}\right).$$
+
+3. 产生均匀分布的随机数 $U \sim U(0,1)$，如果 $U \leq \alpha$，接受 $x^*$，即以 $\alpha$ 为接受概率接受 $x^*$。若接受，$x^t = x^*$，否则 $x^t = x^{t-1}$。
+```
+
+
+### 独立 Metropolis-Hastings
+
+在独立 Metropolis-Hastings 中，$g(x^*|x^{t-1}) = g(x^*)$，也就是说猜想概率密度不依赖于上一步的状态 $x^{t-1}$，那么独立  Metropolis-Hastings 如下。
+
+\centering
+```{block, type='method'}
+**随机游走 Metropolis-Hastings 算法**
+
+1. 从 $q$ 中抽取 $\epsilon$，其中 $q$ 是一个以 0 为中心的对称分布。让 $x^* = x^{t-1} + \epsilon$。
+
+2. 计算接受概率
+ $$\alpha = \min\left(1, \frac{f(x^*)g(x^{t-1})}{f(x^{t-1})g(x^*)}\right).$$
+
+3. 产生均匀分布的随机数 $U \sim U(0,1)$，如果 $U \leq \alpha$，接受 $x^*$，即以 $\alpha$ 为接受概率接受 $x^*$。若接受，$x^t = x^*$，否则 $x^t = x^{t-1}$。
+```
+
+```{example}
+从混合正态分布 $f \sim 0.3 * N(0, 1) + 0.7 * N(2, 8)$ 中抽样。
+```
+
+
+
+
+## Gibbs 抽样
