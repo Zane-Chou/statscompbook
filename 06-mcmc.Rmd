@@ -1,8 +1,10 @@
-# 马尔科夫链蒙特卡罗抽样 {#mcmc}
+# 马尔科夫链蒙特卡洛抽样 {#mcmc}
 
-在章节~\@ref(rejection)~中的拒绝抽样算法需要有一个合理的猜想概率密度 $g(x)$，如果 $g(x)$ 与目标概率密度 $f(x)$ 相差较远，拒绝抽样可能无法收敛。马尔科夫链蒙特卡罗（Markov chain Monte Carlo，MCMC）模拟则可以通过一个可适应性的猜想概率密度，也就是在每一步抽样中通过调整猜想概率使其尽可能的靠近目标概率密度。
 
-```{r rsnorm, fig.cap="上：以 $g(x)$ 为猜想概率密度对 $f(x)$ 进行拒绝抽样；下：MCMC抽样", echo=FALSE}
+
+在章节~\@ref(rejection)~中的拒绝抽样算法需要有一个合理的猜想概率密度 $g(x)$，如图~\@ref(mcmc)~所示，如果 $g(x)$ 与目标概率密度 $f(x)$ 相差较远，拒绝抽样可能会效率很低甚至无法收敛。马尔科夫链蒙特卡洛（Markov chain Monte Carlo，MCMC）模拟则可以通过一个可适应性的猜想概率密度，也就是在每一步抽样中通过调整猜想概率使其尽可能的靠近目标概率密度。
+
+```{r mcmc, fig.cap="上：以 $g(x)$ 为猜想概率密度对 $f(x)$ 进行拒绝抽样；下：MCMC抽样", echo=FALSE}
 library(ggplot2)
 f <- function(x) {
     0.3 * dnorm(x, 0, 1) + 0.7 * dnorm(x, 4, 1)
@@ -10,7 +12,7 @@ f <- function(x) {
 p1 <- cggplot(data.frame(x=runif(1000, -10, 10)), aes(x)) +
   stat_function(fun = f) +
   stat_function(fun = dnorm, args = list(mean = -3, sd = 2), col= 'red')  +
-  ylab('密度') + annotate("text", x = c(-3,4,-3,-1,-5), y = c(0.21,0.29,-0.01,-0.01,-0.01), label = c("g(x)","f(x)","x^1","x^2","x^3"), parse = TRUE) +
+  ylab('密度') + annotate("text", x = c(-3,4,-3,-1,-5), y = c(0.21,0.29,-0.015,-0.015,-0.015), label = c("g(x)","f(x)","x[1]","x[2]","x[3]"), parse = TRUE) +
   geom_segment(aes(x = x1, y = y1, xend = x2, yend = y2), data = data.frame(x1 = c(-3,-1,-5), y1 = 0, x2 = c(-3,-1,-5), y2 = c(0.2, 0.12,0.12)), linetype = 2)
 
 p2 <- cggplot(data.frame(x=runif(1000, -10, 10)), aes(x)) +
@@ -18,7 +20,7 @@ p2 <- cggplot(data.frame(x=runif(1000, -10, 10)), aes(x)) +
   stat_function(fun = dnorm, args = list(mean = -3, sd = 2), col= 'red')  +
   stat_function(fun = dnorm, args = list(mean = -3 + 2, sd = 2), col= 'orange')  +
   stat_function(fun = dnorm, args = list(mean = -3 + 2 + 2, sd = 2), col= 'purple')  +
-  ylab('密度') + annotate("text", x = c(-3,-1,1,4,-3,-1,1), y = c(0.21,0.21,0.21,0.29,-0.01,-0.01,-0.01), label = c(expression(paste("g(", x^2,"|",x^1,")")),expression(paste("g(", x^3,"|",x^2,")")),expression(paste("g(", x^4,"|",x^3,")")),"f(x)","x^1","x^2","x^3"), parse = TRUE) +
+  ylab('密度') + annotate("text", x = c(-3,-1,1,4,-3,-1,1), y = c(0.21,0.21,0.21,0.29,-0.015,-0.015,-0.015), label = c(expression(paste("g(", x[2],"|",x[1],")")),expression(paste("g(", x[3],"|",x[2],")")),expression(paste("g(", x[4],"|",x[3],")")),"f(x)","x[1]","x[2]","x[3]"), parse = TRUE) +
   geom_segment(aes(x = x1, y = y1, xend = x2, yend = y2), data = data.frame(x1 = c(-3,-1,1), y1 = 0, x2 = c(-3,-1,1), y2 = 0.2), linetype = 2)
 
 library(patchwork)
@@ -31,67 +33,205 @@ p1 / p2
 
 ## 马尔科夫链
 
-马尔科夫链（Markov chain）是一个随机变量序列 $X^1, X^2, \cdots$，对于任意时刻 $t$，给定 $X^1, X^2, \cdots, X^{t-1}$ 的条件下， $X^t$ 的分布只依赖于上一步的状态 $X^{t-1}$。
+马尔科夫链（Markov chain）是一个随机变量序列 $X_1, X_2, \cdots$，对于任意时刻 $t$，给定 $X_1, X_2, \cdots, x=X_{t-1}$ 的条件下， $X_t$ 的分布只依赖于上一步的状态 $X_{t-1}$。
 
 ## Metropolis-Hastings
 
-假设我们想从 $f(x)$ 中抽样，抽样的初始值为 $x^0$， Metropolis-Hastings 算法假设给定第 $t-1$ 步的抽样 $x^{t-1}$ 的条件下，$x^t$ 的抽样由一个可以产生 $x^*$ 的猜想概率密度和接受概率 $\alpha$ 决定。 其中 $\alpha$ 就是接受 $x^*$ 为下一状态的概率。具体来讲，Metropolis-Hastings 算法如下。
+假设我们想从 $f(x)$ 中抽样，抽样的初始值为 $x_0$， Metropolis-Hastings 算法假设给定第 $t-1$ 步的抽样 $x_{t-1}$ 的条件下，$x_t$ 的抽样由一个可以产生 $x^*$ 的猜想概率密度和接受概率 $\alpha$ 决定。 其中 $\alpha$ 就是接受 $x^*$ 为下一状态的概率。具体来讲，Metropolis-Hastings 算法如下。
 
 \centering
 ```{block, type='method'}
 **Metropolis-Hastings 算法**
 
-1. 从 $g(x^*|x^{t-1})$ 中抽取随机数 $x^*$。
+1. 从 $g(x^*|x_{t-1})$ 中抽取随机数 $x^*$。
 
 2. 计算接受概率
- $$\alpha = \min\left(1, \frac{f(x^*)g(x^{t-1}|x^*)}{f(x^{t-1)}g(x^*|x^{t-1}))}\right).$$
+ $$\alpha = \min\left(1, \frac{f(x^*)g(x_{t-1}|x^*)}{f(x_{t-1)}g(x^*|x_{t-1}))}\right).$$
 
-3. 产生均匀分布的随机数 $U \sim U(0,1)$，如果 $U \leq \alpha$，接受 $x^*$，即以 $\alpha$ 为接受概率接受 $x^*$。若接受，$x^t = x^*$，否则 $x^t = x^{t-1}$。
+3. 产生均匀分布的随机数 $U \sim U(0,1)$，如果 $U \leq \alpha$，接受 $x^*$，即以 $\alpha$ 为接受概率接受 $x^*$。若接受，$x_t = x^*$，否则 $x_t = x_{t-1}$。
 ```
 
 ### 随机游走 Metropolis-Hastings
 
-在随机游走 Metropolis-Hastings 中， $g(x^*|x^{t-1})$ 定义成 $x^* = x^{t-1} + \epsilon$，其中 $\epsilon$ 服从一个以 0 为中心的对称分布 $q$，那么我们有 
-$$g(x^*|x^{t-1}) = q(\epsilon),$$
-并且 $$g(x^{t-1}|x^*)  = q(-\epsilon) = q(\epsilon).$$
-此时因为 $g(x^*|x^{t-1}) = g(x^{t-1}|x^*)$，Metropolis-Hastings 算法中的接受概率 $\alpha$ 就变成了 $$\alpha = \min\left(1, \frac{f(x^*)}{f(x^{t-1})}\right).$$ 具体来讲，随机游走 Metropolis-Hastings 算法^[随机游走 Metropolis-Hastings 算法也就是最原始的 Metropolis 算法。]如下。
+在随机游走 Metropolis-Hastings 中， $g(x^*|x_{t-1})$ 定义成 $x^* = x_{t-1} + \epsilon$，其中 $\epsilon$ 服从一个以 0 为中心的对称分布 $q$，那么我们有 
+$$g(x^*|x_{t-1}) = q(\epsilon),$$
+并且 $$g(x_{t-1}|x^*)  = q(-\epsilon) = q(\epsilon).$$
+此时因为 $g(x^*|x_{t-1}) = g(x_{t-1}|x^*)$，Metropolis-Hastings 算法中的接受概率 $\alpha$ 就变成了 $$\alpha = \min\left(1, \frac{f(x^*)}{f(x_{t-1})}\right).$$ 具体来讲，随机游走 Metropolis-Hastings 算法^[随机游走 Metropolis-Hastings 算法也就是最原始的 Metropolis 算法。]如下。
 
 \centering
 ```{block, type='method'}
 **随机游走 Metropolis-Hastings 算法**
 
-1. 从 $q$ 中抽取 $\epsilon$，其中 $q$ 是一个以 0 为中心的对称分布。让 $x^* = x^{t-1} + \epsilon$。
+1. 从 $q$ 中抽取 $\epsilon$，其中 $q$ 是一个以 0 为中心的对称分布。让 $x^* = x_{t-1} + \epsilon$。
 
 2. 计算接受概率
- $$\alpha = \min\left(1, \frac{f(x^*)}{f(x^{t-1})}\right).$$
+ $$\alpha = \min\left(1, \frac{f(x^*)}{f(x_{t-1})}\right).$$
 
-3. 产生均匀分布的随机数 $U \sim U(0,1)$，如果 $U \leq \alpha$，接受 $x^*$，即以 $\alpha$ 为接受概率接受 $x^*$。若接受，$x^t = x^*$，否则 $x^t = x^{t-1}$。
+3. 产生均匀分布的随机数 $U \sim U(0,1)$，如果 $U \leq \alpha$，接受 $x^*$，即以 $\alpha$ 为接受概率接受 $x^*$。若接受，$x_t = x^*$，否则 $x_t = x_{t-1}$。
 ```
 
 ```{example}
-从混合正态分布 $f \sim 0.3 * N(0, 1) + 0.7 * N(2, 8)$ 中抽样。
+从混合正态分布 $f \sim 0.3 * N(0, 1) + 0.7 * N(4, 1)$ 中抽样。
 ```
 
+随机游走 Metropolis-Hastings 的一个例子是假设 $x^* \sim N(x_{t-1}, \sigma^2)$。
+首先我们先画一下目标概率密度。
+
+```{r mixnorm, fig.cap="混合正态分布的概率密度图"}
+f <- function(x) {
+    0.3 * dnorm(x, 0, 1) + 0.7 * dnorm(x, 4, 1)
+}
+ggplot(data.frame(x=runif(1000, -5, 8)), aes(x)) +
+  stat_function(fun = f) +
+  ylab('f(x)') 
+```
+
+接下来我们写出猜想概率密度函数。假设 $\sigma = 4$，即 $x^* \sim N(x_{t-1}, 16)$。
+
+```{r}
+g <- function(x) rnorm(1, x, 4)
+```
+
+然后随机游走 Metropolis-Hastings 可以通过以下函数来实现。
+
+```{r}
+rw.mh <- function(x0, f, g, n.steps = 1000){
+  x <- x0
+  samples <- matrix(NA, n.steps, length(x))
+  for (i in seq_len(n.steps)){
+    # 猜想
+    x.new <- g(x)
+    # 计算接受概率
+    alpha <- min(1, f(x.new) / f(x))
+    # 判断是否接受
+    if (runif(1) < alpha){
+      x <- x.new
+    }
+    samples[i,] <- x 
+  }
+  return(samples)
+} 
+```
+
+对于  $f \sim 0.3 * N(0, 1) + 0.7 * N(4, 1)$ 的抽样为：
+
+```{r}
+x0 <- 1
+n.steps <- 2000
+samples <- rw.mh(x0, f, g, n.steps = n.steps)
+```
+
+我们可以看到抽样的直方图是否接近于图~\@ref(fig:mixnorm)~中所示的密度图。
+
+```{r}
+hist(samples, prob =TRUE)
+```
+
+我们还可以画出抽样的路径图（trace plot）。
+
+```{r}
+qplot(1:n.steps, samples, geom = "line", xlab = "迭代次数", ylab = "抽样") + 
+  theme(text = element_text(family = "STSong"))
+```
 
 
 ### 独立 Metropolis-Hastings
 
-在独立 Metropolis-Hastings 中，$g(x^*|x^{t-1}) = g(x^*)$，也就是说猜想概率密度不依赖于上一步的状态 $x^{t-1}$，那么独立  Metropolis-Hastings 如下。
+在独立 Metropolis-Hastings 中，$g(x^*|x_{t-1}) = g(x^*)$，也就是说猜想概率密度不依赖于上一步的状态 $x_{t-1}$，那么独立  Metropolis-Hastings 如下。
 
 \centering
 ```{block, type='method'}
 **随机游走 Metropolis-Hastings 算法**
 
-1. 从 $q$ 中抽取 $\epsilon$，其中 $q$ 是一个以 0 为中心的对称分布。让 $x^* = x^{t-1} + \epsilon$。
+1. 从 $q$ 中抽取 $\epsilon$，其中 $q$ 是一个以 0 为中心的对称分布。让 $x^* = x_{t-1} + \epsilon$。
 
 2. 计算接受概率
- $$\alpha = \min\left(1, \frac{f(x^*)g(x^{t-1})}{f(x^{t-1})g(x^*)}\right).$$
+ $$\alpha = \min\left(1, \frac{f(x^*)g(x_{t-1})}{f(x_{t-1})g(x^*)}\right).$$
 
-3. 产生均匀分布的随机数 $U \sim U(0,1)$，如果 $U \leq \alpha$，接受 $x^*$，即以 $\alpha$ 为接受概率接受 $x^*$。若接受，$x^t = x^*$，否则 $x^t = x^{t-1}$。
+3. 产生均匀分布的随机数 $U \sim U(0,1)$，如果 $U \leq \alpha$，接受 $x^*$，即以 $\alpha$ 为接受概率接受 $x^*$。若接受，$x_t = x^*$，否则 $x_t = x_{t-1}$。
 ```
 
 
 
-
-
 ## Gibbs 抽样
+
+## MCMC 的收敛效率
+
+在例6.1中，如果我们增大或减小 $\sigma$ ，会得到什么样的结论呢？我们分别画出 $\sigma = 4$，$\sigma = 50$ 以及 $\sigma = 0.1$ 的路径图。  
+
+
+
+```{r compsigma, fig.cap="不同的猜想概率密度标准差下混合正态分布的抽样"}
+# 定义不同的猜想概率
+g1 <- function(x) rnorm(1, x, 0.1)
+g2 <- function(x) rnorm(1, x, 4)
+g3 <- function(x) rnorm(1, x, 50)
+
+# 分别抽样
+set.seed(Sys.Date())
+samples1 <- rw.mh(-5, f, g1, n.steps)
+samples2 <- rw.mh(-5, f, g2, n.steps)
+samples3 <- rw.mh(-5, f, g3, n.steps)
+
+# 画出路径图
+samples <- data.frame(iter = 1:n.steps, samples1 = samples1, samples2 = samples2, samples3 = samples3)
+cggplot(samples, aes(iter)) + 
+  geom_line(aes(y = samples1, colour = "sd = 0.1")) + 
+  geom_line(aes(y = samples2, colour = "sd = 4")) +
+  geom_line(aes(y = samples3, colour = "sd = 50")) +
+  scale_colour_discrete(expression(sigma),  labels = c('0.1', '4', '50')) +
+  xlab('迭代次数') + ylab('抽样')
+```
+
+不同的标准差设定下的抽样直方图如下。
+
+```{r compsigmahist, fig.cap = "不同的猜想概率密度标准差下混合正态分布的抽样密度图"}
+library(reshape2)
+library(dplyr)
+samples.melt <- data.frame(iter = 1:n.steps, samples1 = samples1, samples2 = samples2, samples3 = samples3) %>% select(-iter) %>% melt()
+cggplot(samples.melt,aes(x=value, color=variable)) + geom_density(alpha=0.25, size = 1.3) + scale_color_discrete(expression(sigma), labels = c('0.1', '4', '50')) + xlab('x') + ylab('密度')
+```
+
+由图~\@ref(fig:compsigma)~可以看出，当 $\sigma = 50$ 时，Metropolis 算法的抽样过程中有很多样本被拒绝，导致算法的接受率很低。当  $\sigma = 0.1$ 时，算法的接受率几乎为 $100\%$，但这也不是一个好的猜想概率密度，由图~\@ref(compsigmahist)~可以看出，$\sigma = 0.1$ 对应的抽样密度离目标概率密度较远，因为猜想概率密度的标准差很小，所以无法抽到尾部的样本。这时如果增加抽样次数，马尔科夫链将收敛于目标概率密度，但导致算法的效率很低。
+
+
+### 蒙特卡洛误差
+
+有了 $f(x)$ 的随机样本 $x_1, x_2, \cdots, x_M$，我们就可以计算相关的汇总统计量，比如我们可以计算它们的均值用来估计 $E_X$：
+$$E_X \approx \frac{1}{M}\sum\limits_{i = 1}^M x_i.$$ 
+因为我们用样本均值进行估计 $E_X$，所以会导致估计误差，这个误差会随着抽样数量的增加而减小。我们把这个误差称作蒙特卡洛误差（Monte Carlo Error）。一种测量蒙特卡洛误差的方法是计算样本均值的方差，即
+$$
+\begin{aligned} \operatorname{Var}\left(\frac{1}{M} \sum_{i=1}^{M} x_i\right) &=\frac{1}{M^{2}} \operatorname{Var}\left(\sum_{i=1}^{M} x_i\right) \\ &=\frac{1}{M^{2}} \sum_{i=1}^{M} \operatorname{Var}\left(x_i\right)+\frac{2}{M^{2}} \sum_{i=1}^{M} \sum_{j>i} \operatorname{cov}\left(x_i, x_j\right) \\ &=\frac{\operatorname{Var}(X)}{M}+\frac{2}{M^{2}} \sum_{i=1}^{M} \sum_{j>i} \operatorname{cov}\left(x_i, x_j\right) \end{aligned}.
+$$
+由此可见，在马尔科夫链中样本之间相关性越小，样本均值的方差越小。
+图~\@ref(fig:ggcor)~展示了例6.1中不同的猜想概率密度标准差下抽取样本的自相关图。当 $\sigma = 4$ 时，样本之间的自相关最小，这时蒙特卡洛误差最小。
+```{r ggcor, fig.cap="不同的猜想概率密度标准差下混合正态分布的抽样自相关图"}
+ggcor <- function(x){
+  bacf <- acf(x, plot = FALSE)
+  bacfdf <- with(bacf, data.frame(lag, acf))
+  p <- ggplot(data = bacfdf, mapping = aes(x = lag, y = acf)) +
+    geom_hline(aes(yintercept = 0)) +
+    geom_segment(mapping = aes(xend = lag, yend = 0))
+  return(p)
+}
+
+p1 <- ggcor(samples1) + ggtitle(bquote(sigma ~ "= 0.1")) 
+p2 <- ggcor(samples2) + ggtitle(bquote(sigma ~ "= 4")) 
+p3 <- ggcor(samples3) + ggtitle(bquote(sigma ~ "= 50")) 
+library(patchwork)
+p1 / p2 / p3
+```
+
+### 有效样本量
+
+有效样本量（Effective Sample Size，ESS）通常被用来比较不同的猜想概率密度，我们用 $M_{\operatorname{ESS}}$ 表示有效样本量，它可以通过以下式子得到：
+$$\operatorname{Var}\left(\frac{1}{M} \sum_{i=1}^{M} x_i\right)  = \frac{\operatorname{Var}(X)}{M}+\frac{2}{M^{2}} \sum_{i=1}^{M} \sum_{j>i} \operatorname{cov}\left(x_i, x_j\right) = \frac{\operatorname{Var}(X)}{M_{\operatorname{ESS}}}.$$
+
+在 R 中，$M_{\operatorname{ESS}}$ 可以通过 R 包 `coda` 来计算。
+
+```{r}
+coda::effectiveSize(samples1)
+coda::effectiveSize(samples2)
+coda::effectiveSize(samples3)
+```
+由此可见，不同的猜想概率密度标准差下的有效样本量差异较大。当$\sigma = 4$ 时，有效样本量最大。
