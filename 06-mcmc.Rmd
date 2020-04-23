@@ -254,7 +254,7 @@ smoothScatter(samples, xlab ='x', ylab = 'y')
 contour(x, y, z, add = TRUE)
 ```
 
-### Gibbs 抽样与 Metropolis-Hastings 算法的关系
+## Gibbs 抽样与 Metropolis-Hastings 算法的关系
 
 在 Gibbs 抽样中每一步的猜想概率密度为条件概率，我们可以计算接受概率 $\alpha$:
 $$\begin{aligned} \alpha &= \mathrm{min} \left(1, \frac{p\left(x_{i+1}, y\right) p\left(x_{i} | y\right)}{p\left(x_{i}, y\right) p\left(x_{i+1} | y\right)}\right) \\ &= \mathrm{min} \left(1, \frac{p(x_{i+1} | y) p(y) p\left(x_{i} | y\right)}{p(x_{i}| y) p(y) p(x_{i+1} | y)}\right) \\ &=1.\end{aligned}$$
@@ -340,3 +340,6 @@ coda::effectiveSize(samples2)
 coda::effectiveSize(samples3)
 ```
 由此可见，不同的猜想概率密度标准差下的有效样本量差异较大。当 $\sigma = 4$ 时，有效样本量最大。
+
+## 基于优化的抽样算法
+

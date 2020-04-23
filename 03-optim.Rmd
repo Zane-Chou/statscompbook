@@ -1,4 +1,4 @@
-# 常见的优化算法 {#optim}
+# 优化算法 {#optim}
 
 
 ## 介绍 {#optim-intro}
