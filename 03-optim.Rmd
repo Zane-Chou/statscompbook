@@ -8,6 +8,7 @@
 
 ## 牛顿优化算法
 
+
 假设函数 $f(x)$ 可导并一阶导 $f^{\prime}(x)$ 连续，那么最大化 $f(x)$ 相当于求 $f^{\prime}(x) = 0$ 的根，我们就可以使用牛顿法求根。优化 $f(x)$ 就转化成了方程求根问题。 牛顿优化算法的迭代过程如下。
 
 \centering
@@ -31,9 +32,32 @@ x_{n+1}=x_{n}-\frac{f^{\prime}\left(x_{n}\right)}{f^{\prime\prime}\left(x_{n}\ri
 
 - $|f(x_{n}) - f(x_{n-1})| < \epsilon$.
 
+## 多元优化算法
+
+我们现在考虑多元优化算法，假设 $f: \mathbb{R}^d \rightarrow \mathbb{R}$，且 $f$ 的一阶和二阶偏导连续可导。我们记 $\mathbf{x} = (x_1, x_2, \cdots, x_d)^T$，那么我们有梯度向量
+$$\nabla f(\mathbf x) = \frac{\partial f({\mathbf{x}})}{\partial {\mathbf{x}}} = 
+    \left(
+      \begin{array}{c}
+        \frac{\partial f(\mathbf x)}{\partial x_1}\\
+        \frac{\partial f(\mathbf x)}{\partial x_2}\\
+        \vdots\\
+        \frac{\partial f(\mathbf x)}{\partial x_d}
+      \end{array}
+    \right).$$
+以及海塞矩阵
+$$\mathbf{H}(\mathbf x)= \frac{\partial^2 f({ \mathbf{x}})}{\partial {\mathbf{x}}\partial{\mathbf{x}}'}= \left(\begin{array}{cccc}\frac{\partial^{2} f(\mathbf x)}{\partial x_{1}^{2}} & \frac{\partial^{2} f(\mathbf x)}{\partial x_{1} \partial x_{2}} & \cdots & \frac{\partial^{2} f(\mathbf x)}{\partial x_{1} \partial x_{d}} \\ \frac{\partial^{2} f(\mathbf x)}{\partial x_{2} \partial x_{1}} & \frac{\partial^{2} f(\mathbf x)}{\partial x_{2}^{2}} & \cdots & \frac{\partial^{2} f(\mathbf x)}{\partial x_{2} \partial x_{d}} \\ \vdots & \vdots & \ddots & \vdots \\ \frac{\partial^{2} f(\mathbf x)}{\partial x_{d} \partial x_{1}} & \frac{\partial^{2} f(\mathbf x)}{\partial x_{d} \partial x_{2}} & \cdots & \frac{\partial^{2} f(\mathbf x)}{\partial x_{d}^{2}}\end{array}\right).$$
+
+和一元优化问题类似，我们可以通过迭代求 $f(\mathbf x)$ 的极值。比如多元的牛顿优化算法的迭代过程可以写为：
+$$\mathbf{x_{n+1}}=\mathbf{x_n}-\left(\frac{\partial^2 f({ \mathbf{x}})}{\partial {\mathbf{x}}\partial{\mathbf{x}}'}\right)^{-1}
+                                                                                                  \frac{\partial f({\mathbf{x}})}{\partial {\mathbf{x}}}.$$
+                                                                                                停止条件可以为：
+                                                                                                1. $||\nabla f(\mathbf x_n)|| < \epsilon$.
+                                                                                                2. $||\mathbf x_n - \mathbf x_{n-1}|| < \epsilon$.
+                                                                                                3. $|f(\mathbf x_n) - f(\mathbf x_{n-1})|| < \epsilon$.
+                                                                                                
 
 ```{example}
-求 $f(x_1, x_2) = x_1^2 - x_1x_2 + x_2^2 + \exp(x_2)$ 的最小值。
+通过牛顿优化算法求 $f(x_1, x_2) = x_1^2 - x_1x_2 + x_2^2 + \exp(x_2)$ 的最小值。
 ```
 
 ```{r newton}
@@ -170,7 +194,7 @@ knitr::include_graphics("./rcode/nelder.gif")
 
 
 
-梯度下降（Gradient Descent，或者 Steepest Descent）算法是一种迭代算法。对于一个 $n$ 元连续可导函数 $f(\mathbf{x})$，在 $\mathbf{x}_n$ 处 $f(\mathbf{x})$下降最快的方向也就是$f(\mathbf{x})$ 在 $\mathbf{x}_n$ 处的梯度方向的反方向，即$-\nabla f(\mathbf{x}_n)$，这也是与 $\mathbf{x}_n$ 处等高线正交的方向。所以给定当前 $\mathbf{x}_n$，梯度下降算法的更新策略就是：
+梯度下降（Gradient Descent，或者 Steepest Descent）算法是一种迭代算法。对于一个多元连续可导函数 $f(\mathbf{x})$，在 $\mathbf{x}_n$ 处 $f(\mathbf{x})$下降最快的方向也就是$f(\mathbf{x})$ 在 $\mathbf{x}_n$ 处的梯度方向的反方向，即$-\nabla f(\mathbf{x}_n)$，这也是与 $\mathbf{x}_n$ 处等高线正交的方向。所以给定当前 $\mathbf{x}_n$，梯度下降算法的更新策略就是：
 \begin{equation}
 \mathbf{x}_{n+1}=\mathbf{x}_{n}-\alpha  \nabla f\left(\mathbf{x}_{n}\right),
 (\#eq:gd)
