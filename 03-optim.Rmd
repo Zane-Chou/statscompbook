@@ -46,14 +46,15 @@ $$\nabla f(\mathbf x) = \frac{\partial f({\mathbf{x}})}{\partial {\mathbf{x}}} =
     \right).$$
 以及海塞矩阵
 $$\mathbf{H}(\mathbf x)= \frac{\partial^2 f({ \mathbf{x}})}{\partial {\mathbf{x}}\partial{\mathbf{x}}'}= \left(\begin{array}{cccc}\frac{\partial^{2} f(\mathbf x)}{\partial x_{1}^{2}} & \frac{\partial^{2} f(\mathbf x)}{\partial x_{1} \partial x_{2}} & \cdots & \frac{\partial^{2} f(\mathbf x)}{\partial x_{1} \partial x_{d}} \\ \frac{\partial^{2} f(\mathbf x)}{\partial x_{2} \partial x_{1}} & \frac{\partial^{2} f(\mathbf x)}{\partial x_{2}^{2}} & \cdots & \frac{\partial^{2} f(\mathbf x)}{\partial x_{2} \partial x_{d}} \\ \vdots & \vdots & \ddots & \vdots \\ \frac{\partial^{2} f(\mathbf x)}{\partial x_{d} \partial x_{1}} & \frac{\partial^{2} f(\mathbf x)}{\partial x_{d} \partial x_{2}} & \cdots & \frac{\partial^{2} f(\mathbf x)}{\partial x_{d}^{2}}\end{array}\right).$$
-
 和一元优化问题类似，我们可以通过迭代求 $f(\mathbf x)$ 的极值。比如多元的牛顿优化算法的迭代过程可以写为：
-$$\mathbf{x_{n+1}}=\mathbf{x_n}-\left(\frac{\partial^2 f({ \mathbf{x}})}{\partial {\mathbf{x}}\partial{\mathbf{x}}'}\right)^{-1}
-                                                                                                  \frac{\partial f({\mathbf{x}})}{\partial {\mathbf{x}}}.$$
-                                                                                                停止条件可以为：
-                                                                                                1. $||\nabla f(\mathbf x_n)|| < \epsilon$.
-                                                                                                2. $||\mathbf x_n - \mathbf x_{n-1}|| < \epsilon$.
-                                                                                                3. $|f(\mathbf x_n) - f(\mathbf x_{n-1})|| < \epsilon$.
+$$\mathbf{x_{n+1}}=\mathbf{x_n}-\left(\frac{\partial^2 f({ \mathbf{x}})}{\partial {\mathbf{x}}\partial{\mathbf{x}}'}\right)^{-1}\frac{\partial f({\mathbf{x}})}{\partial {\mathbf{x}}}.$$
+停止条件可以为：
+
+1. $||\nabla f(\mathbf x_n)|| < \epsilon$.
+
+2. $||\mathbf x_n - \mathbf x_{n-1}|| < \epsilon$.
+
+3. $|f(\mathbf x_n) - f(\mathbf x_{n-1})|| < \epsilon$.
                                                                                                 
 
 ```{example}
