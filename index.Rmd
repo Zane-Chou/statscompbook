@@ -14,7 +14,7 @@ lot: yes
 lof: yes
 geometry: [b5paper, tmargin=2.5cm, bmargin=2.5cm, lmargin=3.5cm, rmargin=2.5cm]
 site: bookdown::bookdown_site
-github-repo: ykang/Statistical-Computing-Chinese
+github-repo: ykang/statscompbook
 ---
 
 ```{r setup, include=FALSE}
