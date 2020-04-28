@@ -113,7 +113,7 @@ cbind(m, n)
 
 ### 数据框
 
-数据框是 R 中最常用的数据结构，它是一个等长度向量的列表，因此它是兼有矩阵和列表的特性的二维结构。数据框可以通过 `data.frame()` 来创建：
+数据框是 R 中最常用的数据结构，它是一种特殊的列表，这种列表中的每个元素长度都相等，因此它是兼有矩阵和列表的特性的二维结构。数据框可以通过 `data.frame()` 来创建：
 ```{r, echo=TRUE}
 df <- data.frame(x = 1:10, y = letters[1:10])
 str(df)
@@ -170,13 +170,42 @@ x[, 2] # 提取x的第二列
 #### 提取数据框的子集{-}
 
 ```{r, echo=TRUE}
-x <- data.frame(a = 1:10, b = letters[1:10])
+x <- data.frame(a = 1:10, b = letters[1:10], d = rnorm(10))
 x$a # 提取x的a元素，相当于 x[[1]]
 x[1] # 返回的还是数据框
-
+head(x) # 查看x的前6行
+tail(x) # 查看x的后6行
+nrow(x) # x的行数
+ncol(x) # x的列数
+names(x) # x的列名
 ```
 
+
+
 ## R 中的数据输入输出
+
+### R 中的数据输入
+
+在 R 中数据输入的主要函数包括：
+
+- 读取表格数据：`read.table()`, `read.csv()`。
+
+- 读取文本数据：`readLines()`。
+
+- 读取 R 脚本文件：`source()`。
+
+- 读取 `.Rdata`：`load()`。
+
+在 R 中数据输出的主要函数包括：
+
+- 输出表格数据：`write.table()`, `write.csv()`。
+
+- 输出文本数据：`writeLines()`。
+
+- 输出 R 脚本文件：`dump()`。
+
+- 输出 `.Rdata`：`save()`。
+
 
 ## R 中的控制语句
 
