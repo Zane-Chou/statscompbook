@@ -1,8 +1,8 @@
 ---
 title: "统计计算"
 author: 
-  - "李丰"
   - "康雁飞"
+  - "李丰"
 date: "`r Sys.Date()`"
 documentclass: ctexbook
 description: "本科生统计计算教材。"

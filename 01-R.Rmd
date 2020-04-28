@@ -1,6 +1,6 @@
 \mainmatter
 
-# 零基础入手 R  {#usage}
+# 零基础入手 R  {#R}
 
 
 
@@ -9,11 +9,13 @@
 
 本书使用 R 语言。R 是什么呢？在 R 的[官网](http://cran.r-project.org/)上是这么描述的：
 
-> ... a freely available language and environment for statistical computing and graphics which provides a wide variety of statistical and graphical techniques: linear and nonlinear modelling, statistical tests, time series analysis, classification, clustering, etc. 
+> "... a freely available language and environment for statistical computing and graphics which provides a wide variety of statistical and graphical techniques: linear and nonlinear modelling, statistical tests, time series analysis, classification, clustering, etc...."
 
 所以 R 是免费的、几乎适用于任何操作系统的一种语言和环境。在 R 里可安装上千个包，几乎可以做任何你想做的事情，具体来讲，它主要用于统计计算和统计图，包括线性和非线性模型、统计检验、时间序列分析、分类、聚类等。我们推荐通过 Rstudio 使用 R。
 
 #### 安装 R 和 RStudio {-}
+
+在 R 中可以在控制台（console）执行所有命令，但是更方便的是写 R 脚本（scripts），这时需要一个编辑器（editor）。Rstudio 是一个 R 语言的集成开发环境（Integrated Development Environment，IDE），它因为集成了编辑、调试（debugging）、可视化、R Markdown、R Notebook 等强大功能、非常受 R 用户的欢迎。下面给出 R 和 Rstudio 的下载地址。
 
   1. [下载和安装 R。](http://cran.r-project.org/)
   2. [下载和安装 RStudio。](http://bit.ly/rstudiodownload)
@@ -21,11 +23,25 @@
 
 #### R 工作目录 {-}
 
+当我们打开 R 或者 Rstudio 时，会有默认的工作目录，我们可以通过 `getwd()` 函数来看一下当前的工作目录。
+```{r}
+getwd()
+```
+开始任何一个任务之前，应该设置对应的工作目录，这可以通过 `setwd()` 来完成。当然可以在 R 的设置中也可以设置默认的初始工作目录。
+
+#### 寻求帮助{-}
+
+通过 `help(x)` 或者 `?x` 可以找到关于函数 `x` 的帮助文件。如果你忘记了一个命令或函数的具体名字，可以通过 `help.search('x')` 来找到有关 'x' 的所有命令
+
+
 
 #### 安装 R 包 {-}
-以 `ggplot2` 这个包为例，先运行 RStudio，在“包”选项，点击“安装包”，并且安装 `ggplot2` 包。（请勾选“安装依赖包”选项）。
+以 `ggplot2` 这个包为例，可以通过以下方式来安装。
 
-就是这样！你现在应该准备好了。
+- 先运行 RStudio，在“包”选项，点击“安装包”，并且安装 `ggplot2` 包。（请勾选“安装依赖包”选项）。
+
+- 通过命令 `install.packages('ggplot2')`。
+
 
 #### 本书中的 R 示例 {-}
 
@@ -39,9 +55,15 @@ df <- deriv(f, 'x', func = TRUE)
 
 注意：有时候我们也假设同一章节中较前的 R 代码已被执行；所以最好在每个章节都按顺序执行所提供的 R 代码。 
 
+就是这样！你现在应该准备好了！
+
 ## R 基础
 
-## R 中的数据结构
+### R 中的对象
+
+### R 中的数据输入输出
+
+
 
 ## 如何写 R 函数
 
@@ -50,7 +72,7 @@ df <- deriv(f, 'x', func = TRUE)
 
 ## 有关 R 的学习资源
 
-如果你从来没有用过 R，可以学习 DataCamp 的免费在线课程 [“R入门”](http://bit.ly/dcintro2r)。这个课程不会统计计算的内容，它只是教你R语言的基础。DataCamp 上还有 R 相关的[其他课程](https://www.datacamp.com/courses/tech:r)。 此外，[Coursera 上的 R 编程课程](https://www.coursera.org/learn/r-programming)也非常值得推荐。
+如果你从来没有用过 R，可以学习 DataCamp 的免费在线课程 [“R入门”](http://bit.ly/dcintro2r)，这个课程不包括统计计算的内容，它只是教你R语言的基础。DataCamp 上还有 R 相关的[其他课程](https://www.datacamp.com/courses/tech:r)。 此外，[Coursera 上的 R 编程课程](https://www.coursera.org/learn/r-programming)也非常值得推荐。
 
 
 
