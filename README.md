@@ -1,2 +1,3 @@
-# Statistical-Computing-Chinese
-Statistical Computing textbook written in Chinese
+# 统计计算
+
+[康雁飞](https://yanfei.site/) [李丰](http://feng.li/) 著
