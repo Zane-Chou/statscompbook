@@ -57,13 +57,66 @@ df <- deriv(f, 'x', func = TRUE)
 
 就是这样！你现在应该准备好了！
 
-## R 基础
 
-### R 中的对象
+## R 中的数据结构
 
-### R 中的数据输入输出
+R 是基于对象（objects）的，对象可以是 R 中的任何存在，如常数、数据结构、函数、图等。给定任何一个对象，可以通过 `str()` 来了解该对象的结构。R 中常用的基础数据结构有向量（vector）、列表（list）、矩阵（matrix）、数据框（data frame）、数组（array）等。
+
+### 向量
+
+向量是 R 中最基础的数据结构，向量分为逻辑型（logical）、整数型（integer）、数值型（Numeric）和字符型（character）几个类型。向量通过可以通过 `c()` 来创建，其中 “c”代表“combine”：
+```{r, echo=TRUE}
+num_x <- c(1.2, 4.5, 6)
+int_x <- c(1L, 6L, 80L)
+log_x <- c(TRUE, FALSE, T, F, F)
+cha_x <- c('yanfei', 'feng')
+cha_x
+```
+也可以通过比如以下方式直接生成一个向量：
+```{r, echo=TRUE}
+10:15
+seq(from=1, to=10, by=3)
+LETTERS[1:10]
+rep(14, 10)
+```
+
+### 列表
+
+列表和向量不同的是列表的元素可以是任何数据类型，列表可以通过函数 `list()` 来创建：
+```{r, echo=TRUE}
+l <- list(a = c(1, 2), b = "apple", c = list(1,2))
+l
+str(l)
+```
 
 
+### 矩阵
+
+矩阵可以通过 `matrix()` 来创建：
+```{r, echo=TRUE}
+m <- matrix(c(1:6), 2, 3)
+m
+```
+`dim()` 函数可以得到矩阵的维度，`t()` 可以得到矩阵的转置：
+```{r, echo=TRUE}
+dim(m)
+t(m)
+```
+`rbind()` 和 `cbind()` 可以将两个矩阵按行或者按列合并： 
+```{r, echo=TRUE}
+n <- matrix(c(8:13), 2, 3)
+rbind(m, n)
+cbind(m, n)
+```
+
+
+### 数据框
+
+### 数组
+
+## R 中的数据输入输出
+
+## R 中的控制语句
 
 ## 如何写 R 函数
 
