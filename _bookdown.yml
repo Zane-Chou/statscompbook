@@ -24,6 +24,6 @@ rmd_files: ["index.Rmd"
  ,"04-laplace.Rmd"
  ,"05-mc.Rmd"
  ,"06-mcmc.Rmd"
- ,"9990-references.Rmd"
+ ,"99-references.Rmd"
 ]
 
