@@ -391,6 +391,35 @@ vf(1:3,1:3)
 
 ## 如何写 R 函数
 
+什么时候应该写一个 R 函数呢？当你发现你在重复执行一段代码（可能只对其中的参数做了细微改变）时，这时候就应该考虑写 R 函数了！在 R 中的函数是通过 `function()` 来定义的，它向其它的 R 对象一样，是以对象的形式存在的：
+
+```{r, eval=FALSE}
+name <- function(arg_1, arg_2, …) {
+  expression
+  return(value)
+}
+```
+其中 `expression` 是一段 R 代码，通过参数 `arg_1, arg_2, …` 来计算函数的输出 `value`。函数的调用可以用 `name(expr_1, expr_2, …)`。下面我们来看一个例子：
+```{r}
+f <- function(num  = 1) {
+    myname <- "Yanfei \n"
+    for (i in seq_len(num)) {
+        cat(myname)
+    }
+    myname.length <- nchar(myname) * num
+    return(myname.length)
+}
+mynamel <- f(3)
+print(mynamel)
+```
+在这个例子中，我们定义了函数 `f()`，其中
+
+1. `f()` 有一个参数 `num`，这个函数中设置了默认值 `num = 1`，因此如果我们执行 `f()`，则默认参数 `num = 1`。如果不设置默认值，执行 `f()` 就会报错。
+
+2. `f()` 循环打印 "Yanfei \n"，打印次数是由参数 `num` 设定的。
+
+3. 函数的输出为打印到控制台中的字符个数。
+
 ## 如何在 R 中作图
 
 
