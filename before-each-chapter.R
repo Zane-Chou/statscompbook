@@ -22,6 +22,6 @@ knitr::opts_chunk$set(
 
 
 cggplot <- function(...){
-  ggplot(...) + theme(text = element_text(family = "STSong"))
+  ggplot(...) + theme(text = element_text(family = "SimHei"))
 }
 

@@ -420,8 +420,70 @@ print(mynamel)
 
 3. 函数的输出为打印到控制台中的字符个数。
 
-## 如何在 R 中作图
+## 如何在 R 中绘图
 
+> "The simple graph has brought more information to the data analyst’s mind than any other device." -- John Tukey
+
+在 R 中绘图的方式有很多种，如 R 中的基础绘图（base graphics，基于 `graphics` 包）、基于 `ggplot2` 包 [@ggplot2]、基于 `lattice` 包 [@lattice]、基于 `plotly` 包 [@plotly] 等等。 
+
+
+### R 中的基础绘图
+
+R 中的基础做图包含用于绘制最常见图形的函数，包括条形图、饼图、折线图和散点图。 此外，还可以绘制分位数（QQ）图，等高线图、三维图等。 `graphics` 包中包含的常用的绘图函数如表 \@ref(tab:graphics) 所示 [@adler2010r]。
+
+```{r graphics, echo=FALSE, }
+tab <- tibble::tibble(
+  "R 函数" = c(
+    "`barplot()`","`pie()`", "`hist()`","`density()`","`boxplot()`", "`plot()`", "`smoothScatter()`", "`pairs()`", "`image()`", "`contour()`", "`persp()`"),
+  "描述" = c("条形图",
+           "饼图",
+           "直方图",
+           "核密度图",
+           "箱线图",
+           "散点图",
+           "带有平滑密度的散点图",
+           "两两散点图",
+           "图像",
+           "等高线图",
+           "三维图"))
+knitr::kable(tab, booktabs=TRUE, longtable=FALSE, escape=FALSE, caption = "R 中的基础绘图函数")
+```
+
+#### 条形图 {-}
+
+条形图通常用于展示定性变量。以 2019 年中国居民人均消费支出（来源：[国家统计局网站](http://www.stats.gov.cn/tjsj/zxfb/202001/t20200117_1723396.html)）为例：
+
+```{r}
+expense <- data.frame(
+  消费 = c(6084, 5055, 2862, 2513, 1902, 1338, 1281, 524), 
+  类别 = c("食品烟酒", "居住",
+         "交通通信", "教育文化娱乐",
+         "医疗保健", "衣着",
+         "生活用品及服务", "其他用品及服务"))
+par(family = 'SimHei')
+barplot(height = expense$消费, 
+        main = "2019 年中国居民人均消费支出", 
+        ylab = "消费（元）", 
+        names.arg = expense$类别,
+        border = 'darkblue',
+        col = "orange3",
+        las = 2)
+```
+
+
+#### 饼图 {-}
+
+饼图适于表示数据的结构性特征。再以 2019  年中国居民人均消费支出数据为例，我们可以通过饼图来了解消费结构。
+
+```{r}
+par(family = 'SimHei')
+pie(expense$消费,
+    labels = expense$类别, 
+    main = "2019 年中国居民人均消费支出结构")
+```
+
+
+### `ggplot2` 
 
 ## 有关 R 的学习资源
 
