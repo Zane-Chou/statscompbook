@@ -487,7 +487,7 @@ pie(expense$消费,
 
 ## 有关 R 的学习资源
 
-如果你从来没有用过 R，可以学习 DataCamp 的免费在线课程 [“R入门”](http://bit.ly/dcintro2r)，这个课程不包括统计计算的内容，它只是教你R语言的基础。DataCamp 上还有 R 相关的[其他课程](https://www.datacamp.com/courses/tech:r)。 此外，[Coursera 上的 R 编程课程](https://www.coursera.org/learn/r-programming)也非常值得推荐。
+如果你从来没有用过 R，可以学习 DataCamp 的免费在线课程 [“R 入门”](http://bit.ly/dcintro2r)，这个课程不包括统计计算的内容，它只是教你 R 语言的基础。DataCamp 上还有 R 相关的[其他课程](https://www.datacamp.com/courses/tech:r)。 此外，[Coursera 上的 R 编程课程](https://www.coursera.org/learn/r-programming)也非常值得推荐。
 
 
 
