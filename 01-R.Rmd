@@ -429,9 +429,9 @@ print(mynamel)
 
 ### R 中的基础绘图
 
-R 中的基础做图包含用于绘制最常见图形的函数，包括条形图、饼图、折线图和散点图。 此外，还可以绘制分位数（QQ）图，等高线图、三维图等。 `graphics` 包中包含的常用的绘图函数如表 \@ref(tab:graphics) 所示 [@adler2010r]。
+R 中的基础做图包含用于绘制最常见图形的函数，如适用于定量数据的条形图、饼图，以及适用于定性数据的直方图、箱线图、折线图、散点图等。 此外，还可以绘制分位数（QQ）图，等高线图、三维图等。 `graphics` 包中包含的常用的绘图函数如表 \@ref(tab:graphics) 所示 [@adler2010r]。
 
-```{r graphics, echo=FALSE, }
+```{r graphics, echo=FALSE}
 tab <- tibble::tibble(
   "R 函数" = c(
     "`barplot()`","`pie()`", "`hist()`","`density()`","`boxplot()`", "`plot()`", "`smoothScatter()`", "`pairs()`", "`image()`", "`contour()`", "`persp()`"),
@@ -482,8 +482,36 @@ pie(expense$消费,
     main = "2019 年中国居民人均消费支出结构")
 ```
 
+#### 直方图 {-}
+
+以下为某个班级 50 名同学的《统计计算》课程考试成绩。
+
+```{r, echo=FALSE}
+set.seed(123)
+grades <- sample(70:100,50,replace = TRUE)
+grades
+```
+从这组数据中我们可以了解这个班级同学的《统计计算》成绩分布情况，比如我们可以统计出成绩属于每个区间段的学生个数（如表 \@ref(tab:grades) 所示）。
+
+```{r grades, echo=FALSE}
+tab <- tibble::tibble(
+  "成绩区间" = c(
+    "(70, 75]","(75, 80]", "(80, 85]","(85, 90]","(90, 95]", "(95, 100]"),
+  "学生数" = c(5, 14, 7, 8, 8, 8))
+knitr::kable(tab, booktabs=TRUE, longtable=FALSE, escape=FALSE, caption = "某班级《统计计算》成绩分布情况")
+```
+
+直方图可以以图的形式展示以上分布。
+```{r, echo=FALSE}
+par(family = 'SimHei')
+hist(grades, breaks = 4, col = 'orange3', border='darkblue',main = '某班级《统计计算》考试成绩直方图', xlab = '成绩', ylab = '频数')
+```
+
+
 
 ### `ggplot2` 
+
+
 
 ## 有关 R 的学习资源
 
