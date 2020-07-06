@@ -6,7 +6,7 @@
 - 康雁飞老师在北京航空航天大学经济管理学院讲授的的
     - [《统计计算》](https://yanfei.site/teaching/sc/) (2019年春季)
     - [《贝叶斯统计》](https://yanfei.site/teaching/bs/) (2019年秋季)
-    - [《贝叶斯统计与计算》](https://yanfei.site/teaching/bsc/) (及2020年春季的)
+    - [《贝叶斯统计与计算》](https://yanfei.site/teaching/bsc/) (2020年春季)
     
     本科专业课程教学内容。以及
     
