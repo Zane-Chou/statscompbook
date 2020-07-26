@@ -533,7 +533,19 @@ par(family = 'SimHei')
 boxplot(grades, col = 'orange3', main = '统计学考试成绩箱线图')
 ```
 
+#### 散点图 {-}
 
+散点图可以反映两个变量之间的相关关系，例如下图展示了体重与腹围之间的关系。
+
+```{r, echo=FALSE}
+library(faraway)
+data(fat)
+par(family='SimHei')
+plot(fat$abdom, fat$weight,
+     col="#69b3a2",
+     xlab="腹围", ylab="体重", pch = 16,
+     main="腹围和体重") 
+```
 
 ### `ggplot2` 
 
