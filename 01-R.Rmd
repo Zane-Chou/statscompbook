@@ -507,6 +507,10 @@ par(family = 'SimHei')
 hist(grades, breaks = 4, col = 'orange3', border='darkblue',main = '某班级《统计计算》考试成绩直方图', xlab = '成绩', ylab = '频数')
 ```
 
+#### 箱线图 {-}
+
+箱线图
+
 ### `ggplot2` 
 
 
