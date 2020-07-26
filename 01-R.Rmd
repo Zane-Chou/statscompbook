@@ -509,7 +509,31 @@ hist(grades, breaks = 4, col = 'orange3', border='darkblue',main = '某班级《
 
 #### 箱线图 {-}
 
-箱线图
+箱线图可以基于一组数据的四分位数（quartiles）来展示数据分布。一个一般的箱线图可以展示：
+
+1. “最小值”：去除异常值外的最小值。
+2. “最大值”：去除异常值外的最大值。
+3. 中位数：一组数据中位于中间位置的数，也叫第二四分位数（the second quartiile，简称 $Q_2$）或第50百分位数（50th percentile）。
+4. 第一四分位数（the first quartiile，简称 $Q_1$），也叫第25百分位数（25th percentile）。
+5. 第三四分位数（the third quartiile，简称 $Q_3$），也叫第75百分位数（75th percentile）。
+
+其中“最小值”和“最大值”通过四分位距（Interquartile range，简称IQR = $Q_3$ - $Q_1$）来确定：
+
+$$
+\begin{aligned} “最小值”
+&= Q_1- 1.5*\mathrm{IQR}, \\
+“最大值”
+& = Q3+ 1.5*\mathrm{IQR}.
+\end{aligned}
+$$
+
+下面我们通过箱线图来展示《统计计算》成绩分布情况。
+```{r, echo=FALSE}
+par(family = 'SimHei')
+boxplot(grades, col = 'orange3', main = '统计学考试成绩箱线图')
+```
+
+
 
 ### `ggplot2` 
 
