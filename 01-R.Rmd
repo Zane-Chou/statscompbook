@@ -549,6 +549,44 @@ plot(fat$abdom, fat$weight,
 
 ### `ggplot2` 
 
+`ggplot2`是 R 中最美观的绘图框架之一，它有一个精心设计的绘图结构。`ggplot2` 绘图是基于图形语法（[The Grammar of Graphics](https://amzn.to/2ef1eWp)）的， 这导致它与基础绘图方式非常不同：
+
+1. `ggplot2` 绘图所需的所有数据通常包含在数据框中，数据框可以通过 `ggplot()` 或者对应的 geoms 来提供（稍后会有更多细节）。
+2. 您可以通过向使用 `ggplot()` 创建的现有绘图添加更多层（和主题）来不断增强绘图。
+
+一般来讲，`ggplot2` 绘图可以遵循以下步骤。
+
+#### 第一步： 初始化 {-}
+
+初始化的主要目的是告诉 `ggplot2` 你所要绘制的数据集。在 `ggplot2` 绘图框架下，可以通过 `ggplot(df)` 来提供所要绘制的数据集 `df`，其中 `df` 中应该包含绘图所需要的所有变量。这和基础绘图不同，因为 `ggplot()` 处理的是数据框，而不是单个向量。
+
+
+```{r}
+library(ggplot2)
+ggplot(diamonds) 
+```
+
+你可以通过参数 `aes()` 在你的 ggplot  图中加入任何美学特征（aesthetics）。比如，你可以通过指定 $X$ 轴和 $Y$ 轴来锁定所有图层的变量。
+
+```{r}
+ggplot(diamonds, aes(x = carat, y = price)) 
+```
+
+还可以设置颜色、形状等随之变化的变量，如：
+
+```{r}
+ggplot(diamonds, aes(x = carat, color = cut)) 
+```
+在这种情况下，`cut` 变量的每一个类别会展现成不同的颜色。如果你想固定颜色或者大小，需要在 `aes()` 参数外设置，如：
+
+```{r}
+ggplot(diamonds, aes(x = carat), color = 'orange3')
+```
+
+通过上面几个例子，你会发现，它们只是绘制了一个空的 ggplot，即使 `aes()` 指定了 $X$ 轴和 $Y$ 轴，图中也没有点或者线。这是因为你只告诉 `ggplot()` 要使用什么数据集，它并不认为你是要绘制散点图或折线图，X和Y轴应该使用哪些列。
+
+#### 第二步： 加图层 {-}
+
 
 
 ## 有关 R 的学习资源
