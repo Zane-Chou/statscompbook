@@ -587,6 +587,12 @@ ggplot(diamonds, aes(x = carat), color = 'orange3')
 
 #### 第二步： 加图层 {-}
 
+`ggplot2` 中的图层（layers）也叫 “geoms” 。初始化之后，就可以一层一层的加图层了。比如我们可以通过 `geom_point()` 加入散点图层。
+
+```{r}
+ggplot(diamonds, aes(x=carat, y=price)) + geom_point()
+```
+
 
 
 ## 有关 R 的学习资源
