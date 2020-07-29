@@ -610,6 +610,15 @@ ggplot(diamonds, aes(x = carat, y = price)) + geom_point() + geom_smooth()
 ggplot(diamonds, aes(x = carat, y = price, color = cut)) + geom_point() + geom_smooth()
 ```
 
+#### 第三步： 加标签 {-}
+
+现在我们已经完成了绘图的主要部分，如果你想修改图的标签（如标题、$X$ 轴或 $Y$ 轴标签等），可以通过 `labs()` 来完成。
+
+```{r}
+ggplot(diamonds) + geom_point(aes(x = carat, y = price)) + labs(title = 'Scatterplot of carat and price', x = 'Carat', y = 'Price')
+```
+
+
 ## 有关 R 的学习资源
 
 如果你从来没有用过 R，可以学习 DataCamp 的免费在线课程 [“R 入门”](http://bit.ly/dcintro2r)，这个课程不包括统计计算的内容，它只是教你 R 语言的基础。DataCamp 上还有 R 相关的[其他课程](https://www.datacamp.com/courses/tech:r)。 此外，[Coursera 上的 R 编程课程](https://www.coursera.org/learn/r-programming)也非常值得推荐。
