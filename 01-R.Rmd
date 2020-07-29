@@ -590,10 +590,25 @@ ggplot(diamonds, aes(x = carat), color = 'orange3')
 `ggplot2` 中的图层（layers）也叫 “geoms” 。初始化之后，就可以一层一层的加图层了。比如我们可以通过 `geom_point()` 加入散点图层。
 
 ```{r}
-ggplot(diamonds, aes(x=carat, y=price)) + geom_point()
+ggplot(diamonds, aes(x = carat, y = price)) + geom_point()
 ```
 
+`aes()` 也可以放在图层 `geom_point()` 里。
 
+```{r}
+ggplot(diamonds) + geom_point(aes(x = carat, y = price))
+```
+
+在此基础上还可以加入多个图层，如：
+```{r}
+ggplot(diamonds, aes(x = carat, y = price)) + geom_point() + geom_smooth()
+```
+
+也可以根据 `cut` 变量展现不同类别的 diamonds。
+
+```{r}
+ggplot(diamonds, aes(x = carat, y = price, color = cut)) + geom_point() + geom_smooth()
+```
 
 ## 有关 R 的学习资源
 
