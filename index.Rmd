@@ -18,7 +18,7 @@ github-repo: ykang/statscompbook
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, tidy = TRUE)
 ```
 
 # 简介 {-}
