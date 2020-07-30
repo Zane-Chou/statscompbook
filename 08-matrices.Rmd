@@ -11,7 +11,7 @@
 knitr::include_graphics('figs/eigen.png')
 ```
 
-### 特征分析能做什么？{-}
+
 
 
 ## 特征分解
@@ -20,7 +20,7 @@ knitr::include_graphics('figs/eigen.png')
 
 如果 $n \times n$ 的矩阵 $A$ 具有 $n$ 个线性独立的特征向量，那么 $A$ 是可以正交化的，此时 $A$ 的特征分解为：
 $$A = Q \Lambda Q^{-1},$$
-其中 $Q$ 是一个 $n \times n$ 的方阵，其第 $i$ 列对应 $A$ 的第 $i$ 个特征向量 $q_{i}$，$\Lambda$ 是一个对角阵，其对角线上的元素对应 $A$ 的 $n$ 个特征值：$\Lambda{ii} = \lambda_{i}$。
+其中 $Q$ 是一个 $n \times n$ 的方阵，其第 $i$ 列对应 $A$ 的第 $i$ 个特征向量 $q_{i}$，$\Lambda$ 是一个对角阵，其对角线上的元素对应 $A$ 的 $n$ 个特征值：$\Lambda_{ii} = \lambda_{i}$。
 
 注意：只有可以正交化的矩阵才可以进行上述特征分解。
 
