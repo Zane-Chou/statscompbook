@@ -504,7 +504,9 @@ knitr::kable(tab, booktabs=TRUE, longtable=FALSE, escape=FALSE, caption = "某�
 直方图可以以图的形式展示以上分布。
 ```{r, echo=FALSE}
 par(family = 'SimHei')
-hist(grades, breaks = 4, col = 'orange3', border='darkblue',main = '某班级《统计计算》考试成绩直方图', xlab = '成绩', ylab = '频数')
+hist(grades, breaks = 4, col = 'orange3', border='darkblue',
+     main = '某班级《统计计算》考试成绩直方图', 
+     xlab = '成绩', ylab = '频数')
 ```
 
 #### 箱线图 {-}
@@ -590,30 +592,38 @@ ggplot(diamonds, aes(x = carat), color = 'orange3')
 `ggplot2` 中的图层（layers）也叫 “geoms” 。初始化之后，就可以一层一层的加图层了。比如我们可以通过 `geom_point()` 加入散点图层。
 
 ```{r}
-ggplot(diamonds, aes(x = carat, y = price)) + geom_point()
+ggplot(diamonds, aes(x = carat, y = price)) + 
+  geom_point()
 ```
 
 `aes()` 也可以放在图层 `geom_point()` 里。
 
 ```{r}
-ggplot(diamonds) + geom_point(aes(x = carat, y = price))
+ggplot(diamonds) + 
+  geom_point(aes(x = carat, y = price))
 ```
 
 在此基础上还可以加入多个图层，如：
 ```{r}
-ggplot(diamonds, aes(x = carat, y = price)) + geom_point() + geom_smooth()
+ggplot(diamonds, aes(x = carat, y = price)) + 
+  geom_point() + 
+  geom_smooth()
 ```
 
 也可以根据 `cut` 变量展现不同类别的 diamonds。
 
 ```{r}
-ggplot(diamonds, aes(x = carat, y = price, color = cut)) + geom_point() + geom_smooth()
+ggplot(diamonds, aes(x = carat, y = price, color = cut)) + 
+  geom_point() + 
+  geom_smooth()
 ```
 
 不同类别的 diamonds 可以通过不同的形状来展示。
 
 ```{r}
-ggplot(diamonds, aes(x = carat, y = price, color = cut, shape = color)) + geom_point() + geom_smooth()
+ggplot(diamonds, aes(x = carat, y = price, color = cut, shape = color)) + 
+  geom_point() + 
+  geom_smooth()
 ```
 
 #### 第三步： 加标签 {-}
@@ -621,7 +631,9 @@ ggplot(diamonds, aes(x = carat, y = price, color = cut, shape = color)) + geom_p
 现在我们已经完成了绘图的主要部分，如果你想修改图的标签（如标题、$X$ 轴或 $Y$ 轴标签等），可以通过 `labs()` 来完成。
 
 ```{r}
-ggplot(diamonds) + geom_point(aes(x = carat, y = price, color = cut)) + labs(title = 'Scatterplot of carat and price', x = 'Carat', y = 'Price')
+ggplot(diamonds) + 
+  geom_point(aes(x = carat, y = price, color = cut)) + 
+  labs(title = 'Scatterplot of carat and price', x = 'Carat', y = 'Price')
 ```
 
 #### 第四步： 修改主题 {-}
@@ -629,12 +641,15 @@ ggplot(diamonds) + geom_point(aes(x = carat, y = price, color = cut)) + labs(tit
 也许有时候你需要修改图的主题，如调整标题字体、标签字体、修改图例标题等。调整标题字体、标签字体等可以通过 `theme()` 来完成。
 
 ```{r}
-p <- ggplot(diamonds) + geom_point(aes(x = carat, y = price, color = cut)) + labs(title = 'Scatterplot of carat and price', x = 'Carat', y = 'Price') 
+p <- ggplot(diamonds) + 
+  geom_point(aes(x = carat, y = price, color = cut)) + 
+  labs(title = 'Scatterplot of carat and price', x = 'Carat', y = 'Price') 
 p1 <- p + theme(plot.title = element_text(size=30, face="bold"), 
-                  axis.text.x = element_text(size=15), 
-                  axis.text.y = element_text(size=15),
-                  axis.title.x = element_text(size=25),
-                  axis.title.y = element_text(size=25))
+                axis.text.x = element_text(size=15), 
+                axis.text.y = element_text(size=15),
+                axis.title.x = element_text(size=25),
+                axis.title.y = element_text(size=25))
+p1
 ```
 
 如果你想调整图例标题，则取决于图例所对应的属性，如果是 `color`，则可以使用 `scale_color_discrete()` 来调整：
