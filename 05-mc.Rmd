@@ -47,7 +47,7 @@ for (i in 1:length(x)){
 
 ### 拒绝抽样算法 {#rejection}
 
-\centering
+
 ```{block, type='method'}
 **拒绝抽样算法 (Rejection Sampling)**
 
@@ -118,19 +118,23 @@ $$\begin{aligned} \mathbb{P}(x \text { 被接受}) &=\mathbb{P}\left(U \leq \fra
 
 
 拒绝抽样的第二个性质为：被接受的随机数服从目标概率密度 $f(x)$，也就是说被接受的随机数的分布函数为 $F(x) = \int_{-\infty}^t f(x) dx$，我们可以通过以下推导得到 [@peng2018advanced]。
+
 $$\begin{aligned} \mathbb{P}(X \leq t | X \text { 被接受}) &=\frac{\mathbb{P}(X \leq t, X \text { 被接受})}{\mathbb{P}(X \text { 被接受 })} \\ &=\frac{\mathbb{P}(X \leq t, X \text { 被接受})}{1 / M} \\ &=M \mathbb{E}_{g} \mathbb{E}\left[\mathcal{I}\{x \leq t\} \mathcal{I}\left\{U \leq \frac{f(x)}{M g(x)}\right\} | X=x\right] \\ &=M \mathbb{E}_{g}\left[\mathcal{I}\{X \leq t\} \mathbb{E}\left[\mathcal{I}\left\{U \leq \frac{f(x)}{M g(x)}\right\} | X=x\right]\right] \\ &=M \mathbb{E}_{g}\left[\mathcal{I}\{X \leq t\} \frac{f(X)}{c g(X)}\right] \\ &=\int_{-\infty}^{\infty} 1\{x \leq t\} \frac{f(x)}{g(x)} g(x) d x \\ &=\int_{-\infty}^{t} f(x) d x \\ &=F(t) \end{aligned}.$$
 
 
-\centering
+
 ```{block, type='bookcomment'}
 **几点注意**
 
-1. 在拒绝抽样中，任何 $M^{\prime} \geq M$ 都可以采用，只是抽样效率会降低。
-
-2. 在抽样过程中，尽量使用对数 ($\log$) 形式。
-
-3. $f(x)$ 的维度越高，拒绝抽样的效率越低。
-
+\begin{enumerate}
+\item
+  在拒绝抽样中，任何 \(M^{\prime} \geq M\)
+  都可以采用，只是抽样效率会降低。
+\item
+  在抽样过程中，尽量使用对数 (\(\log\)) 形式。
+\item
+  \(f(x)\) 的维度越高，拒绝抽样的效率越低。
+\end{enumerate}
 ```
 
 

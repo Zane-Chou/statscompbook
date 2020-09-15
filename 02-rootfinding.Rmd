@@ -36,12 +36,13 @@ $$x_{2}=x_{1}-\frac{f\left(x_{1}\right)}{f^{\prime}\left(x_{1}\right)}.$$
 
 按照这种思路继续迭代下去，就是牛顿法求根。牛顿法更一般的写法如下。
 
-\centering
+
 ```{block, type='method'}
 **牛顿法**
 
 1. 选择初始猜测点 $x_0$，设置 $n = 0$。
 2. 按照以下迭代过程进行迭代：
+
 \begin{equation}
 x_{n+1}=x_{n}-\frac{f\left(x_{n}\right)}{f^{\prime}\left(x_{n}\right)}.
 \end{equation}

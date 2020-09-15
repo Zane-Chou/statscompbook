@@ -7,3 +7,5 @@ distcompbook.rds
 _bookdown_files/**
 textbook/**
 *.pdf
+*.rds
+

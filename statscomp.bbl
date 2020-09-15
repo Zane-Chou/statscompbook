@@ -1,9 +1,0 @@
-\begin{thebibliography}{}
-
-\bibitem[Wichmann and Hill, 1982]{Wichmann1982:RNG}
-Wichmann, B.~A. and Hill, I.~D. (1982).
-\newblock Algorithm as 183: An efficient and portable pseudo-random number
-  generator.
-\newblock {\em Applied Statistics}, 31:188–190. Remarks: 34, 198 and 35, 89.
-
-\end{thebibliography}

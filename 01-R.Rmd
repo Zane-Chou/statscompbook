@@ -416,7 +416,7 @@ print(mynamel)
 
 1. `f()` 有一个参数 `num`，这个函数中设置了默认值 `num = 1`，因此如果我们执行 `f()`，则默认参数 `num = 1`。如果不设置默认值，执行 `f()` 就会报错。
 
-2. `f()` 循环打印 "Yanfei \n"，打印次数是由参数 `num` 设定的。
+2. `f()` 循环打印 "Yanfei"，打印次数是由参数 `num` 设定的。
 
 3. 函数的输出为打印到控制台中的字符个数。
 
@@ -644,11 +644,11 @@ ggplot(diamonds) +
 p <- ggplot(diamonds) + 
   geom_point(aes(x = carat, y = price, color = cut)) + 
   labs(title = 'Scatterplot of carat and price', x = 'Carat', y = 'Price') 
-p1 <- p + theme(plot.title = element_text(size=30, face="bold"), 
+p1 <- p + theme(plot.title = element_text(size=20, face="bold"), 
                 axis.text.x = element_text(size=15), 
                 axis.text.y = element_text(size=15),
-                axis.title.x = element_text(size=25),
-                axis.title.y = element_text(size=25))
+                axis.title.x = element_text(size=20),
+                axis.title.y = element_text(size=20))
 p1
 ```
 

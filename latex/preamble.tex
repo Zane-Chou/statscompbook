@@ -2,12 +2,18 @@
 \usepackage{longtable}
 
 \usepackage{framed,color}
-\definecolor{shadecolor}{RGB}{248,248,248}
+\definecolor{shadecolor}{RGB}{248,248,248} 
 
 \renewcommand{\textfraction}{0.05}
 \renewcommand{\topfraction}{0.8}
 \renewcommand{\bottomfraction}{0.8}
 \renewcommand{\floatpagefraction}{0.75}
+
+% \newenvironment{method}{
+%   \definecolor{shadecolor}{RGB}{248,248,248} 
+%   \color{black}
+%   \begin{shaded}}
+%  {\end{shaded}}
 
 \usepackage[many]{tcolorbox}
 
@@ -19,8 +25,8 @@
   arc=4pt}
 
 \newtcolorbox{bookcomment}{
-  colback=white,
-  colframe=white,
+  colback=lightgray,
+  colframe=orange,
   coltext=black,
   boxsep=5pt,
   arc=4pt}
@@ -70,4 +76,5 @@
 }
 \makeatother
 
+% \setCJKmainfont{STSong}
 \frontmatter

@@ -17,8 +17,8 @@ site: bookdown::bookdown_site
 github-repo: ykang/statscompbook
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, tidy = TRUE)
+```{r setup, include=FALSE, dev="CairoPNG"}
+knitr::opts_chunk$set(echo = TRUE, tidy = TRUE,  dev="Cairo::CairoPNG")
 ```
 
 # 简介 {-}

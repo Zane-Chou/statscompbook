@@ -39,13 +39,14 @@ p1 / p2
 
 假设我们想从 $f(x)$ 中抽样，抽样的初始值为 $x_0$， Metropolis-Hastings 算法假设给定第 $t-1$ 步的抽样 $x_{t-1}$ 的条件下，$x_t$ 的抽样由一个可以产生 $x^*$ 的猜想概率密度和接受概率 $\alpha$ 决定。 其中 $\alpha$ 就是接受 $x^*$ 为下一状态的概率。具体来讲，Metropolis-Hastings 算法如下。
 
-\centering
+
 ```{block, type='method'}
 **Metropolis-Hastings 算法**
 
 1. 从 $g(x^*|x_{t-1})$ 中抽取随机数 $x^*$。
 
 2. 计算接受概率
+
  $$\alpha = \min\left(1, \frac{f(x^*)g(x_{t-1}|x^*)}{f(x_{t-1)}g(x^*|x_{t-1}))}\right).$$
 
 3. 产生均匀分布的随机数 $U \sim U(0,1)$，如果 $U \leq \alpha$，接受 $x^*$，即以 $\alpha$ 为接受概率接受 $x^*$。若接受，$x_t = x^*$，否则 $x_t = x_{t-1}$。
@@ -57,16 +58,21 @@ p1 / p2
 $$g(x^*|x_{t-1}) = q(\epsilon),$$ 并且 $$g(x_{t-1}|x^*)  = q(-\epsilon) = q(\epsilon).$$
 此时因为 $g(x^*|x_{t-1}) = g(x_{t-1}|x^*)$，Metropolis-Hastings 算法中的接受概率 $\alpha$ 就变成了 $$\alpha = \min\left(1, \frac{f(x^*)}{f(x_{t-1})}\right).$$ 具体来讲，随机游走 Metropolis-Hastings 算法^[随机游走 Metropolis-Hastings 算法也就是最原始的 Metropolis 算法。]如下。
 
-\centering
+
 ```{block, type='method'}
 **随机游走 Metropolis-Hastings 算法**
 
-1. 从 $q$ 中抽取 $\epsilon$，其中 $q$ 是一个以 0 为中心的对称分布。让 $x^* = x_{t-1} + \epsilon$。
+- 从 \(q\) 中抽取 \(\epsilon\)，其中 \(q\) 是一个以 0
+  为中心的对称分布。让 \(x^* = x_{t-1} + \epsilon\)。
 
-2. 计算接受概率
- $$\alpha = \min\left(1, \frac{f(x^*)}{f(x_{t-1})}\right).$$
+- 计算接受概率
+  
+  \[\alpha = \min\left(1, \frac{f(x^*)}{f(x_{t-1})}\right).\]
 
-3. 产生均匀分布的随机数 $U \sim U(0,1)$，如果 $U \leq \alpha$，接受 $x^*$，即以 $\alpha$ 为接受概率接受 $x^*$。若接受，$x_t = x^*$，否则 $x_t = x_{t-1}$。
+- 产生均匀分布的随机数 \(U \sim U(0,1)\)，如果 \(U \leq \alpha\)，接受
+  \(x^*\)，即以 \(\alpha\) 为接受概率接受
+  \(x^*\)。若接受，\(x_t = x^*\)，否则 \(x_t = x_{t-1}\)。
+
 ```
 
 ```{example}
@@ -180,16 +186,21 @@ contour(x, y, z, add = TRUE)
 
 在独立 Metropolis-Hastings 中，$g(x^*|x_{t-1}) = g(x^*)$，也就是说猜想概率密度不依赖于上一步的状态 $x_{t-1}$，那么独立  Metropolis-Hastings 如下。
 
-\centering
+
 ```{block, type='method'}
 **独立 Metropolis-Hastings 算法**
 
-1. 从 $q$ 中抽取 $\epsilon$，其中 $q$ 是一个以 0 为中心的对称分布。让 $x^* = x_{t-1} + \epsilon$。
+- 从 \(q\) 中抽取 \(\epsilon\)，其中 \(q\) 是一个以 0
+  为中心的对称分布。让 \(x^* = x_{t-1} + \epsilon\)。
+  
+- 计算接受概率
+  
+  \[\alpha = \min\left(1, \frac{f(x^*)g(x_{t-1})}{f(x_{t-1})g(x^*)}\right).\]
 
-2. 计算接受概率
- $$\alpha = \min\left(1, \frac{f(x^*)g(x_{t-1})}{f(x_{t-1})g(x^*)}\right).$$
-
-3. 产生均匀分布的随机数 $U \sim U(0,1)$，如果 $U \leq \alpha$，接受 $x^*$，即以 $\alpha$ 为接受概率接受 $x^*$。若接受，$x_t = x^*$，否则 $x_t = x_{t-1}$。
+- 产生均匀分布的随机数 \(U \sim U(0,1)\)，如果 \(U \leq \alpha\)，接受
+  \(x^*\)，即以 \(\alpha\) 为接受概率接受
+  \(x^*\)。若接受，\(x_t = x^*\)，否则 \(x_t = x_{t-1}\)。
+  
 ```
 
 
@@ -200,15 +211,16 @@ contour(x, y, z, add = TRUE)
 
 假设我们要从二元密度 $f(x,y)$ 中抽样，且我们有全部的条件分布 $f(x|y)$ 和 $f(y|x)$，那么我们可以通过 Gibbs 抽样算法按照以下步骤进行抽样。
 
-\centering
+
 ```{block, type='method'}
 **Gibbs 抽样算法**
 
 假设当前状态为 $(x_i ,y_i)$，重复以下过程直到得到目标数量的样本。
 
-1. 从 $f(x|y_i)$ 中抽取 $x_{i+1}$。
+- 从 \(f(x|y_i)\) 中抽取 \(x_{i+1}\)。
 
-2. 从 $f(y|x_{i+1})$ 中抽取 $y_{i+1}$。
+- 从 \(f(y|x_{i+1})\) 中抽取 \(y_{i+1}\)。
+
 ```
 
 在 Gibbs 抽样中，在每一步条件概率密度的抽样中都用了其他变量的最近状态。Gibbs 抽样中的 $x$ 和 $y$ 可以互换位置，而且适用于 $p > 2$ 的情况。例如，当 $p = 3$ 时，如果要从 $f(x, y, z)$ 中抽样，假设当前状态为 $(x_i ,y_i, z_i)$，Gibbs 抽样重复以下过程：
@@ -303,8 +315,10 @@ cggplot(samples.melt,aes(x=value, color=variable)) + geom_density(alpha=0.25, si
 ### 蒙特卡洛误差
 
 有了 $f(x)$ 的随机样本 $x_1, x_2, \cdots, x_M$，我们就可以计算相关的汇总统计量，比如我们可以计算它们的均值用来估计 $E_X$：
+
 $$E_X \approx \frac{1}{M}\sum\limits_{i = 1}^M x_i.$$ 
 因为我们用样本均值进行估计 $E_X$，所以会导致估计误差，这个误差会随着抽样数量的增加而减小。我们把这个误差称作蒙特卡洛误差（Monte Carlo Error）。一种测量蒙特卡洛误差的方法是计算样本均值的方差，即
+
 $$
 \begin{aligned} \operatorname{Var}\left(\frac{1}{M} \sum_{i=1}^{M} x_i\right) &=\frac{1}{M^{2}} \operatorname{Var}\left(\sum_{i=1}^{M} x_i\right) \\ &=\frac{1}{M^{2}} \sum_{i=1}^{M} \operatorname{Var}\left(x_i\right)+\frac{2}{M^{2}} \sum_{i=1}^{M} \sum_{j>i} \operatorname{cov}\left(x_i, x_j\right) \\ &=\frac{\operatorname{Var}(X)}{M}+\frac{2}{M^{2}} \sum_{i=1}^{M} \sum_{j>i} \operatorname{cov}\left(x_i, x_j\right) \end{aligned}.
 $$
@@ -330,6 +344,7 @@ p1 / p2 / p3
 ### 有效样本量
 
 有效样本量（Effective Sample Size，ESS）通常被用来比较不同的猜想概率密度，我们用 $M_{\operatorname{ESS}}$ 表示有效样本量，它可以通过以下式子得到：
+
 $$\operatorname{Var}\left(\frac{1}{M} \sum_{i=1}^{M} x_i\right)  = \frac{\operatorname{Var}(X)}{M}+\frac{2}{M^{2}} \sum_{i=1}^{M} \sum_{j>i} \operatorname{cov}\left(x_i, x_j\right) = \frac{\operatorname{Var}(X)}{M_{\operatorname{ESS}}}.$$
 
 在 R 中，$M_{\operatorname{ESS}}$ 可以通过 R 包 `coda` 来计算。
