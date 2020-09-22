@@ -13,11 +13,9 @@
 knitr::include_graphics('figs/eigen.png')
 ```
 
-```{example}
-**谷歌页面排序（PageRank）**
+### 谷歌页面排序（PageRank）算法
 
 
-```
 
 ### 矩阵的特征分解过程
 
@@ -64,6 +62,45 @@ $$A^{20} = Q\Lambda^{20}Q^{-1}.$$
 
 
 ## 奇异值分解
+
+对于一个方阵 $A$ 而言，是可以对角化或者三角化的。这在矩阵计算中非常有用。但是对于一个非方阵而言，我们并不能对其进行特征分解，这个时候我们怎么办呢？在本节中，我们将学习对任何矩阵适用的矩阵分解方法 --- 奇异值分解 (Singular Value Decomposition，简称 SVD)。
+
+###  奇异值（Singular values）和奇异向量（Singular vectors）
+
+奇异值 $\sigma$ 是矩阵$A^TA$（对称方阵）特征根的平方根。对应的一对奇异向量（$u$ 和 $v$）满足
+
+$$A v = \sigma u.$$
+
+我们可以将矩阵的特征分解拓展，矩阵 $A$ 的特征分解 $A=Q\Lambda Q^T$ 对每个特征值只涉及到一个特征向量，我们如果将其拓展到奇异值和奇异向量，就有了一个一般矩阵的奇异值分解方法。
+
+
+### 奇异值分解 (SVD)
+
+对于 $A \in \mathcal{R}^{m \times n}$，存在正交阵
+
+$$U = [u_1, \cdots, u_m] \in \mathcal{R}^{m\times m}$$ 和
+
+$$V = [v_1, \cdots, v_n] \in \mathcal{R}^{n\times n},$$
+
+使得
+
+$$U^TAV = \Sigma = \text{diag}\{\sigma_1, \cdots, \sigma_p\} \in \mathcal{R}^{m\times n},$$
+其中 $p = \min\{m, n\}$， $\sigma_1 \geq \dots \geq \sigma_p \geq 0$。
+
+经过变换，我们可以得到 $$A = U\Sigma V^T$$。
+
+
+### SVD 的一些性质 
+
+
+- $A$ 的非零奇异值是 $A^TA$ 和 $AA^T$ 的非零特征根的平方根。
+- $A$ 的秩等于其非零奇异值的个数。
+- $A^TA$ 的奇异度（degree of singularity）可以通过条件值（condition number）$\kappa$ 来测量：
+
+$$\kappa = \frac{\text{max singular value}}{\text{min singular value}}.$$
+
+### SVD 的一些应用
+
 
 ## 数值方法
 
