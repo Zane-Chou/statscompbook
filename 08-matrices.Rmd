@@ -74,9 +74,9 @@ $$A v = \sigma u.$$
 我们可以将矩阵的特征分解拓展，矩阵 $A$ 的特征分解 $A=Q\Lambda Q^T$ 对每个特征值只涉及到一个特征向量，我们如果将其拓展到奇异值和奇异向量，就有了一个一般矩阵的奇异值分解方法。
 
 
-### 奇异值分解 (SVD)
+### 奇异值分解 
 
-对于 $A \in \mathcal{R}^{m \times n}$，存在正交阵
+对于 $A \in \mathcal{R}^{m \times n}$，假设 $m \geq n$，那么存在正交阵
 
 $$U = [u_1, \cdots, u_m] \in \mathcal{R}^{m\times m}$$ 和
 
@@ -84,13 +84,40 @@ $$V = [v_1, \cdots, v_n] \in \mathcal{R}^{n\times n},$$
 
 使得
 
-$$U^TAV = \Sigma = \text{diag}\{\sigma_1, \cdots, \sigma_p\} \in \mathcal{R}^{m\times n},$$
-其中 $p = \min\{m, n\}$， $\sigma_1 \geq \dots \geq \sigma_p \geq 0$。
+\begin{equation}
+U^TAV = \Sigma = \text{diag}\{\sigma_1, \cdots, \sigma_p\} \in \mathcal{R}^{m\times n},
+(\#eq:svd)
+\end{equation}
 
-经过变换，我们可以得到 $$A = U\Sigma V^T$$。
+其中 $p = \min\{m, n\}$， $\sigma_1 \geq \dots \geq \sigma_p \geq 0$。$\Sigma$ 是一个对角阵，对角线上的非负元素降序排列，其最后 $m - n$ 行的元素为零。 $\sigma_j$ 为奇异值，$u_j$ 和 $v_j$ 分别为左右奇异向量。
 
 
-### SVD 的一些性质 
+公式 \@ref(eq:svd)经过变换，我们可以得到 
+
+\begin{equation}
+A = U\Sigma V^T.
+(\#eq:svd1)
+\end{equation}
+
+
+因为 $\Sigma$ 的最后 $m - n$ 行的元素为零，因此 SVD 分解也可以写为
+
+\begin{equation}
+A = U\Sigma V^T = \left(\begin{array}{cc}U_1 & U_2\end{array}\right) \left(\begin{array}{cc}
+   D & \\
+    & 0
+   \end{array}\right) \left(\begin{array}{cc}V_1^T & V_2^T\end{array}\right) = U_1^TDV_1^T,
+   (\#eq:svd2)
+ \end{equation}
+其中 $D = \text{diag}\{\alpha_1, \cdots, \alpha_r\} \in \mathcal{R}^{r\times r}$，$\sigma_r > 0$，$r = \text{rank}(A)$。
+
+
+
+
+
+
+
+### 奇异值分解的一些性质 
 
 
 - $A$ 的非零奇异值是 $A^TA$ 和 $AA^T$ 的非零特征根的平方根。
@@ -99,7 +126,66 @@ $$U^TAV = \Sigma = \text{diag}\{\sigma_1, \cdots, \sigma_p\} \in \mathcal{R}^{m\
 
 $$\kappa = \frac{\text{max singular value}}{\text{min singular value}}.$$
 
-### SVD 的一些应用
+## 奇异值分解的应用
+
+
+
+### 矩阵的低秩估计
+
+根据公式 \@ref(eq:svd2)，$A$ 也可以写成外积加和形式
+
+$$A = \Sigma_{i = 1}^r \sigma_i u_u v_i^T = \alpha_1 u_1 v_1^T + \cdots + \alpha_r u_r v_r^T.$$
+如果我们只取前 $k,~ 1 \leq k \leq r$ 个加和，我们可以得到
+
+$$A_k = \Sigma_{i = 1}^{k < r} \sigma_i u_u v_i^T = \alpha_1 u_1 v_1^T + \cdots + \alpha_k u_k v_k^T,$$
+其中 $A_k$ 的秩为 $k$。如果奇异值 $\sigma_{k+1}, \cdots, \sigma_r$ 很小的话，$A$ 和 $A_k$ 之间的差别即 $A - A_k$ 也很小。并且 $||A - A_k|| = \sigma_{k+1}$，这通常被用作矩阵低秩估计的误差（Matrix Approximation Error）。这说明如果 $\sigma_{k+1}$ 很小的话，用 $A_k$ 来估计 $A$ 就相当精确。
+
+
+
+### 图像压缩
+
+在许多应用（如网页设计）中，我们经常需要传输和存储图像。图像越小，传输和存储的成本就越低。因此，我们经常需要应用数据压缩技术来减少图像所消耗的存储空间。一种方法是对图像矩阵进行奇异值分解（SVD）。通过对图像矩阵的低秩估计，来完成图像压缩。对于一个 $m\times n$ 的矩阵 $A$，其存储大小为 $m\times n$ 个像素点，经过压缩后的 $A_k$，存储像素点变为 $m\times k + k + k\times n = k \times (1 + m + n)$。
+
+```{example}
+基于矩阵的低秩估计对以下本书作者进行压缩。
+<p float="center">
+  <img src="figs/ykang.jpg" width="200" /> 
+</p>
+```
+
+
+
+```{r, eval=TRUE, echo=FALSE}
+library(jpeg)
+ykang <- readJPEG('./figs/ykang.jpg')
+r <- ykang[,,1]
+g <- ykang[,,2]
+b <- ykang[,,3]
+ykang.r.svd <- svd(r)
+ykang.g.svd <- svd(g)
+ykang.b.svd <- svd(b)
+rgb.svds <- list(ykang.r.svd, ykang.g.svd, ykang.b.svd)
+for (j in seq.int(4, 200, length.out = 8)) {
+  a <- sapply(rgb.svds, function(i) {
+    ykang.compress <- i$u[,1:j] %*% diag(i$d[1:j]) %*% t(i$v[,1:j])
+  }, simplify = 'array')
+  writeJPEG(a, paste('./figs/', 'ykang_svd_rank_', round(j,0), '.jpg', sep=''))
+}
+```
+以下四张压缩后的图像的秩分别为 200、116 和 32。他们分别需要存储多少个像素点？和原图像相比，他们分别的压缩比例又是多少？
+
+<p float="center">
+  <img src="figs/ykang_svd_rank_200.jpg" width="200" /> 
+  <img src="figs/ykang_svd_rank_116.jpg" width="200" />
+  <img src="figs/ykang_svd_rank_32.jpg" width="200" />
+</p>
+
+### 伪逆
+
+### 曲线拟合
+
+
+
 
 
 ## 数值方法
