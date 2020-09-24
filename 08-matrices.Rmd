@@ -9,7 +9,7 @@
 
 一般来讲，一个 $n \times n$ 的矩阵 $A$ 乘以一个向量 $x$ 之后得到的向量 $Ax$ 既改变 $x$ 的长度，也改变其方向。但是，存在某些向量 $x$，使得 $Ax$ 只改变 $x$ 的长度而不改变其方向：即满足 $Ax = \lambda x$，那么 $\lambda$ 是 $A$ 的特征值，$x$ 是其特征向量。在二维情况下的特征分析（eigenanalysis）过程如图~\@ref(fig:eigen)~所示^[来源：https://en.wikipedia.org/wiki/Eigenvalues_and_eigenvectors]。
 
-```{r eigen, fig.cap='二维矩阵的特征分析', echo=FALSE, fig.align='center'}
+```{r eigen, fig.cap='二维矩阵的特征分析', echo=FALSE, fig.align='center', out.width = "50%"}
 knitr::include_graphics('figs/eigen.png')
 ```
 
@@ -148,14 +148,15 @@ $$A_k = \Sigma_{i = 1}^{k < r} \sigma_i u_u v_i^T = \alpha_1 u_1 v_1^T + \cdots 
 
 ```{example}
 基于矩阵的低秩估计对以下本书作者进行压缩。
-<p float="center">
-  <img src="figs/ykang.jpg" width="200" /> 
-</p>
+```
+```{r image,  echo=FALSE, fig.align='default', out.width = "30%"}
+knitr::include_graphics('./figs/ykang.jpg')
 ```
 
 
 
-```{r, eval=TRUE, echo=FALSE}
+
+```{r, eval=TRUE, echo=TRUE}
 library(jpeg)
 ykang <- readJPEG('./figs/ykang.jpg')
 r <- ykang[,,1]
@@ -169,16 +170,16 @@ for (j in seq.int(4, 200, length.out = 8)) {
   a <- sapply(rgb.svds, function(i) {
     ykang.compress <- i$u[,1:j] %*% diag(i$d[1:j]) %*% t(i$v[,1:j])
   }, simplify = 'array')
-  writeJPEG(a, paste('./figs/', 'ykang_svd_rank_', round(j,0), '.jpg', sep=''))
+  writeJPEG(a, paste('./figs/', 'ykang_svd_rank_', 
+  	round(j,0), '.jpg', sep=''))
 }
 ```
 以下四张压缩后的图像的秩分别为 200、116 和 32。他们分别需要存储多少个像素点？和原图像相比，他们分别的压缩比例又是多少？
 
-<p float="center">
-  <img src="figs/ykang_svd_rank_200.jpg" width="200" /> 
-  <img src="figs/ykang_svd_rank_116.jpg" width="200" />
-  <img src="figs/ykang_svd_rank_32.jpg" width="200" />
-</p>
+```{r imagecompressed,  echo=FALSE, fig.align='default', out.width = "30%"}
+knitr::include_graphics(c('./figs/ykang_svd_rank_200.jpg', './figs/ykang_svd_rank_116.jpg', './figs/ykang_svd_rank_32.jpg'))
+```
+
 
 ### 伪逆
 
