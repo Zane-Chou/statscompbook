@@ -502,7 +502,7 @@ knitr::kable(tab, booktabs=TRUE, longtable=FALSE, escape=FALSE, caption = "某�
 ```
 
 直方图可以以图的形式展示以上分布。
-```{r, echo=FALSE}
+```{r}
 par(family = 'SimHei')
 hist(grades, breaks = 4, col = 'orange3', border='darkblue',
      main = '某班级《统计计算》考试成绩直方图', 
@@ -530,7 +530,7 @@ $$
 $$
 
 下面我们通过箱线图来展示《统计计算》成绩分布情况。
-```{r, echo=FALSE}
+```{r}
 par(family = 'SimHei')
 boxplot(grades, col = 'orange3', main = '统计学考试成绩箱线图')
 ```
@@ -539,7 +539,7 @@ boxplot(grades, col = 'orange3', main = '统计学考试成绩箱线图')
 
 散点图可以反映两个变量之间的相关关系，例如下图展示了体重与腹围之间的关系。
 
-```{r, echo=FALSE}
+```{r}
 library(faraway)
 data(fat)
 par(family='SimHei')
