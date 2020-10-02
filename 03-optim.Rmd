@@ -627,6 +627,144 @@ ggplot(f_long, aes(x, y, z = z)) +
 
 4. 对于 $\alpha$ 的选择，可以参考 @bottou2012stochastic 和 @zeiler2012adadelta。
 
+## 案例：心脏病预测
+
+#### Logistic回归 {-}
+
+Logistic 回归是应用最为广泛的分类算法之一，它通常用于解决二分类问题（0或1），例如垃圾邮件识别、疾病诊断等应用。Logistic 回归模型假定观测 $y$ 服从概率为 $p$的伯努利分布，该算法的模型设定如下：
+
+$$
+\hat p=g(\beta^Tx) = g(\beta_0+\beta_1x_1+\dots,\beta_kx_k)
+$$
+其中 $g(x)=\frac{1}{1+e^{-x}}$ 为链接函数，它的主要目的是将 $\beta^Tx$从$(-\infty,+\infty)$ 映射到 $(0,1)$，当 $\hat p>0.5$ 时，$\hat y=1$，当 $\hat p<0.5$ 时，$\hat y=0$。
+
+Logistic 回归模型常采用极大似然估计法进行估计，可以写出它的对数似然函数如下：
+
+
+\begin{align*}
+L &= \mathrm{log}\left[\prod_{i=1}^np_i^{y_i}(1-p_i)^{1-y_i}\right]\\\
+&=\sum_{i=1}^n\left[y_i\mathrm{log}p_i+(1-y_i)\mathrm{log}(1-p_i)\right]\\\
+&=\sum_{i=1}^n\left[y_i\beta^Tx_i-\mathrm{log}(1+e^{\beta^Tx_i})\right]\\
+\end{align*}
+
+接下来我们使用本章之前讲过的随机梯度下降算法，结合实际的心脏病发病数据，进行基于 Logistic 回归模型的拟合和预测。
+
+
+#### Logistic 回归随机梯度下降算法的 R 实现 {-}
+
+
+```{r}
+sgd.logisticReg <- function(X, y, beta.init, alpha = 0.5, 
+  n.samples = 1, tol = 1e-5, max.iter = 100){
+  n <- length(y)
+  beta.old <- beta.init
+  J <- betas <- list()
+  sto.sample <- sample(1:n, n.samples, replace = TRUE)
+  # sto.sample <- 1:n
+  betas[[1]] <- beta.old
+  J[[1]] <- sgd.logisticReg.cost(X, y, beta.old)
+  beta.new <- beta.old - alpha * sgd.logisticReg.cost.grad(X[sto.sample, ], y[sto.sample], beta.old)
+  betas[[2]] <- beta.new
+  J[[2]] <- sgd.logisticReg.cost(X, y, beta.new)
+  iter <- 0
+  n.best <- 0
+  
+  while ((abs(sgd.logisticReg.cost(X, y, beta.new) - sgd.logisticReg.cost(X, y, beta.old))  > tol) & (iter + 2 < max.iter)){
+    beta.old <- beta.new
+    sto.sample <- sample(1:n, n.samples, replace = TRUE)
+    beta.new <- beta.old - alpha * sgd.logisticReg.cost.grad(X[sto.sample, ], y[sto.sample], beta.old)
+    iter <- iter + 1
+    betas[[iter + 2]] <- beta.new
+    J[[iter + 2]] <- sgd.logisticReg.cost(X, y, beta.new)
+  }
+  
+  if (abs(sgd.logisticReg.cost(X, y, beta.new) - sgd.logisticReg.cost(X, y, beta.old)) > tol){
+    cat('算法无法收敛。 \n')
+  } else{
+    cat('算法收敛\n')
+    cat('共迭代',iter + 1,'次','\n')
+    cat('系数估计为：', beta.new, '\n')
+    return(list(coef = betas,
+                cost = J,
+                niter = iter + 1))
+  }
+}
+
+## Make the cost function
+sgd.logisticReg.cost <- function(X, y, beta){
+   n <- length(y)
+   if (!is.matrix(X)){
+    X <- matrix(X, nrow = 1)
+   }
+   p <- 1/(1+exp(-X %*% beta))
+   loss <- -sum(y*log(p)+(1-y)*log(1-p))/n
+return(loss)
+}
+
+## Calculate the gradient
+sgd.logisticReg.cost.grad <- function(X, y, beta){
+  n <- length(y)
+  if (!is.matrix(X)){
+    X <- matrix(X, nrow = 1)
+  }
+  t(X)%*%(1/(1+exp(-X%*%beta)) - y)/n
+}
+```
+
+#### 心脏病预测 {-}
+
+本案例采用的数据来源于[Kaggle平台](https://www.kaggle.com/naveengowda16/logistic-regression-heart-disease-prediction)，主要目标是根据吸烟数、年龄、性别、相关疾病、身体健康指数等预测病人是否会有心脏病。
+
+```{r}
+hd = read.csv("data/framingham_heart_disease.csv")
+```
+
+#### 拟合Logistic回归 {-}
+
+为了加快随机梯度下降速度，对部分特征进行标准化，数据共有3656条，用其中的3000条进行训练，剩余的用作测试。
+
+```{r}
+mean_norm <- function(x){
+  (x-mean(x))/sd(x)
+}
+X <- cbind(1, as.matrix(hd[,-14]))
+y <- as.matrix(hd[,14])
+X[,3] = mean_norm(X[,3])
+X[,4] = log(X[,4]+1)
+X[,9:14] = apply(X[,9:14], 2, mean_norm)
+
+X_train = X[1:3000,]
+y_train = y[1:3000,]
+X_test = X[3001:3656,]
+y_test = y[3001:3656,]
+beta.init <- runif(14, -1, 0)
+```
+
+
+```{r}
+res = sgd.logisticReg(X_train, y_train, beta.init, alpha = 0.01, 
+  n.samples = 1, max.iter = 1000, tol = 1e-6)
+```
+
+```{r}
+plot(1:length(res$cost), res$cost, type = "l", 
+  xlab = "Iterations", ylab = "Loss")
+```
+
+#### 预测 {-}
+
+```{r}
+p <- 1/(1+exp(-X_test%*%res$coef[[length(res$coef)]]))
+y_predicted <- ifelse(p>=0.5, 1, 0)
+print(paste0("accuracy:", sum(y_predicted==y_test)/656))
+```
+
+
+
+
+
+
+
 
 ## 拓展阅读 {#optim-reading}
 
