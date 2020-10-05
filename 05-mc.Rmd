@@ -22,7 +22,8 @@ $$F_{X}(x)=\left\{\begin{array}{ll}{0} & {\text { for } x<0;} \\
 lambda <- 1
 u <- runif(20)
 x <- -1/lambda * log(1 - u)
-curve(1 - exp(-x), 0, 5, ylab = 'u', main = 'Direct sampling from exp(1)') 
+curve(1 - exp(-x), 0, 5, ylab = 'u', 
+      main = 'Direct sampling from exp(1)') 
 for (i in 1:length(x)){
   lines(c(x[i], x[i]), c(u[i], 0), lty = 'dashed')
   lines(c(x[i], 0), c(u[i], u[i]), lty = 'dashed')
@@ -86,7 +87,8 @@ X <- vector()
 
 # 计算 M
 fg <- function(x){dnorm(x)/dt(x, df = 2)}
-M <- optim(1, fg, method = 'BFGS', control = list(fnscale = -1))$value
+M <- optim(1, fg, method = 'BFGS', 
+           control = list(fnscale = -1))$value
 
 # 拒绝抽样
 for (i in seq_len(iter)){

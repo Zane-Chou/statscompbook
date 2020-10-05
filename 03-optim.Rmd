@@ -82,7 +82,8 @@ newton <- function(f, x0, tol = 1e-9, max.iter = 100) {
     fx <- ftn(f, x)
     iter <- iter + 1
     xs[[iter + 1]] <- x
-    cat(paste0('迭代第',iter,'次：x1 = ',x[1],', x2 = ',x[2],'\n'))
+    cat(paste0('迭代第', iter, '次：x1 = ', x[1], ', x2 = ', 
+               x[2], '\n'))
   }
   if (max(abs(fx$fgrad)) > tol){
     cat('算法无法收敛 \n')
@@ -93,7 +94,8 @@ newton <- function(f, x0, tol = 1e-9, max.iter = 100) {
 }
 
 ftn <- function(f, x){
-  df <- deriv(body(f), c('x1', 'x2'), func = TRUE, hessian = TRUE)
+  df <- deriv(body(f), c('x1', 'x2'), func = TRUE, 
+              hessian = TRUE)
   dfx <- df(x[1], x[2])
   f <- dfx[1]
   fgrad <- attr(dfx, 'gradient')[1,]
@@ -155,7 +157,9 @@ $$f({\mathbf x_1})\leq f({\mathbf x_2})\leq\ldots\leq f({\mathbf x_{n+1}}).$$
 
 #### 第二步：计算中心点 {-}
 
-去掉最差点 ${\mathbf x_{n+1}}$，计算剩下的 $n$ 个点的中心点，$${\mathbf x_0}=\frac{1}{n}\sum_{j=1}^{n}  {\mathbf x_j}.$$
+去掉最差点 ${\mathbf x_{n+1}}$，计算剩下的 $n$ 个点的中心点，
+
+$${\mathbf x_0}=\frac{1}{n}\sum_{j=1}^{n}  {\mathbf x_j}.$$
 对于一个二维单纯形，中点即为两点连线的中点。
 
 
@@ -179,7 +183,11 @@ $$ {\mathbf x_e}={\mathbf x_0}+\gamma({\mathbf x_r}-{\mathbf x_0})，$$ 通常�
 
 
     
-3. $f({\mathbf x_r})\geq f({\mathbf x_n})$，即 ${\mathbf x_r}$ 为最差点，这意味着在 ${\mathbf x_{n+1}}$ 和 ${\mathbf x_{r}}$ 之间可能存在谷点，这时寻找收缩点（contraction point）：$${\mathbf x_c}={\mathbf x_0}+\rho({\mathbf x_{n+1}}-{\mathbf x_0})，$$通常取 $\rho=0.5$。
+3. $f({\mathbf x_r})\geq f({\mathbf x_n})$，即 ${\mathbf x_r}$ 为最差点，这意味着在 ${\mathbf x_{n+1}}$ 和 ${\mathbf x_{r}}$ 之间可能存在谷点，这时寻找收缩点（contraction point）：
+
+$${\mathbf x_c}={\mathbf x_0}+\rho({\mathbf x_{n+1}}-{\mathbf x_0}),$$
+通常取 $\rho=0.5$。
+
     - 如果 $f({\mathbf x_c}) < f({\mathbf x_{n+1}})$，那么用收缩点 ${\mathbf x_c}$ 形成新的单纯形。
     - 如果 $f({\mathbf x_c}) \geq f({\mathbf x_{n+1}})$，说明收缩无效，需要一个更小的单纯形，这时将 ${\mathbf x_{1}}$ 以外的点按以下方式压缩（shrink）：
     
@@ -196,7 +204,12 @@ $$ {\mathbf x_e}={\mathbf x_0}+\gamma({\mathbf x_r}-{\mathbf x_0})，$$ 通常�
 
 #### 停止条件 {-}
 
-由图 \@ref(fig:nelder) 可见，随着迭代过程，单纯形的体积越来越小，因此通常将单纯形的体积足够小做为Nelder Mead。有 $n+1$ 个顶点的单纯形的体积为： $$\frac{1}{2}|\mathrm{det}(\tilde{X})|,$$其中 $$\tilde{X}=\left({\mathbf x_1}-{\mathbf x_{n+1}},{\mathbf x_2-{\mathbf x_{n+1}}},\ldots, {\mathbf x_{n}-{\mathbf x_{n+1}}}\right).$$
+由图 \@ref(fig:nelder) 可见，随着迭代过程，单纯形的体积越来越小，因此通常将单纯形的体积足够小做为Nelder Mead。有 $n+1$ 个顶点的单纯形的体积为：
+
+$$\frac{1}{2}|\mathrm{det}(\tilde{X})|,$$
+其中 
+
+$$\tilde{X}=\left({\mathbf x_1}-{\mathbf x_{n+1}},{\mathbf x_2-{\mathbf x_{n+1}}},\ldots, {\mathbf x_{n}-{\mathbf x_{n+1}}}\right).$$
 
 
 在 R 中，Nelder Mead 算法可以用 `optim()` 实现。
@@ -208,12 +221,14 @@ $$ {\mathbf x_e}={\mathbf x_0}+\gamma({\mathbf x_r}-{\mathbf x_0})，$$ 通常�
 
 
 梯度下降（Gradient Descent，或者 Steepest Descent）算法是一种迭代算法。对于一个多元连续可导函数 $f(\mathbf{x})$，在 $\mathbf{x}_n$ 处 $f(\mathbf{x})$下降最快的方向也就是$f(\mathbf{x})$ 在 $\mathbf{x}_n$ 处的梯度方向的反方向，即$-\nabla f(\mathbf{x}_n)$，这也是与 $\mathbf{x}_n$ 处等高线正交的方向。所以给定当前 $\mathbf{x}_n$，梯度下降算法的更新策略就是：
+
 \begin{equation}
 \mathbf{x}_{n+1}=\mathbf{x}_{n}-\alpha  \nabla f\left(\mathbf{x}_{n}\right),
 (\#eq:gd)
 \end{equation}
 
 其中 $\alpha > 0$  控制下降步长。我们可以选择 $\alpha$ 以最小化：
+
 \begin{equation}
 g(\alpha) = f(\mathbf{x}_n - \alpha \nabla f(\mathbf{x}_n),
 (\#eq:stepsize)
@@ -340,13 +355,16 @@ $$J(\beta) = \frac{1}{2n}(X\beta - y)^T(X\beta - y).$$ 对应的梯度向量为
 $$\nabla J(\beta) = \frac{1}{n}X^T(X\beta-y).$$
 
 ```{r}
-gd.lm <- function(X, y, beta.init, alpha, tol = 1e-5, max.iter = 100){
+gd.lm <- function(X, y, beta.init, alpha, tol = 1e-5, 
+                  max.iter = 100){
   beta.old <- beta.init
   J <- betas <- list()
   if (alpha == 'auto'){
     alpha <-
       optim(0.1, function(alpha) {
-        lm.cost(X, y, beta.old - alpha * lm.cost.grad(X, y, beta.old))
+        lm.cost(
+          X, y, 
+          beta.old - alpha * lm.cost.grad(X, y, beta.old))
       }, method = 'L-BFGS-B', lower = 0, upper = 1)
     if (alpha$convergence == 0) {
       alpha <- alpha$par
@@ -356,11 +374,14 @@ gd.lm <- function(X, y, beta.init, alpha, tol = 1e-5, max.iter = 100){
   }
   betas[[1]] <- beta.old
   J[[1]] <- lm.cost(X, y, beta.old)
-  beta.new <- beta.old - alpha * lm.cost.grad(X, y, beta.old)
+  beta.new <- beta.old - 
+    alpha * lm.cost.grad(X, y, beta.old)
   betas[[2]] <- beta.new
   J[[2]] <- lm.cost(X, y, beta.new)
   iter <- 0
-  while ((abs(lm.cost(X, y, beta.new) - lm.cost(X, y, beta.old))  > tol) & (iter < max.iter)){
+  while ((abs(lm.cost(X, y, beta.new) - 
+              lm.cost(X, y, beta.old))  > tol) &
+         (iter < max.iter)) {
     beta.old <- beta.new
     if (alpha == 'auto'){
     alpha <-
@@ -373,12 +394,14 @@ gd.lm <- function(X, y, beta.init, alpha, tol = 1e-5, max.iter = 100){
       alpha <- 0.1
     }
     }
-    beta.new <- beta.old - alpha * lm.cost.grad(X, y, beta.old)
+    beta.new <- beta.old - 
+      alpha * lm.cost.grad(X, y, beta.old)
     iter <- iter + 1
     betas[[iter + 2]] <- beta.new
     J[[iter + 2]] <- lm.cost(X, y, beta.new)
   }
-  if (abs(lm.cost(X, y, beta.new) - lm.cost(X, y, beta.old)) > tol){
+  if (abs(lm.cost(X, y, beta.new) - 
+          lm.cost(X, y, beta.old)) > tol){
     cat('算法无法收敛 \n')
   } else{
     cat('算法收敛\n')
@@ -416,19 +439,24 @@ lm.cost.grad <- function(X, y, beta){
   (1/n)*(t(X)%*%(X%*%beta - y))
 }
 ## Use optimized alpha
-gd.auto <- gd.lm(X, y, beta.init = c(-4,-5), alpha = 'auto', tol = 1e-5, max.iter = 10000)
+gd.auto <- gd.lm(X, y, beta.init = c(-4,-5), alpha = 'auto', 
+                 tol = 1e-5, max.iter = 10000)
 
 ## alpha = 0.1
-gd1 <- gd.lm(X, y, beta.init = c(-4,-5), alpha = 0.1, tol = 1e-5, max.iter = 10000)
+gd1 <- gd.lm(X, y, beta.init = c(-4,-5), alpha = 0.1, 
+             tol = 1e-5, max.iter = 10000)
 
 ## alpha = 0.01
-gd2 <- gd.lm(X, y, beta.init = c(-4,-5), alpha = 0.01, tol = 1e-5, max.iter = 10000)
+gd2 <- gd.lm(X, y, beta.init = c(-4,-5), alpha = 0.01, 
+             tol = 1e-5, max.iter = 10000)
 ```
 
 ```{r niter}
-niter <- data.frame(alpha = c('auto', 0.1, 0.01), niter = c(gd.auto$niter, gd1$niter, gd2$niter))
+niter <- data.frame(alpha = c('auto', 0.1, 0.01), 
+                    niter = c(gd.auto$niter, gd1$niter, gd2$niter))
 knitr::kable(
-  niter, caption = '不同 $\\alpha$ 对应的梯度下降算法的迭代次数',booktabs = TRUE,  col.names = c("$\\alpha$", '迭代次数'),
+  niter, caption = '不同 $\\alpha$ 对应的梯度下降算法的迭代次数',
+  booktabs = TRUE,  col.names = c("$\\alpha$", '迭代次数'),
   
 ) 
 ```
@@ -482,27 +510,36 @@ $$\nabla J(\beta)_i = X_i^T(X_i\beta-y_i),$$ 完整的迭代过程如下。
 随机梯度下降在R中的实现如下。
 
 ```{r}
-sgd.lm <- function(X, y, beta.init, alpha = 0.5, n.samples = 1, tol = 1e-5, max.iter = 100){
+sgd.lm <- function(X, y, beta.init, 
+                   alpha = 0.5, n.samples = 1, 
+                   tol = 1e-5, max.iter = 100){
   n <- length(y)
   beta.old <- beta.init
   J <- betas <- list()
   sto.sample <- sample(1:n, n.samples, replace = TRUE)
   betas[[1]] <- beta.old
   J[[1]] <- lm.cost(X, y, beta.old)
-  beta.new <- beta.old - alpha * sgd.lm.cost.grad(X[sto.sample, ], y[sto.sample], beta.old)
+  beta.new <- beta.old - alpha * 
+    sgd.lm.cost.grad(X[sto.sample, ], y[sto.sample], beta.old)
   betas[[2]] <- beta.new
   J[[2]] <- lm.cost(X, y, beta.new)
   iter <- 0
   n.best <- 0
-  while ((abs(lm.cost(X, y, beta.new) - lm.cost(X, y, beta.old))  > tol) & (iter + 2 < max.iter)){
+  while ((abs(lm.cost(X, y, beta.new) - 
+              lm.cost(X, y, beta.old))  > tol) & 
+         (iter + 2 < max.iter)){
     beta.old <- beta.new
     sto.sample <- sample(1:n, n.samples, replace = TRUE)
-    beta.new <- beta.old - alpha * sgd.lm.cost.grad(X[sto.sample, ], y[sto.sample], beta.old)
+    beta.new <- beta.old - 
+      alpha * sgd.lm.cost.grad(X[sto.sample, ], 
+                               y[sto.sample], 
+                               beta.old)
     iter <- iter + 1
     betas[[iter + 2]] <- beta.new
     J[[iter + 2]] <- lm.cost(X, y, beta.new)
   }
-  if (abs(lm.cost(X, y, beta.new) - lm.cost(X, y, beta.old)) > tol){
+  if (abs(lm.cost(X, y, beta.new) - lm.cost(X, y, beta.old)) 
+      > tol){
     cat('算法无法收敛。 \n')
   } else{
     cat('算法收敛\n')
@@ -644,9 +681,8 @@ Logistic 回归模型常采用极大似然估计法进行估计，可以写出�
 \begin{align*}
 L &= \mathrm{log}\left[\prod_{i=1}^np_i^{y_i}(1-p_i)^{1-y_i}\right]\\\
 &=\sum_{i=1}^n\left[y_i\mathrm{log}p_i+(1-y_i)\mathrm{log}(1-p_i)\right]\\\
-&=\sum_{i=1}^n\left[y_i\beta^Tx_i-\mathrm{log}(1+e^{\beta^Tx_i})\right]\\
+&=\sum_{i=1}^n\left[y_i\beta^Tx_i-\mathrm{log}(1+e^{\beta^Tx_i})\right].
 \end{align*}
-
 接下来我们使用本章之前讲过的随机梯度下降算法，结合实际的心脏病发病数据，进行基于 Logistic 回归模型的拟合和预测。
 
 
@@ -663,27 +699,36 @@ sgd.logisticReg <- function(X, y, beta.init, alpha = 0.5,
   # sto.sample <- 1:n
   betas[[1]] <- beta.old
   J[[1]] <- sgd.logisticReg.cost(X, y, beta.old)
-  beta.new <- beta.old - alpha * sgd.logisticReg.cost.grad(X[sto.sample, ], y[sto.sample], beta.old)
+  beta.new <- beta.old - 
+    alpha * sgd.logisticReg.cost.grad(X[sto.sample, ], 
+                                      y[sto.sample], 
+                                      beta.old)
   betas[[2]] <- beta.new
   J[[2]] <- sgd.logisticReg.cost(X, y, beta.new)
   iter <- 0
   n.best <- 0
   
-  while ((abs(sgd.logisticReg.cost(X, y, beta.new) - sgd.logisticReg.cost(X, y, beta.old))  > tol) & (iter + 2 < max.iter)){
+  while ((abs(sgd.logisticReg.cost(X, y, beta.new) - 
+              sgd.logisticReg.cost(X, y, beta.old))  > tol) & 
+         (iter + 2 < max.iter)){
     beta.old <- beta.new
     sto.sample <- sample(1:n, n.samples, replace = TRUE)
-    beta.new <- beta.old - alpha * sgd.logisticReg.cost.grad(X[sto.sample, ], y[sto.sample], beta.old)
+    beta.new <- beta.old - 
+      alpha * sgd.logisticReg.cost.grad(X[sto.sample, ], 
+                                        y[sto.sample], 
+                                        beta.old)
     iter <- iter + 1
     betas[[iter + 2]] <- beta.new
     J[[iter + 2]] <- sgd.logisticReg.cost(X, y, beta.new)
   }
   
-  if (abs(sgd.logisticReg.cost(X, y, beta.new) - sgd.logisticReg.cost(X, y, beta.old)) > tol){
+  if (abs(sgd.logisticReg.cost(X, y, beta.new) - 
+          sgd.logisticReg.cost(X, y, beta.old)) > tol){
     cat('算法无法收敛。 \n')
   } else{
     cat('算法收敛\n')
     cat('共迭代',iter + 1,'次','\n')
-    cat('系数估计为：', beta.new, '\n')
+    # cat('系数估计为：', beta.new, '\n')
     return(list(coef = betas,
                 cost = J,
                 niter = iter + 1))
@@ -729,21 +774,23 @@ mean_norm <- function(x){
 }
 X <- cbind(1, as.matrix(hd[,-14]))
 y <- as.matrix(hd[,14])
-X[,3] = mean_norm(X[,3])
-X[,4] = log(X[,4]+1)
-X[,9:14] = apply(X[,9:14], 2, mean_norm)
+X[,3] <- mean_norm(X[,3])
+X[,4] <- log(X[,4]+1)
+X[,9:14] <- apply(X[,9:14], 2, mean_norm)
 
-X_train = X[1:3000,]
-y_train = y[1:3000,]
-X_test = X[3001:3656,]
-y_test = y[3001:3656,]
+X_train <- X[1:3000,]
+y_train <- y[1:3000,]
+X_test <- X[3001:3656,]
+y_test <- y[3001:3656,]
 beta.init <- runif(14, -1, 0)
 ```
 
 
 ```{r}
-res = sgd.logisticReg(X_train, y_train, beta.init, alpha = 0.01, 
-  n.samples = 1, max.iter = 1000, tol = 1e-6)
+res <- sgd.logisticReg(X_train, y_train, 
+                      beta.init, alpha = 0.01, 
+                      n.samples = 1, 
+                      max.iter = 1000, tol = 1e-6)
 ```
 
 ```{r}

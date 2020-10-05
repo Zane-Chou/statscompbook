@@ -167,7 +167,10 @@ ykang.b.svd <- svd(b)
 rgb.svds <- list(ykang.r.svd, ykang.g.svd, ykang.b.svd)
 for (j in seq.int(4, 200, length.out = 8)) {
   a <- sapply(rgb.svds, function(i) {
-    ykang.compress <- i$u[,1:j] %*% diag(i$d[1:j]) %*% t(i$v[,1:j])
+    ykang.compress <- 
+      i$u[,1:j] %*% 
+      diag(i$d[1:j]) %*%
+      t(i$v[,1:j])
   }, simplify = 'array')
   writeJPEG(a, paste('./figs/', 'ykang_svd_rank_', 
   	round(j,0), '.jpg', sep=''))
@@ -187,11 +190,61 @@ knitr::include_graphics(c('./figs/ykang_svd_rank_200.jpg', './figs/ykang_svd_ran
 
 
 
-
-
 ## 数值方法
 
-求矩阵特征值的朴素方法包括求矩阵特征多项式的根。然而，在工业规模的矩阵中，这种方法是不可行的，必须通过其他方法得到特征值。幸运的是，还有其他几种求矩阵特征值和特征向量的技术，其中一些属于迭代方法的范畴。这些方法的工作原理是反复地对特征向量或特征值进行精细化，只要逼近达到适当的精度，就可以终止。迭代法也是现代特征值计算的基础。
+
+
+我们在《线性代数》课程中学过通过求矩阵特征多项式的根来求矩阵特征值，从而得到对应的特征向量。然而，在工业规模的大型矩阵中，这种方法是不可行的，必须通过其他方法得到特征值。幸运的是，我们可以通过求矩阵特征值和特征向量的数值技术来解决这一问题，其中一些技术属于迭代方法的范畴。这些方法的工作原理是反复地对特征向量或特征值进行精细化，只要逼近达到适当的精度，就可以终止。迭代法也是现代特征值计算的基础。
+
+### 幂方法（Power method）
+
+幂方法是计算矩阵极值特征值和相关特征向量的经典方法之一。在实践中，计算
+
+对于一个 $n \times n$ 的矩阵 $A$，如果 $q$ 是其对应于特征值 $\lambda$ 的特征向量，那么 $Aq = \lambda q$。更一般的，$A^kq = \lambda^kq$，这也是幂方法的理论基础。假设 $A$ 的 $n$ 个实数特征值为 $|\lambda_1| > |\lambda_2| > \cdots > |\lambda_n|$，其对应的互相独立的特征向量分别为 $q_1, \cdots, q_n$。$\lambda_1$ 和 $\lambda_n$ 为 $A$ 的两个极值特征值，那么幂方法的过程如下。
+
+```{block, type='method'}
+**幂方法（Power method）**
+
+- 选择一个初始 $x_0$，左乘矩阵 $A$ 得到 $x_1 = Ax_0$，再次左乘 $A$，得到 $x_2 = Ax_1$，以此类推。
+
+$$x_1 = Ax_0;~x_2 = Ax_1 = A^2x_0; \cdots; x_k = A^kx_0.$$
+
+- 当 $k\rightarrow \infty$ 时，$x_k \rightarrow v_1$。
+```
+
+那么幂方法为什么最终会收敛呢？我们来看一下其背后的原理。
+
+因为 $q_1, \cdots, q_n$ 互相独立，所以对于向量 $x_0$ 可以写为：
+
+$$x_0 = c_1 q_1 + \cdots + c_nq_n,$$
+
+那么，
+
+\begin{align*}
+A^kx_0 & = c_1 \lambda_1^k q_1 + \cdots + c_n\lambda_n^kq_n,\\
+       & = \lambda_1^k (c_1q_1 + \cdots + c_n(\frac{\lambda_n}{\lambda_1})^kq_n).
+\end{align*}
+因为我们假设 $\lambda_1$ 为绝对值最大的特征值，因此对于 $i = 2, \cdots, n$，
+
+$$\lim\limits{k \rightarrow \infty}(\frac{\lambda_n}{\lambda_1})^k = 0,$$
+所以当 $k \rightarrow \infty$ 时，$A^kx_0 \rightarrow c_1\lambda_1^kq_1$，其和 $q_1$ 的方向一致。
+
+
+
+因为随着幂方法的不断迭代，$x_0^k$ 的元素会越来越大，但是其实我们只关心的是特征向量的方向，所以在实践中通常使用**标准化的幂方法**。
+
+```{block, type='method'}
+**标准化的幂方法**
+- 选择一个初始 $q_0 = \frac{x_0}{||x_0||}$，
+
+- 对于 $k = 1, 2, \cdots$ 重复以下过程，
+
+    - 计算 $x_k = Ax_{k-1}$，
+    - 标准化 $q_k = x_k/||x_k||$，
+    - 计算 $\lambda_k = q_k^TAq_k$。
+```
+
+### QR 算法
 
 ## 案例：谷歌页面排序（PageRank）算法
 
@@ -212,13 +265,13 @@ knitr::include_graphics('figs/pagerank.png')
 ```
 假设五个页面的重要性得分分别为 $r_1,r_2,r_3,r_4,r_5$，那么按照上面的思路，我们可以得到以下五个等式：
 
-\begin{align}
+\begin{align*}
   r_1 &= \frac{1}{2} r_3, \\
   r_2 &= \frac{1}{3} r_1, \\
   r_3 &= \frac{1}{3} r_2 + r_5, \\
   r_4 &= \frac{1}{3} r_1 + \frac{1}{3} r_2 + \frac{1}{2}r_3, \\
   r_5 &= \frac{1}{3} r_1 + \frac{1}{3} r_2 + r_4. 
-\end{align}
+\end{align*}
 
 如果能计算出$\mathbf{r}=\{r_1,r_2,r_3,r_4,r_5\}$，即可对页面按照$r_i$由高到低进行排序。
 
@@ -286,13 +339,13 @@ order(abs(r),decreasing = T)
 
 ```
 
-#### 现实中PageRank怎么实现？{-}
+#### 现实中 PageRank 怎么实现？{-}
 
 在上面的例子中，面对矩阵的特征分解，我们直接使用了R语言中的命令：
 ```{r eval=FALSE, include=FALSE}
 eigen()
 ```
-但在实际中，面对数以亿计的网页，我们需要更高效的算法和计算“工具”。这里的高效算法就是Power Method，高效的计算“工具”就是 MapReduce。
+但在实际中，面对数以亿计的网页，我们需要更高效的算法和计算“工具”。这里的高效算法就是 Power Method，高效的计算“工具”就是 MapReduce。
 
 假设我们得到一个处理后的$N \times N$的邻接矩阵$\mathbf{B}$：
 
@@ -316,3 +369,10 @@ eigen()
 仔细想，“最终停留在各页面的概率”这个概念似曾相识。这可以看作是马尔科夫链中的平稳概率分布。而转移概率矩阵，正是归一化后的邻接矩阵 $\mathbf{B}$。
 
 其实不止搜索引擎的页面排序，其他问题中也用到了这样的思路：如在网络分析中（比如经济研究中的投入产出网络），各节点的重要性就可以用类似的特征向量描述。
+
+## 案例 2：SVD 助力互联网搜索 
+
+在过去的 20 年里，互联网用户的数量随着时间呈指数增长，试图从这个指数级增长的互联网资源中提取有价值的信息是一项极其艰巨的任务。潜在语义分析（Latent semantic analysis，简称 LSA）是一种发现文本数据中隐藏概念的方法。它基于 SVD 把每个文档和词都被表示为一个向量，来识别包含在非结构化文本集合中的词和概念之间的关系模式。
+
+#### 一个简单例子 {-}
+

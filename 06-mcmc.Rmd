@@ -135,7 +135,8 @@ hist(samples, prob =TRUE)
 我们还可以画出抽样的路径图（trace plot）。
 
 ```{r}
-qplot(1:n.steps, samples, geom = "line", xlab = "迭代次数", ylab = "抽样") + 
+qplot(1:n.steps, samples, geom = "line", xlab = "迭代次数", 
+      ylab = "抽样") + 
   theme(text = element_text(family = "STSong"))
 ```
 
@@ -150,7 +151,9 @@ $$f_{X_1,X_2, \cdots, X_p}(x_1, x_2, \cdots, x_p) = \frac{1}{2\pi \sqrt{|\Sigma|
 首先写出二元正态分布的概率密度函数 $f_{X,Y}(x, y)$ 并画出其等高线图。
 
 ```{r}
-f <- function(x, mu = c(-1, 1), Sigma = matrix(c(1, .25, .25, 1.5), 2, 2)){
+f <- function(x,
+              mu = c(-1, 1), 
+              Sigma = matrix(c(1, .25, .25, 1.5), 2, 2)){
   logdet <- as.numeric(determinant(Sigma, TRUE)$modulus)
   cons <- length(mu) * log(2 * pi) + logdet
   Sigma.i <- solve(Sigma)
@@ -253,8 +256,14 @@ gibbs <- function(x0, mu, Sigma, n.steps = 1000){
   samples[1,2] <- y <- x0[2]
  
   for (i in 1:n.steps-1) {
-    samples[i+1, 1] <- x <- rnorm(1, mu1 + rho * sigma1 * (y-mu2) / sigma2, sqrt((sigma1^2) * (1 - rho^2) ))
-    samples[i+1, 2] <- y <- rnorm(1, mu2 + rho * sigma2 * (x-mu1) / sigma1, sqrt((sigma2^2) * (1 - rho^2) ))
+    samples[i+1, 1] <- x <- 
+      rnorm(1, mu1 + 
+              rho * sigma1 * (y-mu2) / 
+              sigma2, sqrt((sigma1^2) * (1 - rho^2) ))
+    samples[i+1, 2] <- y <-
+      rnorm(1, mu2 + 
+              rho * sigma2 * (x-mu1) / 
+              sigma1, sqrt((sigma2^2) * (1 - rho^2) ))
   }
   return(samples)
 }
@@ -291,12 +300,14 @@ samples2 <- rw.mh(-5, f, g2, n.steps)
 samples3 <- rw.mh(-5, f, g3, n.steps)
 
 # 画出路径图
-samples <- data.frame(iter = 1:n.steps, samples1 = samples1, samples2 = samples2, samples3 = samples3)
+samples <- data.frame(iter = 1:n.steps, samples1 = samples1, 
+                      samples2 = samples2, samples3 = samples3)
 cggplot(samples, aes(iter)) + 
   geom_line(aes(y = samples1, colour = "sd = 0.1")) + 
   geom_line(aes(y = samples2, colour = "sd = 4")) +
   geom_line(aes(y = samples3, colour = "sd = 50")) +
-  scale_colour_discrete(expression(sigma),  labels = c('0.1', '4', '50')) +
+  scale_colour_discrete(expression(sigma),  
+                        labels = c('0.1', '4', '50')) +
   xlab('迭代次数') + ylab('抽样')
 ```
 
@@ -305,8 +316,16 @@ cggplot(samples, aes(iter)) +
 ```{r compsigmahist, fig.cap = "不同的猜想概率密度标准差下混合正态分布的抽样密度图"}
 library(reshape2)
 library(dplyr)
-samples.melt <- data.frame(iter = 1:n.steps, samples1 = samples1, samples2 = samples2, samples3 = samples3) %>% select(-iter) %>% melt()
-cggplot(samples.melt,aes(x=value, color=variable)) + geom_density(alpha=0.25, size = 1.3) + scale_color_discrete(expression(sigma), labels = c('0.1', '4', '50')) + xlab('x') + ylab('密度')
+samples.melt <- data.frame(iter = 1:n.steps, 
+                           samples1 = samples1, 
+                           samples2 = samples2, 
+                           samples3 = samples3) %>% 
+  select(-iter) %>% melt()
+cggplot(samples.melt,aes(x=value, color=variable)) + 
+  geom_density(alpha=0.25, size = 1.3) + 
+  scale_color_discrete(expression(sigma), 
+                       labels = c('0.1', '4', '50')) + 
+  xlab('x') + ylab('密度')
 ```
 
 由图~\@ref(fig:compsigma)~可以看出，当 $\sigma = 50$ 时，Metropolis 算法的抽样过程中有很多样本被拒绝，导致算法的接受率很低。当  $\sigma = 0.1$ 时，算法的接受率几乎为 $100\%$，但这也不是一个好的猜想概率密度，由图~\@ref(fig:compsigmahist)~可以看出，$\sigma = 0.1$ 对应的抽样密度离目标概率密度较远，因为猜想概率密度的标准差很小，所以无法抽到尾部的样本。这时如果增加抽样次数，马尔科夫链将收敛于目标概率密度，但导致算法的效率很低。
@@ -328,7 +347,8 @@ $$
 ggcor <- function(x){
   bacf <- acf(x, plot = FALSE)
   bacfdf <- with(bacf, data.frame(lag, acf))
-  p <- ggplot(data = bacfdf, mapping = aes(x = lag, y = acf)) +
+  p <- ggplot(data = bacfdf, 
+              mapping = aes(x = lag, y = acf)) +
     geom_hline(aes(yintercept = 0)) +
     geom_segment(mapping = aes(xend = lag, yend = 0))
   return(p)

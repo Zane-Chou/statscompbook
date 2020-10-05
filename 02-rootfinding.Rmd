@@ -63,7 +63,8 @@ x_{n+1}=x_{n}-\frac{f\left(x_{n}\right)}{f^{\prime}\left(x_{n}\right)}.
 现在我们将牛顿法在 R 中实现，以下 `newton.root()` 函数中的第一个参数为待求根的函数 $f(x)$，因为牛顿法中每一次迭代都需要求 $f(x)$ 和 $f^{\prime}(x)$ 在 $x_n$ 处的取值，因此我们定义了 R 函数 `ftn()` ，它的输入参数为 $f(x)$ 的表达式及 $x$ 的取值，输出为  $f(x)$ 和 $f^{\prime}(x)$。为了以防算法不收敛，我们加入参数 `max.iter` 来设置最大的迭代次数。具体代码如下。
 
 ```{r newton-root}
-newton.root <- function(f, x0 = 0, tol = 1e-9, max.iter = 100) {
+newton.root <- function(f, x0 = 0, tol = 1e-9, 
+                        max.iter = 100) {
   x <- x0
   cat(paste0("初始值：x = ", x, "\n"))
   fx <- ftn(f, x)
