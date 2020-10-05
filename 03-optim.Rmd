@@ -187,7 +187,6 @@ $$ {\mathbf x_e}={\mathbf x_0}+\gamma({\mathbf x_r}-{\mathbf x_0})，$$ 通常�
 
 $${\mathbf x_c}={\mathbf x_0}+\rho({\mathbf x_{n+1}}-{\mathbf x_0}),$$
 通常取 $\rho=0.5$。
-
     - 如果 $f({\mathbf x_c}) < f({\mathbf x_{n+1}})$，那么用收缩点 ${\mathbf x_c}$ 形成新的单纯形。
     - 如果 $f({\mathbf x_c}) \geq f({\mathbf x_{n+1}})$，说明收缩无效，需要一个更小的单纯形，这时将 ${\mathbf x_{1}}$ 以外的点按以下方式压缩（shrink）：
     
@@ -386,8 +385,9 @@ gd.lm <- function(X, y, beta.init, alpha, tol = 1e-5,
     if (alpha == 'auto'){
     alpha <-
       optim(0.1, function(alpha) {
-        lm.cost(X, y, beta.old - alpha * lm.cost.grad(X, y, beta.old))
-      }, method = 'L-BFGS-B', lower = 0, upper = 1)
+        lm.cost(X, y, beta.old - 
+          alpha * lm.cost.grad(X, y, beta.old))}, 
+        method = 'L-BFGS-B', lower = 0, upper = 1)
     if (alpha$convergence == 0) {
       alpha <- alpha$par
     } else{
