@@ -2,7 +2,30 @@
 
 # 零基础入手 R  {#R}
 
+## 统计语言的历史
 
+在现代统计计算中，最早被统计广泛使用的编程语言应该是20世纪Fortran(Formula Translation的缩
+写)语言。虽然Fortran语言运行速度较快，但是由于Fortran语言语法书写较为繁琐而且需要编译，逐
+渐被不需要编译的脚本语言所取代。Fortran语言的第一个替代版本是贝尔实验室S编程语言。S语言由
+约翰·钱伯斯（John Chambers）于1976年在贝尔实验室（Bell Labs）创立。
+
+R语言是受Scheme语言（一种函数式编程语言）启发，并对S语言加以开源实现， 最新版本的R语言与早
+期的S有一些重要的区别。R语言书由新西兰奥克兰大学的Ross Ihaka和Robert Gentleman创建，并由R
+Development Core团队开发，S语言之父Chambers也是R核心开发团队的成员。读者可能注意到，R语言
+的命名以前两个R作者的名字首字母命名。R语言项目于1992年构思，1995年发布了最初版本，2000年2
+月29日发布了稳定的beta版本（v1.0），截止2020年，已经到v4.0版本。
+
+R的许多功能通过用户创建的R包得到扩展，这些包涵盖专门的统计技术，图形设备，导入/导出功能，
+报告工具（Rmarkdown，knitr，Sweave）等。R的安装除了包含一组核心软件包，还有大量的发布到
+CRAN， Bioconductor，Omegahat，GitHub等超过15,000个贡献软件包供使用。
+
+近些年来，由于大数据的迅猛发展，R也被广泛集成到大数据计算平台。例如R是大数据分布式计算平台
+Apache Spark支持的五种语言之一。
+
+现代计算机与数据科学发展催生了很多很有特色的针对数据处理和建模的开源编程语言，如擅长数据科
+学处理的Python语言，语法简介且计算高效的Julia语言，具有大数据分布式计算基因的Scala语言。R
+语言由于其在统计计算领域的30多年的主导地位，现在仍然是主流统计计算的入门语言。没有编程基础
+的读者学习了R语言，一般都可以触类旁通，快速上手其他语言。
 
 
 ## 介绍
@@ -53,7 +76,7 @@ f <- expression(x^2 - 5)
 df <- deriv(f, 'x', func = TRUE)
 ```
 
-注意：有时候我们也假设同一章节中较前的 R 代码已被执行；所以最好在每个章节都按顺序执行所提供的 R 代码。 
+注意：有时候我们也假设同一章节中较前的 R 代码已被执行；所以最好在每个章节都按顺序执行所提供的 R 代码。
 
 就是这样！你现在应该准备好了！
 
@@ -102,7 +125,7 @@ m
 dim(m)
 t(m)
 ```
-`rbind()` 和 `cbind()` 可以将两个矩阵按行或者按列合并： 
+`rbind()` 和 `cbind()` 可以将两个矩阵按行或者按列合并：
 ```{r, echo=TRUE}
 n <- matrix(c(8:13), 2, 3)
 rbind(m, n)
@@ -217,14 +240,14 @@ names(x) # x的列名
 ```r
 if(<condition>) {
   ## 执行一段代码
-} 
+}
 ## 继续
 ```
 完整的 `if-else`  语句为：
 ```r
 if(<condition>) {
   ## 执行 A 代码
-} 
+}
 else {
   ## 执行 B 代码
 }
@@ -232,7 +255,7 @@ else {
 我们举一个例子：
 ```{r, tidy=TRUE}
 ## Generate a uniform random number
-x <- runif(1, 0, 10)  
+x <- runif(1, 0, 10)
 if(x > 3) {
   y <- 10
 } else {
@@ -247,21 +270,21 @@ R 中 `for` 循环的写法为：
 ```r
 for (x in vector) {
   ## 执行一段代码
-} 
+}
 ```
 对于向量 `vector` 中的每一个元素 `x`，循环执行对应的代码。我们举一个例子：
 ```{r, tidy = TRUE}
 x <- c("a", "b", "c", "d")
 for(i in 1:4) {
   ## 打印 x 中的第 i 个元素
-  print(x[i])  
+  print(x[i])
 }
 ```
 在这个例子中，我们也可以避免使用索引（index）：
 ```{r, tidy = TRUE}
 x <- c("a", "b", "c", "d")
 for(x.ele in x) {
-  print(x.ele)  
+  print(x.ele)
 }
 ```
 在高维的数据结构中，`for` 循环可以是嵌套的：
@@ -270,7 +293,7 @@ x <- matrix(1:9, 3, 3)
 for(i in seq_len(nrow(x))) {
         for(j in seq_len(ncol(x))) {
                 print(x[i, j])
-        }   
+        }
 }
 ```
 
@@ -424,7 +447,7 @@ print(mynamel)
 
 > "The simple graph has brought more information to the data analyst’s mind than any other device." -- John Tukey
 
-在 R 中绘图的方式有很多种，如 R 中的基础绘图（base graphics，基于 `graphics` 包）、基于 `ggplot2` 包 [@ggplot2]、基于 `lattice` 包 [@lattice]、基于 `plotly` 包 [@plotly] 等等。 
+在 R 中绘图的方式有很多种，如 R 中的基础绘图（base graphics，基于 `graphics` 包）、基于 `ggplot2` 包 [@ggplot2]、基于 `lattice` 包 [@lattice]、基于 `plotly` 包 [@plotly] 等等。
 
 
 ### R 中的基础绘图
@@ -455,15 +478,15 @@ knitr::kable(tab, booktabs=TRUE, longtable=FALSE, escape=FALSE, caption = "R 中
 
 ```{r}
 expense <- data.frame(
-  消费 = c(6084, 5055, 2862, 2513, 1902, 1338, 1281, 524), 
+  消费 = c(6084, 5055, 2862, 2513, 1902, 1338, 1281, 524),
   类别 = c("食品烟酒", "居住",
          "交通通信", "教育文化娱乐",
          "医疗保健", "衣着",
          "生活用品及服务", "其他用品及服务"))
 par(family = 'SimHei')
-barplot(height = expense$消费, 
-        main = "2019 年中国居民人均消费支出", 
-        ylab = "消费（元）", 
+barplot(height = expense$消费,
+        main = "2019 年中国居民人均消费支出",
+        ylab = "消费（元）",
         names.arg = expense$类别,
         border = 'darkblue',
         col = "orange3",
@@ -478,7 +501,7 @@ barplot(height = expense$消费,
 ```{r}
 par(family = 'SimHei')
 pie(expense$消费,
-    labels = expense$类别, 
+    labels = expense$类别,
     main = "2019 年中国居民人均消费支出结构")
 ```
 
@@ -505,7 +528,7 @@ knitr::kable(tab, booktabs=TRUE, longtable=FALSE, escape=FALSE, caption = "某�
 ```{r}
 par(family = 'SimHei')
 hist(grades, breaks = 4, col = 'orange3', border='darkblue',
-     main = '某班级《统计计算》考试成绩直方图', 
+     main = '某班级《统计计算》考试成绩直方图',
      xlab = '成绩', ylab = '频数')
 ```
 
@@ -546,10 +569,10 @@ par(family='SimHei')
 plot(fat$abdom, fat$weight,
      col="#69b3a2",
      xlab="腹围", ylab="体重", pch = 16,
-     main="腹围和体重") 
+     main="腹围和体重")
 ```
 
-### `ggplot2` 
+### `ggplot2`
 
 `ggplot2`是 R 中最美观的绘图框架之一，它有一个精心设计的绘图结构。`ggplot2` 绘图是基于图形语法（[The Grammar of Graphics](https://amzn.to/2ef1eWp)）的， 这导致它与基础绘图方式非常不同：
 
@@ -565,19 +588,19 @@ plot(fat$abdom, fat$weight,
 
 ```{r}
 library(ggplot2)
-ggplot(diamonds) 
+ggplot(diamonds)
 ```
 
 你可以通过参数 `aes()` 在你的 ggplot  图中加入任何美学特征（aesthetics）。比如，你可以通过指定 $X$ 轴和 $Y$ 轴来锁定所有图层的变量。
 
 ```{r}
-ggplot(diamonds, aes(x = carat, y = price)) 
+ggplot(diamonds, aes(x = carat, y = price))
 ```
 
 还可以设置颜色、形状等随之变化的变量，如：
 
 ```{r}
-ggplot(diamonds, aes(x = carat, color = cut)) 
+ggplot(diamonds, aes(x = carat, color = cut))
 ```
 在这种情况下，`cut` 变量的每一个类别会展现成不同的颜色。如果你想固定颜色或者大小，需要在 `aes()` 参数外设置，如：
 
@@ -592,37 +615,37 @@ ggplot(diamonds, aes(x = carat), color = 'orange3')
 `ggplot2` 中的图层（layers）也叫 “geoms” 。初始化之后，就可以一层一层的加图层了。比如我们可以通过 `geom_point()` 加入散点图层。
 
 ```{r}
-ggplot(diamonds, aes(x = carat, y = price)) + 
+ggplot(diamonds, aes(x = carat, y = price)) +
   geom_point()
 ```
 
 `aes()` 也可以放在图层 `geom_point()` 里。
 
 ```{r}
-ggplot(diamonds) + 
+ggplot(diamonds) +
   geom_point(aes(x = carat, y = price))
 ```
 
 在此基础上还可以加入多个图层，如：
 ```{r}
-ggplot(diamonds, aes(x = carat, y = price)) + 
-  geom_point() + 
+ggplot(diamonds, aes(x = carat, y = price)) +
+  geom_point() +
   geom_smooth()
 ```
 
 也可以根据 `cut` 变量展现不同类别的 diamonds。
 
 ```{r}
-ggplot(diamonds, aes(x = carat, y = price, color = cut)) + 
-  geom_point() + 
+ggplot(diamonds, aes(x = carat, y = price, color = cut)) +
+  geom_point() +
   geom_smooth()
 ```
 
 不同类别的 diamonds 可以通过不同的形状来展示。
 
 ```{r}
-ggplot(diamonds, aes(x = carat, y = price, color = cut, shape = color)) + 
-  geom_point() + 
+ggplot(diamonds, aes(x = carat, y = price, color = cut, shape = color)) +
+  geom_point() +
   geom_smooth()
 ```
 
@@ -631,8 +654,8 @@ ggplot(diamonds, aes(x = carat, y = price, color = cut, shape = color)) +
 现在我们已经完成了绘图的主要部分，如果你想修改图的标签（如标题、$X$ 轴或 $Y$ 轴标签等），可以通过 `labs()` 来完成。
 
 ```{r}
-ggplot(diamonds) + 
-  geom_point(aes(x = carat, y = price, color = cut)) + 
+ggplot(diamonds) +
+  geom_point(aes(x = carat, y = price, color = cut)) +
   labs(title = 'Scatterplot of carat and price', x = 'Carat', y = 'Price')
 ```
 
@@ -641,11 +664,11 @@ ggplot(diamonds) +
 也许有时候你需要修改图的主题，如调整标题字体、标签字体、修改图例标题等。调整标题字体、标签字体等可以通过 `theme()` 来完成。
 
 ```{r}
-p <- ggplot(diamonds) + 
-  geom_point(aes(x = carat, y = price, color = cut)) + 
-  labs(title = 'Scatterplot of carat and price', x = 'Carat', y = 'Price') 
-p1 <- p + theme(plot.title = element_text(size=20, face="bold"), 
-                axis.text.x = element_text(size=15), 
+p <- ggplot(diamonds) +
+  geom_point(aes(x = carat, y = price, color = cut)) +
+  labs(title = 'Scatterplot of carat and price', x = 'Carat', y = 'Price')
+p1 <- p + theme(plot.title = element_text(size=20, face="bold"),
+                axis.text.x = element_text(size=15),
                 axis.text.y = element_text(size=15),
                 axis.title.x = element_text(size=20),
                 axis.title.y = element_text(size=20))
@@ -662,6 +685,3 @@ p1 + scale_color_discrete(name = "Cut of diamonds")
 ## 有关 R 的学习资源
 
 如果你从来没有用过 R，可以学习 DataCamp 的免费在线课程 [“R 入门”](http://bit.ly/dcintro2r)，这个课程不包括统计计算的内容，它只是教你 R 语言的基础。DataCamp 上还有 R 相关的[其他课程](https://www.datacamp.com/courses/tech:r)。 此外，[Coursera 上的 R 编程课程](https://www.coursera.org/learn/r-programming)也非常值得推荐。
-
-
-
