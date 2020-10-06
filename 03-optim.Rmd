@@ -12,9 +12,10 @@
 假设函数 $f(x)$ 可导并一阶导 $f^{\prime}(x)$ 连续，那么最大化 $f(x)$ 相当于求 $f^{\prime}(x) = 0$ 的根，我们就可以使用牛顿法求根。优化 $f(x)$ 就转化成了方程求根问题。 牛顿优化算法的迭代过程如下。
 
 
-```{block, type='method'}
+::::{.method}
+::: {.center data-latex=""}
 **牛顿优化算法**
-
+:::
 
 1. 选择初始猜测点 $x_0$，设置 $n = 0$。
 2. 按照以下迭代过程进行迭代：
@@ -25,7 +26,7 @@ $$x_{n+1}=x_{n}-\frac{f^{\prime}\left(x_{n}\right)}{f^{\prime\prime}\left(x_{n}\
     1. 如果 $|f^{\prime}(x_{n+1})| \leq \epsilon$，停止迭代；
     2. 否则，返回第 2 步。
     
-```
+::::
 
 
 
@@ -493,8 +494,12 @@ $$\nabla J(\beta)_i = X_i^T(X_i\beta-y_i),$$ 完整的迭代过程如下。
 
 
 
-```{block, type='method'}
+::::{.method}
+::: {.center data-latex=""}
 **随机梯度下降算法**
+:::
+
+
 
 
 - 将训练数据随机排序，然后重复第2步直至收敛。
@@ -504,7 +509,7 @@ $$\nabla J(\beta)_i = X_i^T(X_i\beta-y_i),$$ 完整的迭代过程如下。
 
   $$\beta:= \beta - \alpha \nabla J(\beta)_i.$$
 
-```
+::::
 
 
 随机梯度下降在R中的实现如下。

@@ -31,10 +31,13 @@ $$
 其中第三行中的被积函数为均值为 $x_0$，方差为 $-1/h^{\prime\prime}(x_0)$ 的正态分布密度函数。
 
 
-```{block, type='method'}
+::::{.method}
+::: {.center data-latex=""}
 **拉普拉斯近似**
+:::
+
 
 假设正函数 $g(x)$ 在 $x_0$ 处取得最大值，且 $h(x) = \log(g(x))$，那么 $\int g(x) dx$ 可以通过拉普拉斯近似来得到：
 
 $$\int g(x) dx = \sqrt{2\pi}g(x_0)/[-h^{\prime\prime}(x_0)]^{\frac{1}{2}}.$$
-```
+::::
