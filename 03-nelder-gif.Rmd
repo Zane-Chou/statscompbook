@@ -1,0 +1,4 @@
+图 \@ref(fig:nelder) 展示了 Nelder Mead 算法优化函数 $f(x_1, x_2) = x_1^2 + x_2^2 + x_1\sin(x_2) + x_2\sin(x_1)$。
+```{r nelder, echo=FALSE, fig.cap="单纯形法优化动图"}
+knitr::include_graphics("./rcode/nelder.gif")
+```

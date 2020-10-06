@@ -1,0 +1,41 @@
+\begin{thebibliography}{}
+
+\bibitem[Adler, 2010]{adler2010r}
+Adler, J. (2010).
+\newblock {\em R in a nutshell: A desktop quick reference}.
+\newblock " O'Reilly Media, Inc.".
+
+\bibitem[Bottou, 2012]{bottou2012stochastic}
+Bottou, L. (2012).
+\newblock Stochastic gradient descent tricks.
+\newblock In {\em Neural networks: Tricks of the trade}, pages 421--436.
+  Springer.
+
+\bibitem[Peng, 2018]{peng2018advanced}
+Peng, R.~D. (2018).
+\newblock Advanced statistical computing.
+\newblock {\em Work in progress}.
+
+\bibitem[Sarkar, 2008]{lattice}
+Sarkar, D. (2008).
+\newblock {\em Lattice: Multivariate Data Visualization with R}.
+\newblock Springer, New York.
+\newblock ISBN 978-0-387-75968-5.
+
+\bibitem[Sievert, 2020]{plotly}
+Sievert, C. (2020).
+\newblock {\em Interactive Web-Based Data Visualization with R, plotly, and
+  shiny}.
+\newblock Chapman and Hall/CRC.
+
+\bibitem[Wickham, 2016]{ggplot2}
+Wickham, H. (2016).
+\newblock {\em ggplot2: Elegant Graphics for Data Analysis}.
+\newblock Springer-Verlag New York.
+
+\bibitem[Zeiler, 2012]{zeiler2012adadelta}
+Zeiler, M.~D. (2012).
+\newblock Adadelta: an adaptive learning rate method.
+\newblock {\em arXiv preprint arXiv:1212.5701}.
+
+\end{thebibliography}

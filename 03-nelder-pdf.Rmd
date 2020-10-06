@@ -1,0 +1,3 @@
+```{r nelder, echo=FALSE, fig.cap="单纯形法优化动图"}
+knitr::include_graphics("./rcode/nelder.pdf")
+```

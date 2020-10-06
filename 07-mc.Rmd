@@ -1,0 +1,150 @@
+# 独立蒙特卡洛抽样 {#mc}
+
+## 介绍
+
+## 直接抽样
+
+假设已知随机变量 $U$ 服从均匀分布： $U\sim U(0,1)$，随机变量 $X$ 的分布函数为 $F(x)$，设 $Y = F_X^{-1}(U)$，我们可以得到：
+
+$$
+F_{Y}(y)=\mathbb{P}(Y \leq y)=\mathbb{P}\left(F_{X}^{-1}(U) \leq y\right)=\mathbb{P}\left(U \leq F_{X}(y)\right)=F_{X}(y).
+$$
+也就是说 $Y$ 和 $X$ 具有同样的概率分布。这样的话，如果我们可以抽取均匀分布的随机数的话，在 $F_X^{-1}$ 存在的条件下，我们就可以产生任何连续随机变量 $X$ 的随机数。这种对连续随机变量 $X$ 抽样的方法叫作**直接抽样**（也叫逆方法，或逆分布函数变换法）。
+
+我们也可以从另外一个角度考虑这个问题，因为对任何的连续随机变量$X$， $F_X(X) \sim U(0, 1)$，所以直接抽样也就是先从 $U\sim U(0,1)$ 中抽样后再代入 $F_X^{-1}$。
+
+```{example}
+如果 $X \sim \exp(\lambda)$，我们有
+
+$$F_{X}(x)=\left\{\begin{array}{ll}{0} & {\text { for } x<0;} \\
+{1-e^{-\lambda x}} & {\text { for } x \geq 0.}\end{array}\right.$$假设 $\lambda = 1$，那么我们如何从指数分布中实现直接抽样？
+```
+
+```{r exp-dir}
+lambda <- 1
+u <- runif(20)
+x <- -1/lambda * log(1 - u)
+curve(1 - exp(-x), 0, 5, ylab = 'u', 
+      main = 'Direct sampling from exp(1)') 
+for (i in 1:length(x)){
+  lines(c(x[i], x[i]), c(u[i], 0), lty = 'dashed')
+  lines(c(x[i], 0), c(u[i], u[i]), lty = 'dashed')
+}
+```
+
+## 拒绝抽样
+
+### 拒绝抽样的思想
+
+假设我们想抽取服从 $f(x)$ 的随机变量 $X$ 的随机数，且我们无法计算  $F^{-1}_X$，这时候拒绝抽样是一种可行的抽样方法。
+
+拒绝抽样的思想是：如果我们难以从 $f(x)$ 中抽样，我们可以从一个易于抽样的概率密度 $g(x)$ 中抽样，然后通过选择接受或者拒绝 $g(x)$ 的抽样来使得被接受的样本的概率分布服从 $f(x)$，从而得到了来自 $f(x)$ 的随机数。这里我们把 $g(x)$ 称作 **猜想概率密度**，$f(x)$ 称作 **目标概率密度**。
+
+这里的猜想概率密度 $g(x)$ 需要满足两个条件：
+
+1. $\mathcal{X}_f \subset \mathcal{X}_g$，其中 $\mathcal{X}_f$ 为 $f(x)$ 的支集 （对应的随机变量可能取到的值的集合，对应英文里的 support）， $\mathcal{X}_g$ 为 $g(x)$ 的支集。如果 $f(x)$ 的支集中存在有 $g(x)$ 取不到的区域，那么这个区域就无法得到对应的抽样，这种情况下 $g(x)$ 作为猜想概率密度就是不合理的。 
+
+2. $\frac{f(x)}{g(x)}$ 是有界的，也就是说，对于 $\mathcal{X}_f$ 任意 $x$，都有 $\frac{f(x)}{g(x)} \leq M$。这等价于：$$M=\sup _{x \in \mathcal{X}_{f}} \frac{f(x)}{g(x)}<\infty.$$
+
+满足这两个条件的 $g(x)$ 最简单的选择就是一个比 $f(x)$ 更加厚尾的分布。
+
+### 拒绝抽样算法 {#rejection}
+
+
+::::{.method}
+::: {.center data-latex=""}
+**拒绝抽样算法 (Rejection Sampling)**
+:::
+
+
+1. 从 $g(x)$ 中抽取随机数 $x$。
+
+2.  计算接受概率
+$$\alpha = \frac{f(x)}{M g(x)}.$$
+
+3. 产生均匀分布的随机数 $U \sim U(0,1)$。如果 $U \leq \alpha$，接受 $x$，否则拒绝 $x$。如果拒绝，则返回第1步。也就是说，以 $\alpha = \frac{f(x)}{M g(x)}$ 为接受概率来接受第2步中抽取的随机数 $x$。
+::::
+
+重复以上过程直到得到目标数目的服从分布 $f(x)$ 的随机数。在拒绝抽样中，所有被接受的随机数的概率分布应该服从 $f(x)$。
+
+
+```{example}
+以自由度为 $2$ 的 $t_2$ 分布为猜想概率密度，使用拒绝抽样算法抽取正态分布 $N(0,1)$ 的随机数。
+```
+
+我们先来看一下 $N(0, 1$ 和 $t_2$ 的概率密度函数。如图~\@ref(fig:rsnorm)~，$t_2$ 比 $N(0,1)$ 更加厚尾，所以可以作为猜想概率密度。
+
+```{r rsnorm, fig.cap="$N(0,1)$ 和 $t_2$ 分布的概率密度函数", echo=FALSE}
+library(ggplot2)
+cggplot(data.frame(x=runif(1000, -6, 6)), aes(x)) +
+  stat_function(fun=dnorm,  aes(colour = 'Normal')) +
+  stat_function(fun=dt, args = list(df = 2), aes(colour = 't'))  +
+  scale_colour_manual("分布", values = c("red",  "green"), labels = c('N(0, 1)', expression(t[2]))) +
+  ylab('密度')
+```
+
+根据拒绝抽样算法的步骤，我们可以通过以下过程来抽取标准正态分布的随机数。
+
+```{r rejection}
+iter <- 10000
+k <- 0
+X <- vector()
+
+# 计算 M
+fg <- function(x){dnorm(x)/dt(x, df = 2)}
+M <- optim(1, fg, method = 'BFGS', 
+           control = list(fnscale = -1))$value
+
+# 拒绝抽样
+for (i in seq_len(iter)){
+  u <- runif(1)
+  x <- rt(1, 2)
+  alpha <- dnorm(x)/(dt(x, df = 2) * M)
+  if (u <= alpha){
+    X[k] <- x
+    k <- k + 1
+  }
+}
+
+# 计算接受概率
+cat('接受概率为', k/iter, ' \n')
+cat('1/M = ', 1/M, ' \n')
+
+# 直方图
+hist(X, prob = TRUE)
+curve(dnorm, add = TRUE, col = "red")
+```
+
+### 拒绝抽样的性质
+
+拒绝抽样的性质之一为：在整个抽样过程中，所有抽取的随机数被接受的概率为 $\frac{1}{M}$，我们可以通过以下推导得到 [@peng2018advanced]。
+
+$$\begin{aligned} \mathbb{P}(x \text { 被接受}) &=\mathbb{P}\left(U \leq \frac{f(x)}{M g(x)}\right) \\ &=\int \mathbb{P}\left(U \leq \frac{f(x)}{M g(x)} |x \right) g(x) d x \\ &=\int \frac{f(x)}{M g(x)} g(x) d x \\ &=\frac{1}{M} \end{aligned}.$$
+这个性质可以为我们选择猜想概率密度 $g(x)$ 提供一定的参考依据。理论上讲，任何的概率密度只要满足 $\mathcal{X}_f \subset \mathcal{X}_g$ 都可以作为猜想概率密度，但在实际中，我们应该选择一个与 $f(x)$ 尽可能接近的概率密度作为 $g(x)$，这样的话我们才可以得到尽可能大的接受概率，从而提高抽样效率。在例5.2 中，我们也可以看出接受概率和 $\frac{1}{M}$ 非常接近。
+
+
+
+拒绝抽样的第二个性质为：被接受的随机数服从目标概率密度 $f(x)$，也就是说被接受的随机数的分布函数为 $F(x) = \int_{-\infty}^t f(x) dx$，我们可以通过以下推导得到 [@peng2018advanced]。
+
+$$\begin{aligned} \mathbb{P}(X \leq t | X \text { 被接受}) &=\frac{\mathbb{P}(X \leq t, X \text { 被接受})}{\mathbb{P}(X \text { 被接受 })} \\ &=\frac{\mathbb{P}(X \leq t, X \text { 被接受})}{1 / M} \\ &=M \mathbb{E}_{g} \mathbb{E}\left[\mathcal{I}\{x \leq t\} \mathcal{I}\left\{U \leq \frac{f(x)}{M g(x)}\right\} | X=x\right] \\ &=M \mathbb{E}_{g}\left[\mathcal{I}\{X \leq t\} \mathbb{E}\left[\mathcal{I}\left\{U \leq \frac{f(x)}{M g(x)}\right\} | X=x\right]\right] \\ &=M \mathbb{E}_{g}\left[\mathcal{I}\{X \leq t\} \frac{f(X)}{c g(X)}\right] \\ &=\int_{-\infty}^{\infty} 1\{x \leq t\} \frac{f(x)}{g(x)} g(x) d x \\ &=\int_{-\infty}^{t} f(x) d x \\ &=F(t) \end{aligned}.$$
+
+
+
+```{block, type='bookcomment'}
+**几点注意**
+
+\begin{enumerate}
+\item
+  在拒绝抽样中，任何 \(M^{\prime} \geq M\)
+  都可以采用，只是抽样效率会降低。
+\item
+  在抽样过程中，尽量使用对数 (\(\log\)) 形式。
+\item
+  \(f(x)\) 的维度越高，拒绝抽样的效率越低。
+\end{enumerate}
+```
+
+
+## 重要性抽样
+
+

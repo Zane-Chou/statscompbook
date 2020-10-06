@@ -1,0 +1,48 @@
+# 贝叶斯计算简介 {#bayesiancomputing}
+
+
+## 介绍
+
+给定先验和数据，贝叶斯计算主要围绕两个步骤：计算后验分布 $p(\theta|y)$ 和后验预测分布 $p(\tilde{y}| y)$，其核心是进行后验归纳（Summarizing the posterior）。在第 \@ref(bayesianthinking) 中，我们举了几个例子，这些例子可以得到解析结果，对后验分布的模拟直接使用多数计算机语言（如 R、Python等）中标准分布（如正态分布、伽马分布、$\beta$ 分布、泊松分布等）模块或者进行网格数值计算可以实现。然而，对于更加复杂或不常见的模型或高维模型的后验抽样，需要借助更复杂的贝叶斯计算算法来完成。
+
+贝叶斯计算的主要方法包括：（1）最大化后验（Maximum a Posteriori，简称 MAP），这种方法只使用点估计，忽略不确定性，（2）基于贝叶斯中心极限定理（Bayesian Central Limit Theorem，简称 Bayesian CLT）对后验分布进行高斯近似，将复杂分布的抽样转化为高斯分布的抽样问题，（3）独立蒙特卡洛方法（），（4）马尔科夫链蒙特卡洛方法。本章主要围绕前两种方法，第 \@ref(mc) 章和第 \@ref(mcmc) 章分别讲述独立蒙特卡洛（Independent Monte Carlo Methods）方法和马尔科夫链蒙特卡洛（Markov chain Monte Carlo，简称 MCMC）方法。
+
+
+
+## 最大化后验（MAP）
+
+有时候我们并不需要 $\theta$ 的整个后验分布，只需要一个点估计，这时我们可以采用最大化后验（Maximum a Posteriori，简称 MAP）：
+
+$$\hat{{\theta}}=\underset{{\theta}}{\operatorname{argmax}} p({\theta} |y)=\underset{{\theta}}{\operatorname{argmax}} \log [f(y | {\theta})]+\log [p({\theta})].$$
+这和极大似然估计很像，只是多考虑了先验信息。我们可以使用优化算法来得到 $\theta$ 的点估计。 通过 MAP 来得到 $\theta$ 的点估计其实就是  $\theta$ 的后验众数（Posterior mode）。
+
+
+
+
+## 贝叶斯中心极限定理
+
+我们可以通过贝叶斯中心极限定理将后验分布近似为高斯分布，这会使得后验分布的汇总变的非常简单。根据 Berstein-Von Mises 定理，当样本量足够大时，后验分布不依赖于先验分布，因此可以用高斯分布来近似：$\theta|y \sim \text{Normal}$。
+
+::::{.method}
+::: {.center data-latex=""}
+**贝叶斯中心极限定理**
+:::
+
+
+当样本量 $n$ 足够大时，$\theta$ 的后验分布近似高斯分布：
+
+$$\theta \sim \operatorname{Normal}\left(\hat{{\theta}}_{MAP}, \left[\mathbf{I}\left(\hat{{\theta}}_{M A P}\right)\right]^{-1}\right),$$
+其中 $\mathbf{I}\left(\hat{{\theta}}_{M A P}\right)$ 的第 $(j ,k)$ 个元素为 $-\frac{\partial^{2}}{\partial \theta_{j} \partial \theta_{k}} \log [p(\theta | y)]$ 在 $\hat{\theta}_{MAP}$ 处的取值。
+::::
+
+## 案例：澳大利亚艾滋病死亡率分析
+
+我们将使用 R 中关于1991年7月1日之前在澳大利亚被诊断为艾滋病患者的数据集。我们首先看以下数据概览。
+
+```{r, echo = TRUE}
+data("Aids2", package = "MASS")
+head(Aids2)
+```
+
+
+
