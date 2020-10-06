@@ -7,7 +7,26 @@ library(tidyverse) #
 pdf.options(height=10/2.54, width=10/2.54, family="GB1") # 注意：此设置要放在最后
 ```
 
-## 介绍 {#rootfinding-intro}
+## 牛顿算法的历史 {#rootfinding-intro}
+
+求根算法是人类使用最古老的算法之一。据记载，巴比伦法则（ Babylonian rule，公元前1800-1600
+年）已经被用于将平方根近似转换为现代符号，其公式与本书介绍的“牛顿法”相同。 Heron在Metrica
+一书中（公元50年）描述了相同的计算法则，在较早的书籍中将其称之为为“ Heron方法”。12世纪的代
+数学家Sharaf al-Din al-Tusi给出在数学上等同于牛顿法的方法，而15世纪的阿拉伯数学家Al-Kashi
+进一步使用了该形式用以寻找根。在西欧，亨利·布里格斯（Henry Briggs）在1633年出版的《不列颠
+三角学》（Trigonometria Britannica）一书中使用了类似的方法，他采用了一种更为繁琐的方法来求
+多项式方程式的根。范·舒滕（van Schooten）于1646年出版了该方法的简化版本，由奥格特雷德
+（Oughtred）在《克拉维斯数学》（Clavis Mathematica）（1647）中复现，尽管当时牛顿似乎并未意
+识到这一点。这大概是就是牛顿方法的出处。
+
+有关这一历史的详细说明，可在牛顿未出版的1664年笔记本中找到。到1669年，他将连续多项式线性化。
+但是，与之前已经记载的方法相比，几乎没有证据表明牛顿的方法在概念上更加创新。我们现在广为使
+用的牛顿-拉夫森（Newton-Raphson）方法的前身其实是牛顿首次将这一方法记录并加以讨论。牛顿的
+贡献体现在将其转化纯代数过程。而且牛顿使用了更一般的方法和符号来使他的想法更广泛地为人们所
+接受。牛顿的手稿直到1711年才出版，但较早时私下流出了该手稿的副本。拉夫森在1690年进一步简化
+了该技术，方法是完全消除连续的多项式，并使了迭代方法。该方法已经有些不同于牛顿的方法。但是，
+直到托马斯·辛普森（Thomas Simpson）撰写的《关于几个好奇和有用的主题的论文》（ On Several
+Curious and Useful Subjects）（1740）时，拉夫森的方法才得以被关注。
 
 
 ## 牛顿法
@@ -54,7 +73,7 @@ x_{n+1}=x_{n}-\frac{f\left(x_{n}\right)}{f^{\prime}\left(x_{n}\right)}.
 
     1. 如果 $|f(x_{n+1})| \leq \epsilon$，停止迭代；
     2. 否则，返回第 2 步。
-    
+
 ::::
 
 下面我们来看一下牛顿法更直观的解释。
@@ -68,14 +87,14 @@ x_{n+1}=x_{n}-\frac{f\left(x_{n}\right)}{f^{\prime}\left(x_{n}\right)}.
 现在我们将牛顿法在 R 中实现，以下 `newton.root()` 函数中的第一个参数为待求根的函数 $f(x)$，因为牛顿法中每一次迭代都需要求 $f(x)$ 和 $f^{\prime}(x)$ 在 $x_n$ 处的取值，因此我们定义了 R 函数 `ftn()` ，它的输入参数为 $f(x)$ 的表达式及 $x$ 的取值，输出为  $f(x)$ 和 $f^{\prime}(x)$。为了以防算法不收敛，我们加入参数 `max.iter` 来设置最大的迭代次数。具体代码如下。
 
 ```{r newton-root}
-newton.root <- function(f, x0 = 0, tol = 1e-9, 
+newton.root <- function(f, x0 = 0, tol = 1e-9,
                         max.iter = 100) {
   x <- x0
   cat(paste0("初始值：x = ", x, "\n"))
   fx <- ftn(f, x)
   iter <-  0
   # xs用来保存每步迭代得到的x值
-  xs <- list() 
+  xs <- list()
   xs[[iter + 1]] <- x
   # 继续迭代直到满足停止条件
   while ((abs(fx$f) > tol) && (iter < max.iter)) {
@@ -85,7 +104,7 @@ newton.root <- function(f, x0 = 0, tol = 1e-9,
     xs[[iter + 1]] <- x
     cat(paste0("迭代第", iter, "次：x = ", x, "\n"))
   }
-  
+
   # output depends on success of algorithm
   if (abs(fx$f) > tol) {
     cat("算法无法收敛\n")
@@ -118,12 +137,12 @@ roots <- unlist(newton.root(f, 5))
 ```{r, echo=FALSE}
 # plot
 library(ggplot2)
-cggplot(data.frame(x=c(-5, 5)), aes(x)) + 
-  stat_function(fun=function(x) x^2 - 5) + 
+cggplot(data.frame(x=c(-5, 5)), aes(x)) +
+  stat_function(fun=function(x) x^2 - 5) +
   ylab(expression(f(x))) +
   geom_hline(yintercept = 0, color = 'lightgrey') +
   geom_vline(xintercept = roots, linetype = 'longdash', color = 'red') +
   annotate(geom="text", x= roots[1:3] + 0.15, y=-0.5, label=c(expression(x[0]), expression(x[1]), expression(x[2])), color="red") + annotate(geom="text", x= roots[4] - 0.15, y=-0.5, label=c(expression(x[3])), color="red") +
-  geom_point(data = data.frame(x = roots, y = 0), aes(x = x, y = y), color = 'red', size = 2) + 
+  geom_point(data = data.frame(x = roots, y = 0), aes(x = x, y = y), color = 'red', size = 2) +
   ggtitle(parse(text = paste0('"牛顿法求根： "', ' ~ f(x) == ~ x^2 - 5')))
 ```
