@@ -3,7 +3,54 @@
 
 ## 介绍 {#optim-intro}
 
+优化算法的历史由来已久。牛顿（Newton）和和高斯（Gauss）提出了迭代方法以求出最佳值。十九世
+纪的法国大数学学皮埃尔·德·费马(Pierre de Fermat)和约瑟夫·拉格朗日伯爵(Lagrange)找到了基于
+代数公式来确定佳值的方法。
 
+优化算法中著名的“线性编程”（linear programming）一词是由George B. Dantzig提出的，该理论的
+许多内容是由Leonid Kantorovich于1939年提出的。这里特别要指出的是在这种情况下，编程不是指计
+算机编程，而是是指用于美国军方的优化训练和后勤保障时间的一种方法。该方法当时由Dantzig提出。
+Dantzig在1947年发表了著名的单纯型算法，而计算机学家冯诺依曼（John von Neumann）在同年提出
+了对偶理论。
+
+现代优化算法发展大概经历了三个阶段的发展。
+
+
+第一代的优化方法的大多数考虑局部最优，即最低点或最低点。全局最优值定义为所有谷值的最低点，
+这超出了这些方法的能力。
+
+有些算法涉及到迭代搜索。迭代搜索的思想是基于先前探索点的位置。它的比喻就像一个盲人爬山。此
+人必须知道他们的当前位置，移动方向和移动距离才能确定下一个位置。搜索过程会反复进行，直到到
+达山顶为止。当每个步骤花费很长时间时，此方法会遇到困难，因为优化的总时间等于每个步骤经过的
+时间与所采取步骤的数量的乘积。
+
+还有些算法对梯度或更高阶导数的依赖很强。梯度甚至更高阶导数的计算需要更多的计算资源，并且比
+其他方法更容易出错。现代计算机的自动微分工具很大程度上解决了这一问题。在应用中，这些方法无
+法解释为什么最优是最优的。另外，由于计算能力有限，这些方法并未在工程中得到广泛应用。一些商
+业软件工具或者开源软件如R，CPLEX，LINDO，GAMS，SNOPT和MATLAB均部署了这些算法。
+
+第二代优化算法出现在1980年代。工程师中使用最流行的方法之一是遗传算法（Genetic Algorithms），
+该算法由约翰·霍兰德（John Holland）于1960年发明。遗传算法的工作原理是“适者生存”。之后，模
+拟退火算法（Simulated Annealing）于1983年发表在《科学》杂志上。早期的科学杂志很少刊登具体
+的算法，该算法文章出现在该期刊是极不寻常的。模拟退火算法是一种全局优化算法，其灵感来自退火
+的物理热处理过程。
+
+后来开发了更多算法，例如粒子群优化，蚁群优化，禁忌搜索和人工蜂群。这组方法受自然界或其他启
+发式方法的启发。这些算法本质上是全局优化方法，而且它们不需要梯度的计算或更高的导数，他们也
+自然的支持并行计算。尽管这类算法有很多好处，但是主要问题是在达到全局最优值之前需要大量的试
+验点。这些方法非常适合仅由方程式组成的问题，或者仅需很少计算即可评估每个试验的效果。但是，
+在工程中，由于计算机辅助工程（CAE）工具被广泛采用和应用，评估每个设计的计算时间可能是数小
+时或数天。即使使用并行计算，评估数千个设计试验的总时间仍然是不切实际的。
+
+
+基于AI的方法在1990年代后期开始出现，成为第三代优化方法，并在最近几年逐渐成熟。这一代算法的
+思路是使用有限数量的设计试验（称为样本点）在设计变量和目标/约束之间构建机器学习模型。可以
+根据传统的实验设计（DOE）生成采样点，
+
+基于AI的方法的一大障碍是所谓的“维数诅咒”。由于需要一个样点来学习一个空间，假设每个维度仅使
+用三个点，对于一个10维问题，设计试验点的数量为59,049（即3 ^ 10）。设计试验次数的增长是指数
+级的，因此成为诅咒。由于这个原因，早期的基于AI的方法只能解决10维或更小的问题，并且很难解决
+高维问题。大量的机器学习和深度学习理论被应用到这里解决这一问题。
 
 
 ## 牛顿优化算法
@@ -25,7 +72,7 @@ $$x_{n+1}=x_{n}-\frac{f^{\prime}\left(x_{n}\right)}{f^{\prime\prime}\left(x_{n}\
 3. 计算 $|f^{\prime}(x_{n+1})|$。
     1. 如果 $|f^{\prime}(x_{n+1})| \leq \epsilon$，停止迭代；
     2. 否则，返回第 2 步。
-    
+
 ::::
 
 
@@ -40,7 +87,7 @@ $$x_{n+1}=x_{n}-\frac{f^{\prime}\left(x_{n}\right)}{f^{\prime\prime}\left(x_{n}\
 
 我们现在考虑多元优化算法，假设 $f: \mathbb{R}^d \rightarrow \mathbb{R}$，且 $f$ 的一阶和二阶偏导连续可导。我们记 $\mathbf{x} = (x_1, x_2, \cdots, x_d)^T$，那么我们有梯度向量
 
-$$\nabla f(\mathbf x) = \frac{\partial f({\mathbf{x}})}{\partial {\mathbf{x}}} = 
+$$\nabla f(\mathbf x) = \frac{\partial f({\mathbf{x}})}{\partial {\mathbf{x}}} =
     \left(
       \begin{array}{c}
         \frac{\partial f(\mathbf x)}{\partial x_1}\\
@@ -62,7 +109,7 @@ $$\mathbf{x_{n+1}}=\mathbf{x_n}-\left(\frac{\partial^2 f({ \mathbf{x}})}{\partia
 2. $||\mathbf x_n - \mathbf x_{n-1}|| < \epsilon$.
 
 3. $|f(\mathbf x_n) - f(\mathbf x_{n-1})|| < \epsilon$.
-                                                                                                
+
 
 ```{example}
 通过牛顿优化算法求 $f(x_1, x_2) = x_1^2 - x_1x_2 + x_2^2 + \exp(x_2)$ 的最小值。
@@ -83,7 +130,7 @@ newton <- function(f, x0, tol = 1e-9, max.iter = 100) {
     fx <- ftn(f, x)
     iter <- iter + 1
     xs[[iter + 1]] <- x
-    cat(paste0('迭代第', iter, '次：x1 = ', x[1], ', x2 = ', 
+    cat(paste0('迭代第', iter, '次：x1 = ', x[1], ', x2 = ',
                x[2], '\n'))
   }
   if (max(abs(fx$fgrad)) > tol){
@@ -95,7 +142,7 @@ newton <- function(f, x0, tol = 1e-9, max.iter = 100) {
 }
 
 ftn <- function(f, x){
-  df <- deriv(body(f), c('x1', 'x2'), func = TRUE, 
+  df <- deriv(body(f), c('x1', 'x2'), func = TRUE,
               hessian = TRUE)
   dfx <- df(x[1], x[2])
   f <- dfx[1]
@@ -115,14 +162,14 @@ g <- expand.grid(xg, yg)
 z <- f(g[,1], g[,2])
 f_long <- data.frame(x = g[,1], y = g[,2], z = z)
 library(ggplot2)
-cggplot(f_long, aes(x, y, z = z)) + 
-  geom_contour_filled(aes(fill = stat(level)), bins = 50) + 
+cggplot(f_long, aes(x, y, z = z)) +
+  geom_contour_filled(aes(fill = stat(level)), bins = 50) +
   guides(fill = FALSE) +
   geom_path(data = m, aes(x1, x2, z=0), col = 2, arrow = arrow()) +
   geom_point(data = m, aes(x1, x2, z=0), size = 3, col = 2) +
   xlab(expression(x[1])) +
   ylab(expression(x[2])) +
-  ggtitle(parse(text = paste0('"牛顿优化算法： "', ' ~ f(x[1],x[2]) == ~ x[1]^2 - x[1] * x[2] + x[2]^2 + exp(x[2])'))) 
+  ggtitle(parse(text = paste0('"牛顿优化算法： "', ' ~ f(x[1],x[2]) == ~ x[1]^2 - x[1] * x[2] + x[2]^2 + exp(x[2])')))
 ```
 
 
@@ -139,19 +186,19 @@ Nelder Mead 算法的思路是计算目标函数 $f(\cdot)$ 在 $n$ 维单纯形
 ```{r simplex1, fig.cap = "二维单纯形示例", echo=FALSE}
 t0 <- data.frame(x1 = c(0.5, 1.5, 1), x2 = c(1, -1, 3))
 s0 <- ggplot(data = t0, aes(x = x1, y = x2)) +
-  geom_point(size = 2, color = 'red') + 
+  geom_point(size = 2, color = 'red') +
   geom_polygon(col = 'red', fill = NA) +
   ggtitle("") +
   xlab(expression(x[1])) +
   ylab(expression(x[2])) +
-  xlim(c(0, 2)) + 
-  ylim(c(-6,6)) 
+  xlim(c(0, 2)) +
+  ylim(c(-6,6))
 s0
 ```
 
 #### 第一步：求函数值 {-}
 
-对每个单纯形的顶点 ${\mathbf x_j}$，计算函数值 $f({\mathbf x_j})$，其中 $j \in 1, 2, \cdots, n$，并将将所有顶点排序使得 
+对每个单纯形的顶点 ${\mathbf x_j}$，计算函数值 $f({\mathbf x_j})$，其中 $j \in 1, 2, \cdots, n$，并将将所有顶点排序使得
 
 $$f({\mathbf x_1})\leq f({\mathbf x_2})\leq\ldots\leq f({\mathbf x_{n+1}}).$$
 假设我们的目标是最小化 $f(\cdot)$，那么 $f({\mathbf x_{n+1}})$ 就是最差点。算法目标即使寻找更好的点来取代  $f({\mathbf x_{n+1}})$。
@@ -174,25 +221,25 @@ $${\mathbf x_r}={\mathbf x_0}+\alpha({\mathbf x_0}-{\mathbf x_{n+1}}),$$
 通常取 $\alpha=1$，这种情况下映射点和最差点到中点的距离相等。算法的下一步则取决于 $f({\mathbf x_r})$  的取值大小。
 
 1. $f({\mathbf x_1})\leq f({\mathbf x_r})<f({\mathbf x_n})$， 这种情况下 ${\mathbf x_r}$ 既不是最佳点也不是最差点，将 $\mathbf x_{n+1}$ 替换为 ${\mathbf x_r}$，形成新的单纯形，回到第一步。
-    
+
 2. $f({\mathbf x_r})<f({\mathbf x_1})$，即 ${\mathbf x_r}$ 为最佳点，那么在这个方向上继续延伸，得到延伸点（Expansion Point）：
 
 $$ {\mathbf x_e}={\mathbf x_0}+\gamma({\mathbf x_r}-{\mathbf x_0})，$$ 通常取 $\gamma = 2$。计算  $f({\mathbf x_e})$。
     - 如果 $f({\mathbf x_e}) < f({\mathbf x_r})$，那么延伸点比映射点更优，用延伸点 ${\mathbf x_e}$ 形成新的单纯形。
     - 如果 $f({\mathbf x_r})\leq f({\mathbf x_e})$，用映射点 ${\mathbf x_r}$ 形成新的单纯形。
-    
 
 
-    
+
+
 3. $f({\mathbf x_r})\geq f({\mathbf x_n})$，即 ${\mathbf x_r}$ 为最差点，这意味着在 ${\mathbf x_{n+1}}$ 和 ${\mathbf x_{r}}$ 之间可能存在谷点，这时寻找收缩点（contraction point）：
 
 $${\mathbf x_c}={\mathbf x_0}+\rho({\mathbf x_{n+1}}-{\mathbf x_0}),$$
 通常取 $\rho=0.5$。
     - 如果 $f({\mathbf x_c}) < f({\mathbf x_{n+1}})$，那么用收缩点 ${\mathbf x_c}$ 形成新的单纯形。
     - 如果 $f({\mathbf x_c}) \geq f({\mathbf x_{n+1}})$，说明收缩无效，需要一个更小的单纯形，这时将 ${\mathbf x_{1}}$ 以外的点按以下方式压缩（shrink）：
-    
+
     $${\mathbf x_i}={\mathbf x_1}+\sigma({\mathbf x_i}-{\mathbf x_1})，$$通常取 $\sigma = 0.5$，得到新的单纯形后返回第一步。
-  
+
 
 
 由此可见，Nelder Mead 算法只用到了函数值，不依赖于求导函数，是一种比较稳健的优化算法。
@@ -207,7 +254,7 @@ $${\mathbf x_c}={\mathbf x_0}+\rho({\mathbf x_{n+1}}-{\mathbf x_0}),$$
 由图 \@ref(fig:nelder) 可见，随着迭代过程，单纯形的体积越来越小，因此通常将单纯形的体积足够小做为Nelder Mead。有 $n+1$ 个顶点的单纯形的体积为：
 
 $$\frac{1}{2}|\mathrm{det}(\tilde{X})|,$$
-其中 
+其中
 
 $$\tilde{X}=\left({\mathbf x_1}-{\mathbf x_{n+1}},{\mathbf x_2-{\mathbf x_{n+1}}},\ldots, {\mathbf x_{n}-{\mathbf x_{n+1}}}\right).$$
 
@@ -239,12 +286,12 @@ g(\alpha) = f(\mathbf{x}_n - \alpha \nabla f(\mathbf{x}_n),
 library(ggplot2)
 f <- function(x) x^2 - 5
 gd.eg1 <- data.frame(x = 4:1, y = f(4:1))
-ggplot(data.frame(x=c(-5, 5)), aes(x)) + 
-  stat_function(fun=f) + 
+ggplot(data.frame(x=c(-5, 5)), aes(x)) +
+  stat_function(fun=f) +
   geom_path(data= gd.eg1, aes(x = x, y = y), arrow = arrow(), color = 'red')+
-  geom_point(data = gd.eg1, aes(x = x, y = y), color = 'red', size = 2) + 
+  geom_point(data = gd.eg1, aes(x = x, y = y), color = 'red', size = 2) +
   ggtitle(parse(text = paste0(' ~ f(x) == ~ x^2 - 5'))) + xlab(expression(x)) +
-  ylab(expression(f(x))) 
+  ylab(expression(f(x)))
 ```
 
 
@@ -284,14 +331,14 @@ g <- expand.grid(x, y)
 z <- f(g[,1], g[,2])
 f_long <- data.frame(x = g[,1], y = g[,2], z = z)
 library(ggplot2)
-ggplot(f_long, aes(x, y, z = z)) + 
-  geom_contour_filled(aes(fill = stat(level)), bins = 50) + 
+ggplot(f_long, aes(x, y, z = z)) +
+  geom_contour_filled(aes(fill = stat(level)), bins = 50) +
   guides(fill = FALSE) +
   geom_path(data = m, aes(x, y, z=0), col = 2, arrow = arrow()) +
   geom_point(data = m, aes(x, y, z=0), size = 3, col = 2) +
   xlab(expression(x[1])) +
   ylab(expression(x[2])) +
-  ggtitle(parse(text = paste0('~ f(x[1],x[2]) == ~ x[1]^2 + x[2]^2'))) 
+  ggtitle(parse(text = paste0('~ f(x[1],x[2]) == ~ x[1]^2 + x[2]^2')))
 ```
 
 值得注意的是，通常情况下梯度反方向迭代是符合逻辑的，但是当待优化函数中的某些参数存在高度相关关系时，梯度下降算法的收敛速度可能会降低。
@@ -332,14 +379,14 @@ g <- expand.grid(x, y)
 z <- f(g[,1], g[,2])
 f_long <- data.frame(x = g[,1], y = g[,2], z = z)
 library(ggplot2)
-ggplot(f_long, aes(x, y, z = z)) + 
-  geom_contour_filled(aes(fill = stat(level)), bins = 50) + 
+ggplot(f_long, aes(x, y, z = z)) +
+  geom_contour_filled(aes(fill = stat(level)), bins = 50) +
   guides(fill = FALSE) +
   geom_path(data = m, aes(x, y, z=0), col = 2, arrow = arrow()) +
   geom_point(data = m, aes(x, y, z=0), size = 3, col = 2) +
   xlab(expression(x[1])) +
   ylab(expression(x[2])) +
-  ggtitle(parse(text = paste0(' ~ f(x[1],x[2]) == ~ x[1]^2 + x[2]^2 - 1.6*x[1]*x[2]'))) 
+  ggtitle(parse(text = paste0(' ~ f(x[1],x[2]) == ~ x[1]^2 + x[2]^2 - 1.6*x[1]*x[2]')))
 ```
 
 
@@ -348,14 +395,14 @@ ggplot(f_long, aes(x, y, z = z)) +
 用梯度下降算法估计线性回归模型。
 ```
 
-假设一般的线性回归模型 $y = X\beta + \eta,~\eta \sim N(0, I)$，给定 $n$ 个观测样本，我们可以写出线性模型的损失函数 
+假设一般的线性回归模型 $y = X\beta + \eta,~\eta \sim N(0, I)$，给定 $n$ 个观测样本，我们可以写出线性模型的损失函数
 
-$$J(\beta) = \frac{1}{2n}(X\beta - y)^T(X\beta - y).$$ 对应的梯度向量为 
+$$J(\beta) = \frac{1}{2n}(X\beta - y)^T(X\beta - y).$$ 对应的梯度向量为
 
 $$\nabla J(\beta) = \frac{1}{n}X^T(X\beta-y).$$
 
 ```{r}
-gd.lm <- function(X, y, beta.init, alpha, tol = 1e-5, 
+gd.lm <- function(X, y, beta.init, alpha, tol = 1e-5,
                   max.iter = 100){
   beta.old <- beta.init
   J <- betas <- list()
@@ -363,7 +410,7 @@ gd.lm <- function(X, y, beta.init, alpha, tol = 1e-5,
     alpha <-
       optim(0.1, function(alpha) {
         lm.cost(
-          X, y, 
+          X, y,
           beta.old - alpha * lm.cost.grad(X, y, beta.old))
       }, method = 'L-BFGS-B', lower = 0, upper = 1)
     if (alpha$convergence == 0) {
@@ -374,20 +421,20 @@ gd.lm <- function(X, y, beta.init, alpha, tol = 1e-5,
   }
   betas[[1]] <- beta.old
   J[[1]] <- lm.cost(X, y, beta.old)
-  beta.new <- beta.old - 
+  beta.new <- beta.old -
     alpha * lm.cost.grad(X, y, beta.old)
   betas[[2]] <- beta.new
   J[[2]] <- lm.cost(X, y, beta.new)
   iter <- 0
-  while ((abs(lm.cost(X, y, beta.new) - 
+  while ((abs(lm.cost(X, y, beta.new) -
               lm.cost(X, y, beta.old))  > tol) &
          (iter < max.iter)) {
     beta.old <- beta.new
     if (alpha == 'auto'){
     alpha <-
       optim(0.1, function(alpha) {
-        lm.cost(X, y, beta.old - 
-          alpha * lm.cost.grad(X, y, beta.old))}, 
+        lm.cost(X, y, beta.old -
+          alpha * lm.cost.grad(X, y, beta.old))},
         method = 'L-BFGS-B', lower = 0, upper = 1)
     if (alpha$convergence == 0) {
       alpha <- alpha$par
@@ -395,13 +442,13 @@ gd.lm <- function(X, y, beta.init, alpha, tol = 1e-5,
       alpha <- 0.1
     }
     }
-    beta.new <- beta.old - 
+    beta.new <- beta.old -
       alpha * lm.cost.grad(X, y, beta.old)
     iter <- iter + 1
     betas[[iter + 2]] <- beta.new
     J[[iter + 2]] <- lm.cost(X, y, beta.new)
   }
-  if (abs(lm.cost(X, y, beta.new) - 
+  if (abs(lm.cost(X, y, beta.new) -
           lm.cost(X, y, beta.old)) > tol){
     cat('算法无法收敛 \n')
   } else{
@@ -440,26 +487,26 @@ lm.cost.grad <- function(X, y, beta){
   (1/n)*(t(X)%*%(X%*%beta - y))
 }
 ## Use optimized alpha
-gd.auto <- gd.lm(X, y, beta.init = c(-4,-5), alpha = 'auto', 
+gd.auto <- gd.lm(X, y, beta.init = c(-4,-5), alpha = 'auto',
                  tol = 1e-5, max.iter = 10000)
 
 ## alpha = 0.1
-gd1 <- gd.lm(X, y, beta.init = c(-4,-5), alpha = 0.1, 
+gd1 <- gd.lm(X, y, beta.init = c(-4,-5), alpha = 0.1,
              tol = 1e-5, max.iter = 10000)
 
 ## alpha = 0.01
-gd2 <- gd.lm(X, y, beta.init = c(-4,-5), alpha = 0.01, 
+gd2 <- gd.lm(X, y, beta.init = c(-4,-5), alpha = 0.01,
              tol = 1e-5, max.iter = 10000)
 ```
 
 ```{r niter}
-niter <- data.frame(alpha = c('auto', 0.1, 0.01), 
+niter <- data.frame(alpha = c('auto', 0.1, 0.01),
                     niter = c(gd.auto$niter, gd1$niter, gd2$niter))
 knitr::kable(
   niter, caption = '不同 $\\alpha$ 对应的梯度下降算法的迭代次数',
   booktabs = TRUE,  col.names = c("$\\alpha$", '迭代次数'),
-  
-) 
+
+)
 ```
 
 从表~\@ref(tab:niter)~中我们可以发现在每次迭代过程中对 $\alpha$ 进行优化可以显著提高计算效率。如图~\@ref(fig:gd2)~，如果 $\alpha$ 较小，迭代的次数就会增加，因此收敛过程比较缓慢。
@@ -472,10 +519,10 @@ gd2.betas <- as.data.frame(t(do.call(cbind, gd2$coef)))
 colnames(gd1.betas) <- colnames(gd2.betas) <- c('beta0', 'beta1')
 gd1.betas <- gd1.betas %>% mutate(Iteration = 1:nrow(gd1.betas)) %>% melt(id.vars = 'Iteration', variable.name = 'coef')
 gd2.betas <- gd2.betas %>% mutate(Iteration = 1:nrow(gd2.betas)) %>% melt(id.vars = 'Iteration', variable.name = 'coef')
-p1 <- ggplot(gd1.betas, aes(Iteration, value)) + 
+p1 <- ggplot(gd1.betas, aes(Iteration, value)) +
   geom_line(aes(colour = coef)) + ggtitle(bquote(alpha == 0.1)) + xlim(c(0,500)) +
   scale_colour_discrete(name = '', labels = expression(beta[0],beta[1]))
-p2 <- ggplot(gd2.betas, aes(Iteration, value)) + 
+p2 <- ggplot(gd2.betas, aes(Iteration, value)) +
   geom_line(aes(colour = coef)) + ggtitle(bquote(alpha == 0.01)) + xlim(c(0,500)) +
   scale_colour_discrete(name = '', labels = expression(beta[0],beta[1]))
 library(patchwork)
@@ -485,7 +532,7 @@ p1+p2
 
 ### 随机梯度下降算法
 
-梯度下降算法通常收敛速度较慢，因为在每次迭代中对每个样本值都需要计算梯度，在样本量较大时计算量会随之增大。随机梯度下降算法的思想是在算法的每次迭代更新时只考虑一个样本。以线性回归模型为例，就是将梯度下降算法中的 
+梯度下降算法通常收敛速度较慢，因为在每次迭代中对每个样本值都需要计算梯度，在样本量较大时计算量会随之增大。随机梯度下降算法的思想是在算法的每次迭代更新时只考虑一个样本。以线性回归模型为例，就是将梯度下降算法中的
 
 $$\nabla J(\beta) = \frac{1}{n}X^T(X\beta-y).$$ 替换为 ：
 
@@ -515,8 +562,8 @@ $$\nabla J(\beta)_i = X_i^T(X_i\beta-y_i),$$ 完整的迭代过程如下。
 随机梯度下降在R中的实现如下。
 
 ```{r}
-sgd.lm <- function(X, y, beta.init, 
-                   alpha = 0.5, n.samples = 1, 
+sgd.lm <- function(X, y, beta.init,
+                   alpha = 0.5, n.samples = 1,
                    tol = 1e-5, max.iter = 100){
   n <- length(y)
   beta.old <- beta.init
@@ -524,26 +571,26 @@ sgd.lm <- function(X, y, beta.init,
   sto.sample <- sample(1:n, n.samples, replace = TRUE)
   betas[[1]] <- beta.old
   J[[1]] <- lm.cost(X, y, beta.old)
-  beta.new <- beta.old - alpha * 
+  beta.new <- beta.old - alpha *
     sgd.lm.cost.grad(X[sto.sample, ], y[sto.sample], beta.old)
   betas[[2]] <- beta.new
   J[[2]] <- lm.cost(X, y, beta.new)
   iter <- 0
   n.best <- 0
-  while ((abs(lm.cost(X, y, beta.new) - 
-              lm.cost(X, y, beta.old))  > tol) & 
+  while ((abs(lm.cost(X, y, beta.new) -
+              lm.cost(X, y, beta.old))  > tol) &
          (iter + 2 < max.iter)){
     beta.old <- beta.new
     sto.sample <- sample(1:n, n.samples, replace = TRUE)
-    beta.new <- beta.old - 
-      alpha * sgd.lm.cost.grad(X[sto.sample, ], 
-                               y[sto.sample], 
+    beta.new <- beta.old -
+      alpha * sgd.lm.cost.grad(X[sto.sample, ],
+                               y[sto.sample],
                                beta.old)
     iter <- iter + 1
     betas[[iter + 2]] <- beta.new
     J[[iter + 2]] <- lm.cost(X, y, beta.new)
   }
-  if (abs(lm.cost(X, y, beta.new) - lm.cost(X, y, beta.old)) 
+  if (abs(lm.cost(X, y, beta.new) - lm.cost(X, y, beta.old))
       > tol){
     cat('算法无法收敛。 \n')
   } else{
@@ -584,7 +631,7 @@ sgd.est <- sgd.lm(X, y, beta.init = c(-4,-5), alpha = 0.05, tol = 1e-5, max.iter
 betas <- as.data.frame(t(do.call(cbind,sgd.est$coef)))
 colnames(betas) <- c('beta0', 'beta1')
 betas <- as.data.frame(betas) %>% mutate(Iteration = 1:nrow(betas)) %>% melt(id.vars = 'Iteration', variable.name = 'coef')
-ggplot(betas, aes(Iteration, value)) + 
+ggplot(betas, aes(Iteration, value)) +
   geom_line(aes(colour = coef)) +
   scale_colour_discrete(name = '', labels = expression(beta[0],beta[1]))
 ```
@@ -599,7 +646,7 @@ func = function(beta) {
     sum((y - beta[1] - beta[2] * x)^2)/2/length(y)
 }
 grad = function(beta) {
-    matrix(c(sum(-2 * (y - beta[1] - beta[2] * x)), sum(-2 * x * (y - beta[1] - 
+    matrix(c(sum(-2 * (y - beta[1] - beta[2] * x)), sum(-2 * x * (y - beta[1] -
         beta[2] * x))), 2, 1)/length(y)
 }
 hess = function(beta) {
@@ -609,7 +656,7 @@ newton <- function(f3, x0, tol = 1e-9, n.max = 100) {
   # Newton's method for optimisation, starting at x0
   # f3 is a function that given x returns the list
   # {f(x), grad f(x), Hessian f(x)}
-  
+
   x <- x0
   f3.x <- f3(x)
   xs <- list()
@@ -629,7 +676,7 @@ newton <- function(f3, x0, tol = 1e-9, n.max = 100) {
   }
 }
 ## Newton optimization
-optimOut <- newton(function(beta){list(func(beta), grad(beta), hess(beta))}, c(-4, -5))  
+optimOut <- newton(function(beta){list(func(beta), grad(beta), hess(beta))}, c(-4, -5))
 ```
 
 ```{r optimcomp, fig.asp=0.8, echo=FALSE, fig.cap='梯度下降算法、随机梯度下降算法和牛顿算法的收敛情况比较'}
@@ -643,8 +690,8 @@ z <- sapply(1:dim(g)[1], function(i){lm.cost(X, y, c(g[i,1],g[i,2]))})
 f_long <- data.frame(x = g[,1], y = g[,2], z = z)
 colors <- c("SGD" = "blue", "Newton" = "red", "GD" = "green")
 
-ggplot(f_long, aes(x, y, z = z)) + 
-  geom_contour_filled(aes(fill = stat(level)), bins = 200) + 
+ggplot(f_long, aes(x, y, z = z)) +
+  geom_contour_filled(aes(fill = stat(level)), bins = 200) +
   guides(fill = FALSE) +
   geom_path(data = trace.sgd, aes(x, y, z=0, color = 'SGD'), arrow = arrow(), alpha = 0.5) +
   geom_point(data = trace.sgd, aes(x, y, z=0, color = 'SGD'), size = 1.1, alpha = 0.5) +
@@ -695,7 +742,7 @@ L &= \mathrm{log}\left[\prod_{i=1}^np_i^{y_i}(1-p_i)^{1-y_i}\right]\\\
 
 
 ```{r}
-sgd.logisticReg <- function(X, y, beta.init, alpha = 0.5, 
+sgd.logisticReg <- function(X, y, beta.init, alpha = 0.5,
   n.samples = 1, tol = 1e-5, max.iter = 100){
   n <- length(y)
   beta.old <- beta.init
@@ -704,30 +751,30 @@ sgd.logisticReg <- function(X, y, beta.init, alpha = 0.5,
   # sto.sample <- 1:n
   betas[[1]] <- beta.old
   J[[1]] <- sgd.logisticReg.cost(X, y, beta.old)
-  beta.new <- beta.old - 
-    alpha * sgd.logisticReg.cost.grad(X[sto.sample, ], 
-                                      y[sto.sample], 
+  beta.new <- beta.old -
+    alpha * sgd.logisticReg.cost.grad(X[sto.sample, ],
+                                      y[sto.sample],
                                       beta.old)
   betas[[2]] <- beta.new
   J[[2]] <- sgd.logisticReg.cost(X, y, beta.new)
   iter <- 0
   n.best <- 0
-  
-  while ((abs(sgd.logisticReg.cost(X, y, beta.new) - 
-              sgd.logisticReg.cost(X, y, beta.old))  > tol) & 
+
+  while ((abs(sgd.logisticReg.cost(X, y, beta.new) -
+              sgd.logisticReg.cost(X, y, beta.old))  > tol) &
          (iter + 2 < max.iter)){
     beta.old <- beta.new
     sto.sample <- sample(1:n, n.samples, replace = TRUE)
-    beta.new <- beta.old - 
-      alpha * sgd.logisticReg.cost.grad(X[sto.sample, ], 
-                                        y[sto.sample], 
+    beta.new <- beta.old -
+      alpha * sgd.logisticReg.cost.grad(X[sto.sample, ],
+                                        y[sto.sample],
                                         beta.old)
     iter <- iter + 1
     betas[[iter + 2]] <- beta.new
     J[[iter + 2]] <- sgd.logisticReg.cost(X, y, beta.new)
   }
-  
-  if (abs(sgd.logisticReg.cost(X, y, beta.new) - 
+
+  if (abs(sgd.logisticReg.cost(X, y, beta.new) -
           sgd.logisticReg.cost(X, y, beta.old)) > tol){
     cat('算法无法收敛。 \n')
   } else{
@@ -792,14 +839,14 @@ beta.init <- runif(14, -1, 0)
 
 
 ```{r}
-res <- sgd.logisticReg(X_train, y_train, 
-                      beta.init, alpha = 0.01, 
-                      n.samples = 1, 
+res <- sgd.logisticReg(X_train, y_train,
+                      beta.init, alpha = 0.01,
+                      n.samples = 1,
                       max.iter = 1000, tol = 1e-6)
 ```
 
 ```{r}
-plot(1:length(res$cost), res$cost, type = "l", 
+plot(1:length(res$cost), res$cost, type = "l",
   xlab = "Iterations", ylab = "Loss")
 ```
 
@@ -823,5 +870,3 @@ print(paste0("accuracy:", sum(y_predicted==y_test)/656))
 
 * @bottou2012stochastic 是实战中随机梯度下降算法通常用到的一些技巧。
 * @zeiler2012adadelta 是关于如何适应性的选择梯度下降算法和随机梯度下降算法中的 $\alpha$。
-
-
