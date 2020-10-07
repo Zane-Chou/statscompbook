@@ -7,7 +7,7 @@ library(tidyverse) #
 pdf.options(height=10/2.54, width=10/2.54, family="GB1") # 注意：此设置要放在最后
 ```
 
-## 牛顿算法的历史 {#rootfinding-intro}
+## 牛顿算法的历史 {#newtonhistory}
 
 求根算法是人类使用最古老的算法之一。据记载，巴比伦法则（ Babylonian rule，公元前1800-1600
 年）已经被用于将平方根近似转换为现代符号，其公式与本书介绍的“牛顿法”相同。 Heron在Metrica
