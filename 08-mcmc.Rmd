@@ -1,5 +1,23 @@
 # 马尔科夫链蒙特卡洛抽样 {#mcmc}
 
+Monte Carlo方法，通常可追溯到1940年代后期的冯诺依曼在曼哈顿计划中的应用。第一个MCMC算法与
+另一台名为MANIAC的计算机相关，该计算机是在1952年初在Metropolis的指挥下在洛斯阿拉莫斯实验室
+建造。以当时项目参与人物理学家和数学家Metropolis命名的Metropolis算法一直被使用到如今。
+
+
+Metropolis算法后来Hastings在1970年Metropolis算法后来被推广和扩展，形成了Metroplis-Hastings
+算法。Hastings和他的学生Peskun于1973年，1981年把该算法推广作为作为一般的统计模拟工具。
+
+
+统计物理中使用的具有里程碑意义的吉布斯抽样由Geman兄弟于1984的论文进入统计应用领域。Gibbs名
+字来自物理学家威拉德·吉布斯（Willard Gibbs，1839–1903年）。
+
+
+Gelfand和Smith在1990年的一篇论文大量使用了MCMC方法，之后激发了新的贝叶斯方法，统计计算中使
+用Gibbs抽样和Metropolis-Hastings算法。有趣的是，Tanner和Wong（1987）的论文与Gelfand和Smith
+（1990）的论文，证明从条件分布模拟就足够模拟联合分布渐近分布。这在理论上证明了MCMC方法的科
+学性。至此以后，MCMC方法得到了蓬勃发展，已经成为机器学习，统计计算中最为核心的计算工具之一。
+
 ## 介绍
 
 在章节~\@ref(rejection)~中的拒绝抽样算法需要有一个合理的猜想概率密度 $g(x)$，如图~\@ref(mcmc)~所示，如果 $g(x)$ 与目标概率密度 $f(x)$ 相差较远，拒绝抽样可能会效率很低甚至无法收敛。马尔科夫链蒙特卡洛（Markov chain Monte Carlo，MCMC）模拟则可以通过一个可适应性的猜想概率密度，也就是在每一步抽样中通过调整猜想概率使其尽可能的靠近目标概率密度。
@@ -58,7 +76,7 @@ p1 / p2
 
 ### 随机游走 Metropolis-Hastings
 
-在随机游走 Metropolis-Hastings 中， $g(x^*|x_{t-1})$ 定义成 $x^* = x_{t-1} + \epsilon$，其中 $\epsilon$ 服从一个以 0 为中心的对称分布 $q$，那么我们有 
+在随机游走 Metropolis-Hastings 中， $g(x^*|x_{t-1})$ 定义成 $x^* = x_{t-1} + \epsilon$，其中 $\epsilon$ 服从一个以 0 为中心的对称分布 $q$，那么我们有
 $$g(x^*|x_{t-1}) = q(\epsilon),$$ 并且 $$g(x_{t-1}|x^*)  = q(-\epsilon) = q(\epsilon).$$
 此时因为 $g(x^*|x_{t-1}) = g(x_{t-1}|x^*)$，Metropolis-Hastings 算法中的接受概率 $\alpha$ 就变成了 $$\alpha = \min\left(1, \frac{f(x^*)}{f(x_{t-1})}\right).$$ 具体来讲，随机游走 Metropolis-Hastings 算法^[随机游走 Metropolis-Hastings 算法也就是最原始的 Metropolis 算法。]如下。
 
@@ -73,7 +91,7 @@ $$g(x^*|x_{t-1}) = q(\epsilon),$$ 并且 $$g(x_{t-1}|x^*)  = q(-\epsilon) = q(\e
   为中心的对称分布。让 \(x^* = x_{t-1} + \epsilon\)。
 
 - 计算接受概率
-  
+
   \[\alpha = \min\left(1, \frac{f(x^*)}{f(x_{t-1})}\right).\]
 
 - 产生均匀分布的随机数 \(U \sim U(0,1)\)，如果 \(U \leq \alpha\)，接受
@@ -94,7 +112,7 @@ f <- function(x) {
 }
 ggplot(data.frame(x=runif(1000, -5, 8)), aes(x)) +
   stat_function(fun = f) +
-  ylab('f(x)') 
+  ylab('f(x)')
 ```
 
 接下来我们写出猜想概率密度函数。假设 $\sigma = 4$，即 $x^* \sim N(x_{t-1}, 16)$。
@@ -118,10 +136,10 @@ rw.mh <- function(x0, f, g, n.steps = 1000, ...){
     if (runif(1) < alpha){
       x <- x.new
     }
-    samples[i,] <- x 
+    samples[i,] <- x
   }
   return(samples)
-} 
+}
 ```
 
 对于  $f \sim 0.3 * N(0, 1) + 0.7 * N(4, 1)$ 的抽样为：
@@ -141,8 +159,8 @@ hist(samples, prob =TRUE)
 我们还可以画出抽样的路径图（trace plot）。
 
 ```{r}
-qplot(1:n.steps, samples, geom = "line", xlab = "迭代次数", 
-      ylab = "抽样") + 
+qplot(1:n.steps, samples, geom = "line", xlab = "迭代次数",
+      ylab = "抽样") +
   theme(text = element_text(family = "STSong"))
 ```
 
@@ -158,7 +176,7 @@ $$f_{X_1,X_2, \cdots, X_p}(x_1, x_2, \cdots, x_p) = \frac{1}{2\pi \sqrt{|\Sigma|
 
 ```{r}
 f <- function(x,
-              mu = c(-1, 1), 
+              mu = c(-1, 1),
               Sigma = matrix(c(1, .25, .25, 1.5), 2, 2)){
   logdet <- as.numeric(determinant(Sigma, TRUE)$modulus)
   cons <- length(mu) * log(2 * pi) + logdet
@@ -204,15 +222,15 @@ contour(x, y, z, add = TRUE)
 
 - 从 \(q\) 中抽取 \(\epsilon\)，其中 \(q\) 是一个以 0
   为中心的对称分布。让 \(x^* = x_{t-1} + \epsilon\)。
-  
+
 - 计算接受概率
-  
+
   \[\alpha = \min\left(1, \frac{f(x^*)g(x_{t-1})}{f(x_{t-1})g(x^*)}\right).\]
 
 - 产生均匀分布的随机数 \(U \sim U(0,1)\)，如果 \(U \leq \alpha\)，接受
   \(x^*\)，即以 \(\alpha\) 为接受概率接受
   \(x^*\)。若接受，\(x_t = x^*\)，否则 \(x_t = x_{t-1}\)。
-  
+
 ::::
 
 
@@ -266,15 +284,15 @@ gibbs <- function(x0, mu, Sigma, n.steps = 1000){
   samples <- matrix(NA, n.steps, 2)
   samples[1,1] <- x <- x0[1]
   samples[1,2] <- y <- x0[2]
- 
+
   for (i in 1:n.steps-1) {
-    samples[i+1, 1] <- x <- 
-      rnorm(1, mu1 + 
-              rho * sigma1 * (y-mu2) / 
+    samples[i+1, 1] <- x <-
+      rnorm(1, mu1 +
+              rho * sigma1 * (y-mu2) /
               sigma2, sqrt((sigma1^2) * (1 - rho^2) ))
     samples[i+1, 2] <- y <-
-      rnorm(1, mu2 + 
-              rho * sigma2 * (x-mu1) / 
+      rnorm(1, mu2 +
+              rho * sigma2 * (x-mu1) /
               sigma1, sqrt((sigma2^2) * (1 - rho^2) ))
   }
   return(samples)
@@ -295,7 +313,7 @@ $$\begin{aligned} \alpha &= \mathrm{min} \left(1, \frac{p\left(x_{i+1}, y\right)
 
 ## MCMC 的收敛效率
 
-在例6.1中，如果我们增大或减小 $\sigma$ ，会得到什么样的结论呢？我们分别画出 $\sigma = 4$，$\sigma = 50$ 以及 $\sigma = 0.1$ 的路径图。  
+在例6.1中，如果我们增大或减小 $\sigma$ ，会得到什么样的结论呢？我们分别画出 $\sigma = 4$，$\sigma = 50$ 以及 $\sigma = 0.1$ 的路径图。
 
 
 
@@ -312,13 +330,13 @@ samples2 <- rw.mh(-5, f, g2, n.steps)
 samples3 <- rw.mh(-5, f, g3, n.steps)
 
 # 画出路径图
-samples <- data.frame(iter = 1:n.steps, samples1 = samples1, 
+samples <- data.frame(iter = 1:n.steps, samples1 = samples1,
                       samples2 = samples2, samples3 = samples3)
-cggplot(samples, aes(iter)) + 
-  geom_line(aes(y = samples1, colour = "sd = 0.1")) + 
+cggplot(samples, aes(iter)) +
+  geom_line(aes(y = samples1, colour = "sd = 0.1")) +
   geom_line(aes(y = samples2, colour = "sd = 4")) +
   geom_line(aes(y = samples3, colour = "sd = 50")) +
-  scale_colour_discrete(expression(sigma),  
+  scale_colour_discrete(expression(sigma),
                         labels = c('0.1', '4', '50')) +
   xlab('迭代次数') + ylab('抽样')
 ```
@@ -328,15 +346,15 @@ cggplot(samples, aes(iter)) +
 ```{r compsigmahist, fig.cap = "不同的猜想概率密度标准差下混合正态分布的抽样密度图"}
 library(reshape2)
 library(dplyr)
-samples.melt <- data.frame(iter = 1:n.steps, 
-                           samples1 = samples1, 
-                           samples2 = samples2, 
-                           samples3 = samples3) %>% 
+samples.melt <- data.frame(iter = 1:n.steps,
+                           samples1 = samples1,
+                           samples2 = samples2,
+                           samples3 = samples3) %>%
   select(-iter) %>% melt()
-cggplot(samples.melt,aes(x=value, color=variable)) + 
-  geom_density(alpha=0.25, size = 1.3) + 
-  scale_color_discrete(expression(sigma), 
-                       labels = c('0.1', '4', '50')) + 
+cggplot(samples.melt,aes(x=value, color=variable)) +
+  geom_density(alpha=0.25, size = 1.3) +
+  scale_color_discrete(expression(sigma),
+                       labels = c('0.1', '4', '50')) +
   xlab('x') + ylab('密度')
 ```
 
@@ -347,7 +365,7 @@ cggplot(samples.melt,aes(x=value, color=variable)) +
 
 有了 $f(x)$ 的随机样本 $x_1, x_2, \cdots, x_M$，我们就可以计算相关的汇总统计量，比如我们可以计算它们的均值用来估计 $E_X$：
 
-$$E_X \approx \frac{1}{M}\sum\limits_{i = 1}^M x_i.$$ 
+$$E_X \approx \frac{1}{M}\sum\limits_{i = 1}^M x_i.$$
 因为我们用样本均值进行估计 $E_X$，所以会导致估计误差，这个误差会随着抽样数量的增加而减小。我们把这个误差称作蒙特卡洛误差（Monte Carlo Error）。一种测量蒙特卡洛误差的方法是计算样本均值的方差，即
 
 $$
@@ -359,16 +377,16 @@ $$
 ggcor <- function(x){
   bacf <- acf(x, plot = FALSE)
   bacfdf <- with(bacf, data.frame(lag, acf))
-  p <- ggplot(data = bacfdf, 
+  p <- ggplot(data = bacfdf,
               mapping = aes(x = lag, y = acf)) +
     geom_hline(aes(yintercept = 0)) +
     geom_segment(mapping = aes(xend = lag, yend = 0))
   return(p)
 }
 
-p1 <- ggcor(samples1) + ggtitle(bquote(sigma ~ "= 0.1")) 
-p2 <- ggcor(samples2) + ggtitle(bquote(sigma ~ "= 4")) 
-p3 <- ggcor(samples3) + ggtitle(bquote(sigma ~ "= 50")) 
+p1 <- ggcor(samples1) + ggtitle(bquote(sigma ~ "= 0.1"))
+p2 <- ggcor(samples2) + ggtitle(bquote(sigma ~ "= 4"))
+p3 <- ggcor(samples3) + ggtitle(bquote(sigma ~ "= 50"))
 library(patchwork)
 p1 / p2 / p3
 ```
@@ -389,4 +407,3 @@ coda::effectiveSize(samples3)
 由此可见，不同的猜想概率密度标准差下的有效样本量差异较大。当 $\sigma = 4$ 时，有效样本量最大。
 
 ## 基于优化的抽样算法
-
