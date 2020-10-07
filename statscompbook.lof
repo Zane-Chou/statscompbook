@@ -1,25 +1,25 @@
 \addvspace {10.0pt}
 \addvspace {10.0pt}
 \addvspace {10.0pt}
-\contentsline {figure}{\numberline {3.1}{\ignorespaces 二维单纯形示例}}{47}{figure.3.1}%
-\contentsline {figure}{\numberline {3.2}{\ignorespaces 梯度下降算法：一元函数}}{50}{figure.3.2}%
-\contentsline {figure}{\numberline {3.3}{\ignorespaces 梯度下降算法：二元函数}}{50}{figure.3.3}%
-\contentsline {figure}{\numberline {3.4}{\ignorespaces 梯度下降算法（变量高度相关的情况）}}{51}{figure.3.4}%
-\contentsline {figure}{\numberline {3.5}{\ignorespaces 不同 $\alpha $ 取值下梯度下降算法的收敛情况}}{55}{figure.3.5}%
-\contentsline {figure}{\numberline {3.6}{\ignorespaces 随机梯度下降算法的收敛情况}}{58}{figure.3.6}%
-\contentsline {figure}{\numberline {3.7}{\ignorespaces 梯度下降算法、随机梯度下降算法和牛顿算法的收敛情况比较}}{59}{figure.3.7}%
+\contentsline {figure}{\numberline {3.1}{\ignorespaces 二维单纯形示例}}{53}{figure.3.1}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces 梯度下降算法：一元函数}}{56}{figure.3.2}%
+\contentsline {figure}{\numberline {3.3}{\ignorespaces 梯度下降算法：二元函数}}{56}{figure.3.3}%
+\contentsline {figure}{\numberline {3.4}{\ignorespaces 梯度下降算法（变量高度相关的情况）}}{57}{figure.3.4}%
+\contentsline {figure}{\numberline {3.5}{\ignorespaces 不同 $\alpha $ 取值下梯度下降算法的收敛情况}}{61}{figure.3.5}%
+\contentsline {figure}{\numberline {3.6}{\ignorespaces 随机梯度下降算法的收敛情况}}{64}{figure.3.6}%
+\contentsline {figure}{\numberline {3.7}{\ignorespaces 梯度下降算法、随机梯度下降算法和牛顿算法的收敛情况比较}}{65}{figure.3.7}%
 \addvspace {10.0pt}
 \addvspace {10.0pt}
 \addvspace {10.0pt}
 \addvspace {10.0pt}
-\contentsline {figure}{\numberline {7.1}{\ignorespaces $N(0,1)$ 和 $t_2$ 分布的概率密度函数}}{80}{figure.7.1}%
+\contentsline {figure}{\numberline {7.1}{\ignorespaces $N(0,1)$ 和 $t_2$ 分布的概率密度函数}}{89}{figure.7.1}%
 \addvspace {10.0pt}
-\contentsline {figure}{\numberline {8.1}{\ignorespaces 上：以 $g(x)$ 为猜想概率密度对 $f(x)$ 进行拒绝抽样；下：MCMC抽样}}{85}{figure.8.1}%
-\contentsline {figure}{\numberline {8.2}{\ignorespaces 混合正态分布的概率密度图}}{88}{figure.8.2}%
-\contentsline {figure}{\numberline {8.3}{\ignorespaces 不同的猜想概率密度标准差下混合正态分布的抽样}}{96}{figure.8.3}%
-\contentsline {figure}{\numberline {8.4}{\ignorespaces 不同的猜想概率密度标准差下混合正态分布的抽样密度图}}{97}{figure.8.4}%
-\contentsline {figure}{\numberline {8.5}{\ignorespaces 不同的猜想概率密度标准差下混合正态分布的抽样自相关图}}{99}{figure.8.5}%
+\contentsline {figure}{\numberline {8.1}{\ignorespaces 上：以 $g(x)$ 为猜想概率密度对 $f(x)$ 进行拒绝抽样；下：MCMC抽样}}{94}{figure.8.1}%
+\contentsline {figure}{\numberline {8.2}{\ignorespaces 混合正态分布的概率密度图}}{97}{figure.8.2}%
+\contentsline {figure}{\numberline {8.3}{\ignorespaces 不同的猜想概率密度标准差下混合正态分布的抽样}}{105}{figure.8.3}%
+\contentsline {figure}{\numberline {8.4}{\ignorespaces 不同的猜想概率密度标准差下混合正态分布的抽样密度图}}{106}{figure.8.4}%
+\contentsline {figure}{\numberline {8.5}{\ignorespaces 不同的猜想概率密度标准差下混合正态分布的抽样自相关图}}{108}{figure.8.5}%
 \addvspace {10.0pt}
 \addvspace {10.0pt}
-\contentsline {figure}{\numberline {10.1}{\ignorespaces 二维矩阵的特征分析}}{108}{figure.10.1}%
-\contentsline {figure}{\numberline {10.2}{\ignorespaces 仅有五个页面的链接关系示例。}}{116}{figure.10.2}%
+\contentsline {figure}{\numberline {10.1}{\ignorespaces 二维矩阵的特征分析}}{121}{figure.10.1}%
+\contentsline {figure}{\numberline {10.2}{\ignorespaces 仅有五个页面的链接关系示例。}}{128}{figure.10.2}%

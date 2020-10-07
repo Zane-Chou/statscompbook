@@ -1,3 +1,5 @@
+# (PART) 现代贝叶斯计算 {-}
+
 # 贝叶斯思维 {#bayesianthinking}
 
 ## 介绍
