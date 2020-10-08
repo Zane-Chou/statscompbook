@@ -6,7 +6,7 @@
 \contentsline {figure}{\numberline {3.3}{\ignorespaces 梯度下降算法：二元函数}}{56}{figure.3.3}%
 \contentsline {figure}{\numberline {3.4}{\ignorespaces 梯度下降算法（变量高度相关的情况）}}{57}{figure.3.4}%
 \contentsline {figure}{\numberline {3.5}{\ignorespaces 不同 $\alpha $ 取值下梯度下降算法的收敛情况}}{61}{figure.3.5}%
-\contentsline {figure}{\numberline {3.6}{\ignorespaces 随机梯度下降算法的收敛情况}}{64}{figure.3.6}%
+\contentsline {figure}{\numberline {3.6}{\ignorespaces 随机梯度下降算法的收敛情况}}{65}{figure.3.6}%
 \contentsline {figure}{\numberline {3.7}{\ignorespaces 梯度下降算法、随机梯度下降算法和牛顿算法的收敛情况比较}}{65}{figure.3.7}%
 \addvspace {10.0pt}
 \addvspace {10.0pt}

@@ -237,8 +237,8 @@ $${\mathbf x_c}={\mathbf x_0}+\rho({\mathbf x_{n+1}}-{\mathbf x_0}),$$
 通常取 $\rho=0.5$。
     - 如果 $f({\mathbf x_c}) < f({\mathbf x_{n+1}})$，那么用收缩点 ${\mathbf x_c}$ 形成新的单纯形。
     - 如果 $f({\mathbf x_c}) \geq f({\mathbf x_{n+1}})$，说明收缩无效，需要一个更小的单纯形，这时将 ${\mathbf x_{1}}$ 以外的点按以下方式压缩（shrink）：
-
-    $${\mathbf x_i}={\mathbf x_1}+\sigma({\mathbf x_i}-{\mathbf x_1})，$$通常取 $\sigma = 0.5$，得到新的单纯形后返回第一步。
+    
+$${\mathbf x_i}={\mathbf x_1}+\sigma({\mathbf x_i}-{\mathbf x_1}),$$ 通常取 $\sigma = 0.5$，得到新的单纯形后返回第一步。
 
 
 
@@ -501,7 +501,8 @@ gd2 <- gd.lm(X, y, beta.init = c(-4,-5), alpha = 0.01,
 
 ```{r niter}
 niter <- data.frame(alpha = c('auto', 0.1, 0.01),
-                    niter = c(gd.auto$niter, gd1$niter, gd2$niter))
+                    niter = c(gd.auto$niter, gd1$niter, 
+                              gd2$niter))
 knitr::kable(
   niter, caption = '不同 $\\alpha$ 对应的梯度下降算法的迭代次数',
   booktabs = TRUE,  col.names = c("$\\alpha$", '迭代次数'),

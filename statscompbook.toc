@@ -16,12 +16,12 @@
 \contentsline {subsection}{\numberline {1.5.2}\texttt {for} 循环}{14}{subsection.1.5.2}%
 \contentsline {subsection}{\numberline {1.5.3}\texttt {while} 循环}{15}{subsection.1.5.3}%
 \contentsline {subsection}{\numberline {1.5.4}循环函数}{15}{subsection.1.5.4}%
-\contentsline {section}{\numberline {1.6}如何写 R 函数}{21}{section.1.6}%
+\contentsline {section}{\numberline {1.6}如何写 R 函数}{22}{section.1.6}%
 \contentsline {section}{\numberline {1.7}如何在 R 中绘图}{23}{section.1.7}%
 \contentsline {subsection}{\numberline {1.7.1}R 中的基础绘图}{23}{subsection.1.7.1}%
-\contentsline {subsection}{\numberline {1.7.2}\texttt {ggplot2}}{28}{subsection.1.7.2}%
-\contentsline {section}{\numberline {1.8}有关 R 的学习资源}{37}{section.1.8}%
-\contentsline {part}{第二部分\hspace {1em}现代优化算法}{39}{part.2}%
+\contentsline {subsection}{\numberline {1.7.2}\texttt {ggplot2}}{29}{subsection.1.7.2}%
+\contentsline {section}{\numberline {1.8}有关 R 的学习资源}{38}{section.1.8}%
+\contentsline {part}{第二部分\hspace {1em}统计计算基础}{39}{part.2}%
 \contentsline {chapter}{\numberline {第二章\hspace {.3em}}求根算法}{41}{chapter.2}%
 \contentsline {section}{\numberline {2.1}牛顿算法的历史}{41}{section.2.1}%
 \contentsline {section}{\numberline {2.2}牛顿法}{42}{section.2.2}%
@@ -32,8 +32,8 @@
 \contentsline {section}{\numberline {3.4}Nelder Mead 算法}{52}{section.3.4}%
 \contentsline {section}{\numberline {3.5}随机梯度下降算法}{55}{section.3.5}%
 \contentsline {subsection}{\numberline {3.5.1}梯度下降算法}{55}{subsection.3.5.1}%
-\contentsline {subsection}{\numberline {3.5.2}随机梯度下降算法}{61}{subsection.3.5.2}%
-\contentsline {section}{\numberline {3.6}优化算法比较}{65}{section.3.6}%
+\contentsline {subsection}{\numberline {3.5.2}随机梯度下降算法}{62}{subsection.3.5.2}%
+\contentsline {section}{\numberline {3.6}优化算法比较}{64}{section.3.6}%
 \contentsline {section}{\numberline {3.7}案例：心脏病预测}{66}{section.3.7}%
 \contentsline {section}{\numberline {3.8}拓展阅读}{70}{section.3.8}%
 \contentsline {chapter}{\numberline {第四章\hspace {.3em}}拉普拉斯近似}{71}{chapter.4}%
@@ -91,17 +91,17 @@
 \contentsline {subsection}{\numberline {9.3.4}后验分布}{116}{subsection.9.3.4}%
 \contentsline {subsection}{\numberline {9.3.5}后验推断}{116}{subsection.9.3.5}%
 \contentsline {section}{\numberline {9.4}案例：体脂影响因素分析}{116}{section.9.4}%
-\contentsline {part}{第四部分\hspace {1em}统计计算中的线性代数方法}{117}{part.4}%
-\contentsline {chapter}{\numberline {第十章\hspace {.3em}}现代线性代数方法}{119}{chapter.10}%
+\contentsline {part}{第四部分\hspace {1em}现代线性代数方法}{117}{part.4}%
+\contentsline {chapter}{\numberline {第十章\hspace {.3em}}统计计算中的线性代数方法}{119}{chapter.10}%
 \contentsline {section}{\numberline {10.1}介绍}{119}{section.10.1}%
 \contentsline {section}{\numberline {10.2}特征分解}{120}{section.10.2}%
 \contentsline {subsection}{\numberline {10.2.1}特征分析}{120}{subsection.10.2.1}%
 \contentsline {subsection}{\numberline {10.2.2}矩阵的特征分解过程}{120}{subsection.10.2.2}%
-\contentsline {subsection}{\numberline {10.2.3}特征分解可以帮助我们做什么？}{121}{subsection.10.2.3}%
+\contentsline {subsection}{\numberline {10.2.3}特征分解可以帮助我们做什么？}{122}{subsection.10.2.3}%
 \contentsline {section}{\numberline {10.3}奇异值分解}{122}{section.10.3}%
 \contentsline {subsection}{\numberline {10.3.1}奇异值（Singular values）和奇异向量（Singular vectors）}{122}{subsection.10.3.1}%
 \contentsline {subsection}{\numberline {10.3.2}奇异值分解}{123}{subsection.10.3.2}%
-\contentsline {subsection}{\numberline {10.3.3}奇异值分解的一些性质}{123}{subsection.10.3.3}%
+\contentsline {subsection}{\numberline {10.3.3}奇异值分解的一些性质}{124}{subsection.10.3.3}%
 \contentsline {section}{\numberline {10.4}奇异值分解的应用}{124}{section.10.4}%
 \contentsline {subsection}{\numberline {10.4.1}矩阵的低秩估计}{124}{subsection.10.4.1}%
 \contentsline {subsection}{\numberline {10.4.2}图像压缩}{124}{subsection.10.4.2}%

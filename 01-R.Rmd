@@ -372,7 +372,8 @@ sapply(x, runif)
 `apply()` 可以对一个矩阵（或多维数组）的行或者列执行一个函数，如：
 
 ```{r}
-x <- matrix(rnorm(30), 6, 5)
+options(width = 50)
+x <- matrix(rnorm(200), 10, 20)
 # 对矩阵 x 的列求均值
 apply(x, 2, mean)
 # 对矩阵 x 的每一行求 20% 和 75% 分位数
@@ -511,8 +512,9 @@ pie(expense$消费,
 以下为某个班级 50 名同学的《统计计算》课程考试成绩。
 
 ```{r, echo=FALSE}
+options(width = 50)
 set.seed(123)
-grades <- sample(70:100,50,replace = TRUE)
+grades <- sample(70:100, 50, replace = TRUE)
 grades
 ```
 从这组数据中我们可以了解这个班级同学的《统计计算》成绩分布情况，比如我们可以统计出成绩属于每个区间段的学生个数（如表 \@ref(tab:grades) 所示）。
@@ -657,7 +659,8 @@ ggplot(diamonds, aes(x = carat, y = price, color = cut, shape = color)) +
 ```{r}
 ggplot(diamonds) +
   geom_point(aes(x = carat, y = price, color = cut)) +
-  labs(title = 'Scatterplot of carat and price', x = 'Carat', y = 'Price')
+  labs(title = 'Scatterplot of carat and price',
+       x = 'Carat', y = 'Price')
 ```
 
 #### 第四步： 修改主题 {-}
@@ -667,7 +670,8 @@ ggplot(diamonds) +
 ```{r}
 p <- ggplot(diamonds) +
   geom_point(aes(x = carat, y = price, color = cut)) +
-  labs(title = 'Scatterplot of carat and price', x = 'Carat', y = 'Price')
+  labs(title = 'Scatterplot of carat and price', 
+       x = 'Carat', y = 'Price')
 p1 <- p + theme(plot.title = element_text(size=20, face="bold"),
                 axis.text.x = element_text(size=15),
                 axis.text.y = element_text(size=15),
